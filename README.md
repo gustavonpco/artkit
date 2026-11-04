@@ -8,6 +8,42 @@ Open-source library (Apache-2.0) for React and Node that lets AI agents **create
 
 The specification (in Portuguese) is in [docs/spec.md](docs/spec.md); implementation conventions are in [docs/CONVENTIONS.md](docs/CONVENTIONS.md).
 
+## What it looks like
+
+The screenshots below come from the [browser playground](examples/playground): the same four artifacts an agent could create for a supplier-portal proposal, shown with the built-in renderers.
+
+### An agent edits, the user sees the result
+
+![The playground: artifact list, the document editor, and the agent view with the text projection, the operations it sent and the resulting diff](docs/images/playground.png)
+
+On the right is what the model reads (a compact text outline with stable ids) and the operations it sends. Here it inserted a "Premissa" callout after the `escopo-p1` paragraph and replaced one word. The engine validated the operations, created version 2 and returned a readable diff. In the middle, the user sees the change right away in the visual editor, where they can keep editing, undo, compare versions, export or send it for approval.
+
+### Document
+
+![A technical proposal document with a cover, headings, a bullet list and a pricing table](docs/images/document.png)
+
+Created from Markdown with a cover page. Each block has an id the agent can target. Exports to **docx**, **md** and **html**.
+
+### Sheet
+
+![An effort estimate spreadsheet with hours, subtotals and a total computed by formulas](docs/images/sheet.png)
+
+Cells, styles, number formats and **formulas** (`=C2*valor_hora`, `=SUM(D2:D4)`) computed by the built-in engine, including named ranges. Exports to **xlsx**, **csv** and **html**.
+
+### Slides
+
+![A slide deck showing a column chart slide and thumbnails of the title, bullets, big-number and chart slides](docs/images/slides.png)
+
+The agent picks semantic layouts (`title`, `title-content`, `big-number`…) and fills slots with text, bullets, stats, tables or **charts**. artkit handles the layout. Includes a presentation mode and native **pptx** export (plus html and md).
+
+### Diagram
+
+![An architecture diagram with grouped nodes for channels, services and data, connected by labeled and dashed edges](docs/images/diagram.png)
+
+Written as Mermaid or as nodes/edges/groups. Automatic layout, shapes, labeled edges and groups. Exports to **svg** and **html**.
+
+Every kind also exports to **png** and **pdf** through the headless renderer in [`@artkit-ai/node/headless`](packages/node). To regenerate these images after a UI change, start the playground and run `node scripts/readme-screenshots.mjs`.
+
 ## Packages
 
 | Package                                              | What it does                                                                                                                                                                            |

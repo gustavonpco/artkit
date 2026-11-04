@@ -46,7 +46,13 @@ export async function seed(service: ArtifactService, scope: Scope): Promise<stri
           id: 'estimativa',
           name: 'Estimativa',
           frozen: { rows: 1, cols: 0 },
-          columns: { A: { width: 22 }, D: { width: 16 } },
+          columns: {
+            A: { width: 22 },
+            B: { width: 16 },
+            D: { width: 16 },
+            F: { width: 14 },
+            G: { width: 14 },
+          },
           cells: {
             A1: { v: 'Atividade', s: { bold: true } },
             B1: { v: 'Grupo', s: { bold: true } },

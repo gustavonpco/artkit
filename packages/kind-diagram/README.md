@@ -1,32 +1,32 @@
-# @artkit/kind-diagram
+# @artkit-ai/kind-diagram
 
 `diagram` artifact kind for [artkit](../../docs/spec.md): nodes, edges and groups for architectures, process
 flows, integrations and simple org charts. Includes a small Mermaid flowchart parser, a deterministic layout
 (dagre or bands), a read-only SVG renderer, a React Flow editor and a static SVG exporter.
 
 ```bash
-pnpm add @artkit/kind-diagram @artkit/core
+pnpm add @artkit-ai/kind-diagram @artkit-ai/core
 # renderer and editor
 pnpm add react react-dom
 ```
 
 ## Subpaths
 
-| Import                        | Contents                                                                                    | Runs in                      |
-| ----------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------- |
-| `@artkit/kind-diagram`        | `diagramKind`, schemas, operations, projection, lint, diff, `parseMermaid`, `layoutDiagram` | browser, Node, edge, workers |
-| `@artkit/kind-diagram/react`  | `DiagramRenderer`, `diagramCss`                                                             | React 19                     |
-| `@artkit/kind-diagram/edit`   | `DiagramEditor`, `diagramEditorCss`, pure editor conversions                                | React 19 (React Flow)        |
-| `@artkit/kind-diagram/export` | `diagramExporters` (`svg`), `renderDiagramSvg`                                              | anywhere (`runtime: 'any'`)  |
+| Import                           | Contents                                                                                    | Runs in                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------- |
+| `@artkit-ai/kind-diagram`        | `diagramKind`, schemas, operations, projection, lint, diff, `parseMermaid`, `layoutDiagram` | browser, Node, edge, workers |
+| `@artkit-ai/kind-diagram/react`  | `DiagramRenderer`, `diagramCss`                                                             | React 19                     |
+| `@artkit-ai/kind-diagram/edit`   | `DiagramEditor`, `diagramEditorCss`, pure editor conversions                                | React 19 (React Flow)        |
+| `@artkit-ai/kind-diagram/export` | `diagramExporters` (`svg`), `renderDiagramSvg`                                              | anywhere (`runtime: 'any'`)  |
 
-PNG and PDF come from headless rendering of the renderer in `@artkit/node`, not from this package.
+PNG and PDF come from headless rendering of the renderer in `@artkit-ai/node`, not from this package.
 
 ## Usage
 
 ```ts
-import { createArtifactService, createRegistry } from '@artkit/core';
-import { diagramKind } from '@artkit/kind-diagram';
-import { diagramExporters } from '@artkit/kind-diagram/export';
+import { createArtifactService, createRegistry } from '@artkit-ai/core';
+import { diagramKind } from '@artkit-ai/kind-diagram';
+import { diagramExporters } from '@artkit-ai/kind-diagram/export';
 
 const registry = createRegistry({ kinds: [diagramKind], exporters: diagramExporters });
 
@@ -41,8 +41,8 @@ await service.create(scope, {
 ```
 
 ```tsx
-import { DiagramRenderer, diagramCss } from '@artkit/kind-diagram/react';
-import { DiagramEditor, diagramEditorCss } from '@artkit/kind-diagram/edit';
+import { DiagramRenderer, diagramCss } from '@artkit-ai/kind-diagram/react';
+import { DiagramEditor, diagramEditorCss } from '@artkit-ai/kind-diagram/edit';
 
 <style>{diagramCss}</style>
 <DiagramRenderer content={content} ctx={{ theme, locale: 'en', mode: 'screen' }} />

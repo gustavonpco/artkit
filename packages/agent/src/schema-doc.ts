@@ -1,4 +1,4 @@
-import { envelopeOperationSchema, type JsonSchema, toJsonSchema } from '@artkit/core';
+import { envelopeOperationSchema, type JsonSchema, toJsonSchema } from '@artkit-ai/core';
 import type { z } from 'zod';
 
 /**

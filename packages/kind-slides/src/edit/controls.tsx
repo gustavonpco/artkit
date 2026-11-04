@@ -12,4 +12,4 @@ export {
   TextField,
   type TextFieldProps,
   Toggle,
-} from '@artkit/react';
+} from '@artkit-ai/react';

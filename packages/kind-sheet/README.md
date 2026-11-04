@@ -1,11 +1,11 @@
-# @artkit/kind-sheet
+# @artkit-ai/kind-sheet
 
 Spreadsheet artifact kind for [artkit](../../docs/spec.md) (spec §11.2): a workbook model that AI agents edit
 through typed operations, with its own Excel-compatible formula engine, a text projection for models, lint,
 diff, a read-only React renderer, a visual editor and xlsx/csv/html exporters.
 
 ```bash
-pnpm add @artkit/kind-sheet @artkit/core zod
+pnpm add @artkit-ai/kind-sheet @artkit-ai/core zod
 # optional, for /react and /edit
 pnpm add react react-dom
 ```
@@ -13,9 +13,9 @@ pnpm add react react-dom
 ## Usage
 
 ```ts
-import { createRegistry, applyOperations, prepareContent } from '@artkit/core';
-import { sheetKind, createSheetKind } from '@artkit/kind-sheet';
-import { sheetExporters } from '@artkit/kind-sheet/export';
+import { createRegistry, applyOperations, prepareContent } from '@artkit-ai/core';
+import { sheetKind, createSheetKind } from '@artkit-ai/kind-sheet';
+import { sheetExporters } from '@artkit-ai/kind-sheet/export';
 
 const registry = createRegistry({ kinds: [createSheetKind({ locale: 'pt-BR' })], exporters: sheetExporters });
 
@@ -44,8 +44,8 @@ const result = applyOperations(
 React:
 
 ```tsx
-import { SheetRenderer, sheetCss } from '@artkit/kind-sheet/react';
-import { SheetEditor, sheetEditorCss } from '@artkit/kind-sheet/edit';
+import { SheetRenderer, sheetCss } from '@artkit-ai/kind-sheet/react';
+import { SheetEditor, sheetEditorCss } from '@artkit-ai/kind-sheet/edit';
 
 <style>{sheetEditorCss}</style>
 <SheetEditor content={content} ctx={{ theme, locale: 'pt-BR', mode: 'screen' }} emit={(ops, opts) => apply(ops, opts)} readOnly={false} lint={lint} />
@@ -53,12 +53,12 @@ import { SheetEditor, sheetEditorCss } from '@artkit/kind-sheet/edit';
 
 ## Subpaths
 
-| Subpath   | Contents                                                                                                                                                                                                                                                                                                                                                                                                         |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.`       | `sheetKind`, `createSheetKind({ formulaEngine?, locale? })`, schemas and types, operations, projection, lint, diff, inputs (`table`, `csv`), the formula engine (`createFormulaEngine`, `recalculateAll`, `previewFormula`, tokenizer/parser, reference rewriting), display helpers (`formatCellValue`, `xlsxNumberFormat`). Depends only on `@artkit/core` and `zod`; runs in browsers, Node, edge and workers. |
-| `/react`  | `SheetRenderer`, `sheetCss`, the virtualized `SheetGrid` and layout helpers.                                                                                                                                                                                                                                                                                                                                     |
-| `/edit`   | `SheetEditor`, `sheetEditorCss`, and the pure editor logic (selection model, keys, clipboard, typed input, formula editing, operation builders).                                                                                                                                                                                                                                                                 |
-| `/export` | `sheetExporters` (`xlsx` via exceljs, `csv`, `html`).                                                                                                                                                                                                                                                                                                                                                            |
+| Subpath   | Contents                                                                                                                                                                                                                                                                                                                                                                                                            |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.`       | `sheetKind`, `createSheetKind({ formulaEngine?, locale? })`, schemas and types, operations, projection, lint, diff, inputs (`table`, `csv`), the formula engine (`createFormulaEngine`, `recalculateAll`, `previewFormula`, tokenizer/parser, reference rewriting), display helpers (`formatCellValue`, `xlsxNumberFormat`). Depends only on `@artkit-ai/core` and `zod`; runs in browsers, Node, edge and workers. |
+| `/react`  | `SheetRenderer`, `sheetCss`, the virtualized `SheetGrid` and layout helpers.                                                                                                                                                                                                                                                                                                                                        |
+| `/edit`   | `SheetEditor`, `sheetEditorCss`, and the pure editor logic (selection model, keys, clipboard, typed input, formula editing, operation builders).                                                                                                                                                                                                                                                                    |
+| `/export` | `sheetExporters` (`xlsx` via exceljs, `csv`, `html`).                                                                                                                                                                                                                                                                                                                                                               |
 
 ## Model
 
@@ -123,7 +123,7 @@ Lint: formula referencing an empty cell, number stored as text, column too narro
 | csv    | one sheet (`options.sheet`: id or name, default first visible), `options.delimiter` (`,` `;` tab), `options.bom`; invariant numbers, ISO dates, formula-injection protection (text starting with `= + - @` tab or CR is prefixed with `'`) | other sheets (warning)                                                                                  |
 | html   | static document, one table per visible sheet, merges as spans, locale formats, inline styles                                                                                                                                               | hidden sheets (warning)                                                                                 |
 
-PDF/PNG come from headless rendering of `SheetRenderer` in `@artkit/node`.
+PDF/PNG come from headless rendering of `SheetRenderer` in `@artkit-ai/node`.
 
 ## Deviations and limitations
 

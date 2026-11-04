@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/agent",
+  "name": "@artkit-ai/agent",
   "version": "0.1.0",
   "description": "Harness-neutral agent toolkit for artkit: tool definitions, instructions, model-facing errors and token budgets.",
   "license": "Apache-2.0",
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/agent"
   },
   "publishConfig": {
@@ -40,7 +40,7 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
     "zod": "^4.6.7"
   }
 }

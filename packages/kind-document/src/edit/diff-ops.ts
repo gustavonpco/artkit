@@ -1,4 +1,4 @@
-import { deepEqual } from '@artkit/core';
+import { deepEqual } from '@artkit-ai/core';
 import type { BlockFields, DocumentOperation } from '../operations.js';
 import type { Block } from '../schema.js';
 

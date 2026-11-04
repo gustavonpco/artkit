@@ -5,7 +5,7 @@ import {
   type ExportContext,
   type RenderContext,
   silentLogger,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { createElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import {

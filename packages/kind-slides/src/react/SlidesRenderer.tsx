@@ -1,5 +1,5 @@
-import type { RenderContext } from '@artkit/core';
-import { Toolbar, ToolbarButton, ToolbarGroup } from '@artkit/react';
+import type { RenderContext } from '@artkit-ai/core';
+import { Toolbar, ToolbarButton, ToolbarGroup } from '@artkit-ai/react';
 import {
   ChevronLeft,
   ChevronRight,

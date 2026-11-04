@@ -19,7 +19,7 @@ import {
   summarize,
   t,
   type VersionEntry,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import {
   hashName,
   isErrno,

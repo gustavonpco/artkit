@@ -1,4 +1,4 @@
-import type { LintIssue, Theme } from '@artkit/core';
+import type { LintIssue, Theme } from '@artkit-ai/core';
 import {
   Button,
   ButtonRow,
@@ -7,7 +7,7 @@ import {
   InspectorSection,
   Inspector as Panel,
   Segmented,
-} from '@artkit/react';
+} from '@artkit-ai/react';
 import { ArrowRightLeft, Pin, PinOff, Trash2 } from 'lucide-react';
 import { type KeyboardEvent, type ReactNode, useId } from 'react';
 import type { DiagramOperation } from '../operations.js';

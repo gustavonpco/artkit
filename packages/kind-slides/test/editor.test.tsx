@@ -6,7 +6,7 @@ import {
   type EmitOptions,
   type LintIssue,
   type RenderContext,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';

@@ -1,4 +1,4 @@
-import { defaultTheme } from '@artkit/core';
+import { defaultTheme } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import {
   createTranslator,

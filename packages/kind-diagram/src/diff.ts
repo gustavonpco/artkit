@@ -1,4 +1,4 @@
-import { type ChangeSummary, deepEqual, diffCollection, diffFields } from '@artkit/core';
+import { type ChangeSummary, deepEqual, diffCollection, diffFields } from '@artkit-ai/core';
 import type { DiagramContent, DiagramEdge, DiagramGroup, DiagramNode } from './schema.js';
 
 const isPt = (locale?: string) => locale?.toLowerCase().startsWith('pt') ?? false;

@@ -1,4 +1,4 @@
-import { type AnyArtifactKind, type ArtifactRegistry, operationNames } from '@artkit/core';
+import { type AnyArtifactKind, type ArtifactRegistry, operationNames } from '@artkit-ai/core';
 import {
   describeContent,
   describeEnvelopeOperations,

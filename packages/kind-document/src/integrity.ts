@@ -1,4 +1,4 @@
-import type { ErrorIssue } from '@artkit/core';
+import type { ErrorIssue } from '@artkit-ai/core';
 import type { Block, DocumentContent, ListItem } from './schema.js';
 
 const pt = (locale: string | undefined) => locale?.toLowerCase().startsWith('pt') ?? false;

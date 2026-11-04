@@ -1,4 +1,4 @@
-import { ArtifactError } from '@artkit/core';
+import { ArtifactError } from '@artkit-ai/core';
 import { describe, expect, it, vi } from 'vitest';
 import { createHttpClient, filenameFromDisposition } from '../src/index.js';
 

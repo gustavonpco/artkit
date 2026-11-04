@@ -1,4 +1,4 @@
-import type { Artifact, ChangeSummary } from '@artkit/core';
+import type { Artifact, ChangeSummary } from '@artkit-ai/core';
 import { Columns2, Rows2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { type ArtkitContextValue, useArtkit } from '../context.js';

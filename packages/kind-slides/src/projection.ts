@@ -4,7 +4,7 @@ import {
   type ProjectionItem,
   type ProjectionOptions,
   projectItems,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { composeSlide, resolveTextStyle, slideTitle } from './compose.js';
 import { tableColumnCount, textElementParagraphs } from './elements.js';
 import { CANVAS, fmt, type Rect } from './geometry.js';

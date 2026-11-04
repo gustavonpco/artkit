@@ -1,4 +1,4 @@
-import type { Artifact } from '@artkit/core';
+import type { Artifact } from '@artkit-ai/core';
 import type { ArtifactClient } from './client.js';
 
 export interface CacheEntry {

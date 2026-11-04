@@ -5,7 +5,7 @@ import {
   type LintIssue,
   resolveColor,
   type Theme,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import {
   composeSlide,
   DEFAULT_SHAPE_TEXT_STYLE,

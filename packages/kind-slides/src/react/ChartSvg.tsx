@@ -1,4 +1,4 @@
-import type { Theme } from '@artkit/core';
+import type { Theme } from '@artkit-ai/core';
 import { createElement, type ReactElement } from 'react';
 
 // Chart marks are positional (one per category/series) and never reorder, so they are passed to

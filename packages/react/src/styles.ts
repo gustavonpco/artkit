@@ -5,7 +5,7 @@ import {
   normalizeHex,
   type Theme,
   themeCssVariables,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { kitCss } from './kit-css.js';
 
 function channels(hex: string): [number, number, number] {

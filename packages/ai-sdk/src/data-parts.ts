@@ -1,4 +1,4 @@
-import type { ArtifactReference } from '@artkit/agent';
+import type { ArtifactReference } from '@artkit-ai/agent';
 import type { UIMessage } from 'ai';
 
 /** Name of the data part type (`data-artifact` in the UI stream). */

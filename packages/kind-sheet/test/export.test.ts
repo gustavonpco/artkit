@@ -1,4 +1,4 @@
-import { ArtifactError, defaultTheme, type ExportContext, silentLogger } from '@artkit/core';
+import { ArtifactError, defaultTheme, type ExportContext, silentLogger } from '@artkit-ai/core';
 import ExcelModule from 'exceljs';
 import { describe, expect, it } from 'vitest';
 import {

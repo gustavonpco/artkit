@@ -9,7 +9,7 @@ export function integrationBody(kinds: string[]): string {
   const builtin = kinds.filter((kind) => BUILTIN_KIND_PACKAGES.includes(kind));
   const custom = kinds.filter((kind) => !BUILTIN_KIND_PACKAGES.includes(kind));
   const kindPackages = (builtin.length > 0 ? builtin : BUILTIN_KIND_PACKAGES)
-    .map((kind) => `\`@artkit/kind-${kind}\``)
+    .map((kind) => `\`@artkit-ai/kind-${kind}\``)
     .join(', ');
   return `# Integrating artkit
 
@@ -21,17 +21,17 @@ validated operations; storage, versions, authorization and rendering stay in the
 Use the package manager the project already uses (look for \`pnpm-lock.yaml\`, \`yarn.lock\`, \`bun.lockb\` or
 \`package-lock.json\`). Install only what you need:
 
-- \`@artkit/core\` (always), \`@artkit/agent\` (tools and instructions for any harness).
+- \`@artkit-ai/core\` (always), \`@artkit-ai/agent\` (tools and instructions for any harness).
 - Kinds: ${kindPackages}. Each kind has subpaths: \`.\` (model, safe everywhere), \`/react\` (renderer),
   \`/edit\` (visual editor, load lazily), \`/export\` (heavy exporters, server side).
-- \`@artkit/ai-sdk\` for the Vercel AI SDK 7 (peer \`ai\`), \`@artkit/react\` for the panel, \`@artkit/mcp\` for MCP,
-  \`@artkit/node\` for file-system stores, HTTP routes and headless export.
+- \`@artkit-ai/ai-sdk\` for the Vercel AI SDK 7 (peer \`ai\`), \`@artkit-ai/react\` for the panel, \`@artkit-ai/mcp\` for MCP,
+  \`@artkit-ai/node\` for file-system stores, HTTP routes and headless export.
 ${custom.length > 0 ? `\nThis registry also has custom kinds: ${custom.map((kind) => `\`${kind}\``).join(', ')}.\n` : ''}
 ## 2. Registry, store, assets and authorization
 
 \`\`\`ts
-import { createRegistry, createMemoryStore, createMemoryAssetStore } from '@artkit/core';
-import { createArtifactToolkit } from '@artkit/agent';
+import { createRegistry, createMemoryStore, createMemoryAssetStore } from '@artkit-ai/core';
+import { createArtifactToolkit } from '@artkit-ai/agent';
 
 const registry = createRegistry({ kinds: [/* documentKind, sheetKind, … */], themes: [/* brand theme */] });
 // register exporters from the kinds' /export subpaths on the server: registry.registerExporter(…)
@@ -53,7 +53,7 @@ Scope (workspace and actor) always comes from the authenticated request, never f
 
 \`\`\`ts
 import { ToolLoopAgent, createUIMessageStream, createUIMessageStreamResponse, convertToModelMessages } from 'ai';
-import { artifactTools, artifactToolApproval, artifactToolsContext, artifactContextSchema, artifactInstructions } from '@artkit/ai-sdk';
+import { artifactTools, artifactToolApproval, artifactToolsContext, artifactContextSchema, artifactInstructions } from '@artkit-ai/ai-sdk';
 
 const tools = artifactTools(toolkit);
 const agent = new ToolLoopAgent({
@@ -80,13 +80,13 @@ export async function POST(request: Request) {
 
 Every commit emits a \`data-artifact\` part \`{ id, kind, title, version, status }\` updated in place, so chat messages
 carry references, not content. On the client, \`useArtifacts(messages, { registry, addToolApprovalResponse })\` from
-\`@artkit/ai-sdk/react\` gives the artifact map, streaming previews and approve/reject actions; render them with the
-\`@artkit/react\` panel.
+\`@artkit-ai/ai-sdk/react\` gives the artifact map, streaming previews and approve/reject actions; render them with the
+\`@artkit-ai/react\` panel.
 
 ## 4. MCP
 
 \`\`\`ts
-import { createArtkitMcpServer, connectStdio, createArtkitMcpHttpHandler } from '@artkit/mcp';
+import { createArtkitMcpServer, connectStdio, createArtkitMcpHttpHandler } from '@artkit-ai/mcp';
 
 const server = createArtkitMcpServer({ toolkit, resolveScope: (extra) => scopeFromAuth(extra.authInfo) });
 await connectStdio(server);                       // local agents
@@ -97,9 +97,9 @@ Authentication is the host's job: validate the request, then pass \`authInfo\` s
 
 ## 5. Custom kinds
 
-Define the model with \`defineKind\` from \`@artkit/core\` (schemas, pure \`apply\`, \`project\`, \`lint\`, \`diff\`,
+Define the model with \`defineKind\` from \`@artkit-ai/core\` (schemas, pure \`apply\`, \`project\`, \`lint\`, \`diff\`,
 \`parsePartial\`, \`limits\`, \`instructions\`) and run \`defineKindConformanceTests(kind, fixtures, { describe, it })\`
-from \`@artkit/core/testing\`. Keep the \`.\` entry free of React and Node APIs; put renderers in \`/react\`, editors in
+from \`@artkit-ai/core/testing\`. Keep the \`.\` entry free of React and Node APIs; put renderers in \`/react\`, editors in
 \`/edit\` and exporters in \`/export\`.
 
 ## Known pitfalls

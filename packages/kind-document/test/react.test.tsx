@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { defaultTheme, type RenderContext } from '@artkit/core';
+import { defaultTheme, type RenderContext } from '@artkit-ai/core';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import type { Editor } from '@tiptap/core';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';

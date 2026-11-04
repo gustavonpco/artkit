@@ -1,4 +1,10 @@
-import { type ArtifactExporter, type ExportContext, isSafeLink, themeCssText, toDataUrl } from '@artkit/core';
+import {
+  type ArtifactExporter,
+  type ExportContext,
+  isSafeLink,
+  themeCssText,
+  toDataUrl,
+} from '@artkit-ai/core';
 import { documentCss } from '../react/css.js';
 import { pageRuleCss, pageVariables } from '../react/page-css.js';
 import type { Block, CalloutBlock, DocumentContent, ListItem, Run, TableBlock } from '../schema.js';

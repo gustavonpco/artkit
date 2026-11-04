@@ -5,7 +5,7 @@ import {
   ERROR_CODES,
   type KindExample,
   slugify,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { ERROR_ACTIONS, MAX_RETRIES } from './guides/errors.js';
 import { INTEGRATION_DESCRIPTION, integrationBody } from './guides/integration.js';
 import { kindGuide } from './guides/kinds.js';

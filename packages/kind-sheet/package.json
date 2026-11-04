@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/kind-sheet",
+  "name": "@artkit-ai/kind-sheet",
   "version": "0.1.0",
   "description": "Spreadsheet artifact kind with formula engine, virtualized grid editor and xlsx/csv/html exporters.",
   "license": "Apache-2.0",
@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/kind-sheet"
   },
   "publishConfig": {
@@ -55,8 +55,8 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/react": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/react": "workspace:^",
     "exceljs": "^4.4.0",
     "lucide-react": "^1.68.0",
     "zod": "^4.6.7"

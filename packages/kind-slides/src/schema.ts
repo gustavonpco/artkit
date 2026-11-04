@@ -1,4 +1,4 @@
-import { assetRefSchema, colorSchema, itemIdSchema, linkSchema } from '@artkit/core';
+import { assetRefSchema, colorSchema, itemIdSchema, linkSchema } from '@artkit-ai/core';
 import { z } from 'zod';
 
 /** Layout names: lowercase words joined by "-" (built-ins and application layouts). */

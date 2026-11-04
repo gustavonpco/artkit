@@ -1,4 +1,4 @@
-import type { CreateRequest } from '@artkit/core';
+import type { CreateRequest } from '@artkit-ai/core';
 import type {
   LayoutDefinition,
   LayoutSlot,
@@ -7,7 +7,7 @@ import type {
   SlideInput,
   SlotContent,
   SlotContentKind,
-} from '@artkit/kind-slides';
+} from '@artkit-ai/kind-slides';
 import type { WorkiaBlock, WorkiaDeck } from './types.js';
 
 // Workia's deck layouts are app-specific, so they are registered by the application (spec §20) instead of

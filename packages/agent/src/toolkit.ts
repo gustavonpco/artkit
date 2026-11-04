@@ -26,7 +26,7 @@ import {
   toJsonSchema,
   toModelError,
   zodIssuesToErrorIssues,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import type { z } from 'zod';
 import { type InstructionOptions, renderInstructions } from './instructions.js';
 import { applyToolName, selectKinds } from './kind-doc.js';
@@ -253,7 +253,7 @@ function reference(
  */
 export function createArtifactToolkit(options: ArtifactToolkitOptions): ArtifactToolkit {
   if (typeof options.authorize !== 'function') {
-    throw new Error('@artkit/agent: `authorize` is mandatory (spec §16).');
+    throw new Error('@artkit-ai/agent: `authorize` is mandatory (spec §16).');
   }
   const locale = options.locale ?? 'en';
   const logger = options.logger ?? silentLogger;
@@ -283,7 +283,7 @@ export function createArtifactToolkit(options: ArtifactToolkitOptions): Artifact
     });
   const registry = options.registry ?? service.registry;
   const kinds = selectKinds(registry, options.kinds);
-  if (kinds.length === 0) throw new Error('@artkit/agent: the registry has no kinds to expose.');
+  if (kinds.length === 0) throw new Error('@artkit-ai/agent: the registry has no kinds to expose.');
   const kindNames = kinds.map((kind) => kind.kind);
   const topics = guideTopics(registry, kindNames);
   const exportFormats = [

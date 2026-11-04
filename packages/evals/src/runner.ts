@@ -1,11 +1,11 @@
-import { createArtifactToolkit, OVERVIEW_TOPIC } from '@artkit/agent';
+import { createArtifactToolkit, OVERVIEW_TOPIC } from '@artkit-ai/agent';
 import {
   artifactContextSchema,
   artifactInstructions,
   artifactToolApproval,
   artifactTools,
   artifactToolsContext,
-} from '@artkit/ai-sdk';
+} from '@artkit-ai/ai-sdk';
 import {
   type Artifact,
   type ArtifactRegistry,
@@ -13,11 +13,11 @@ import {
   createRegistry,
   type SchemaProfile,
   type Scope,
-} from '@artkit/core';
-import { diagramKind } from '@artkit/kind-diagram';
-import { documentKind } from '@artkit/kind-document';
-import { sheetKind } from '@artkit/kind-sheet';
-import { slidesKind } from '@artkit/kind-slides';
+} from '@artkit-ai/core';
+import { diagramKind } from '@artkit-ai/kind-diagram';
+import { documentKind } from '@artkit-ai/kind-document';
+import { sheetKind } from '@artkit-ai/kind-sheet';
+import { slidesKind } from '@artkit-ai/kind-slides';
 import { isStepCount, ToolLoopAgent } from 'ai';
 import { createToolCaller, instrumentToolkit, isMutation } from './instrument.js';
 import { buildReport } from './report.js';

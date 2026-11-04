@@ -1,5 +1,5 @@
-import { type ArtifactRegistry, type AssetResolver, defaultTheme, type Theme } from '@artkit/core';
-import { soraFontFaceCss } from '@artkit/core/fonts';
+import { type ArtifactRegistry, type AssetResolver, defaultTheme, type Theme } from '@artkit-ai/core';
+import { soraFontFaceCss } from '@artkit-ai/core/fonts';
 import { type ReactNode, useMemo, useRef } from 'react';
 import { cacheFor } from './cache.js';
 import type { ArtifactClient } from './client.js';

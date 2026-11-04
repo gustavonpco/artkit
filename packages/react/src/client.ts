@@ -18,7 +18,7 @@ import {
   type ReadResult,
   type Scope,
   type VersionEntry,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 
 /** Lifecycle actions accepted by `POST {base}/{id}/status` (spec §15.3). */
 export type StatusAction = 'submit' | 'approve' | 'reject' | 'publish' | 'archive';
@@ -86,7 +86,7 @@ export interface ArtifactClient {
 type HeadersSource = HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
 
 export interface HttpClientOptions {
-  /** Base path of the `@artkit/node` routes (default `/api/artifacts`). */
+  /** Base path of the `@artkit-ai/node` routes (default `/api/artifacts`). */
   baseUrl?: string;
   /** Custom fetch (auth wrappers, tests, SSR). Defaults to the global `fetch`. */
   fetch?: typeof fetch;
@@ -186,7 +186,7 @@ function isAbortError(error: unknown): boolean {
   return typeof error === 'object' && error !== null && (error as { name?: unknown }).name === 'AbortError';
 }
 
-/** Reference client for the `@artkit/node` routes (HTTP contract in docs/CONVENTIONS.md). */
+/** Reference client for the `@artkit-ai/node` routes (HTTP contract in docs/CONVENTIONS.md). */
 export function createHttpClient(options: HttpClientOptions = {}): ArtifactClient {
   const base = (options.baseUrl ?? '/api/artifacts').replace(/\/+$/, '');
   const doFetch =

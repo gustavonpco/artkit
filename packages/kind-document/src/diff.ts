@@ -1,4 +1,4 @@
-import { type ChangeSummary, deepEqual, diffCollection, ellipsis } from '@artkit/core';
+import { type ChangeSummary, deepEqual, diffCollection, ellipsis } from '@artkit-ai/core';
 import { canonicalBlock } from './normalize.js';
 import { blockText } from './runs.js';
 import type { Block, DocumentContent } from './schema.js';

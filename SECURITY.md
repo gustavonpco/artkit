@@ -19,6 +19,6 @@ We credit reporters in the release notes unless they prefer to stay anonymous.
 
 ## Scope
 
-In scope: every `@artkit/*` package, including validation of model input, sanitization (links, SVG, CSV formula injection), store scope isolation, the HTTP routes in `@artkit/node`, headless rendering isolation and, from phase 2, the `app` sandbox.
+In scope: every `@artkit-ai/*` package, including validation of model input, sanitization (links, SVG, CSV formula injection), store scope isolation, the HTTP routes in `@artkit-ai/node`, headless rendering isolation and, from phase 2, the `app` sandbox.
 
 The security model is described in [docs/spec.md §16](docs/spec.md).

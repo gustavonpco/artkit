@@ -1,4 +1,4 @@
-import { COLOR_TOKENS, type ColorToken, type Theme } from '@artkit/core';
+import { COLOR_TOKENS, type ColorToken, type Theme } from '@artkit-ai/core';
 import { Check, ChevronDown, type LucideIcon, X } from 'lucide-react';
 import {
   type KeyboardEvent,

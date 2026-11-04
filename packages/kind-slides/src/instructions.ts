@@ -1,4 +1,4 @@
-import type { KindInstructions } from '@artkit/core';
+import type { KindInstructions } from '@artkit-ai/core';
 import type { LayoutRegistry } from './layouts.js';
 
 function describeLayouts(layouts: LayoutRegistry): string {

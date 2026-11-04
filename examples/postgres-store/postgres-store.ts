@@ -12,7 +12,7 @@ import {
   type Scope,
   t,
   type VersionEntry,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 
 /**
  * Runs one parameterized statement. Matches `pg`'s `pool.query(sql, params)`; wrap other drivers

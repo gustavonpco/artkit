@@ -1,5 +1,5 @@
-import { type RenderContext, resolveColor } from '@artkit/core';
-import { Toolbar, ToolbarButton, ToolbarGroup } from '@artkit/react';
+import { type RenderContext, resolveColor } from '@artkit-ai/core';
+import { Toolbar, ToolbarButton, ToolbarGroup } from '@artkit-ai/react';
 import { ChevronDown, ChevronUp, FunctionSquare, Search } from 'lucide-react';
 import { type KeyboardEvent, useMemo, useRef, useState } from 'react';
 import { type CellPos, cellKey, formatRange, parseCellKey, parseRange } from '../address.js';

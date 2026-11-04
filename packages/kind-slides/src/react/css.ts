@@ -1,4 +1,4 @@
-import { kitCss } from '@artkit/react';
+import { kitCss } from '@artkit-ai/react';
 import { slidesBaseCss } from './slide-css.js';
 
 /**

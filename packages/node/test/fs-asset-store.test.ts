@@ -1,6 +1,6 @@
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { sha256Hex } from '@artkit/core';
+import { sha256Hex } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { createFsAssetStore } from '../src/index.js';
 import { otherWorkspace, PNG, rejection, tempDir, user } from './helpers.js';

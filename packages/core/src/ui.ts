@@ -3,7 +3,7 @@ import { COLOR_TOKENS, mixHex, safeFontFamily, type Theme, themeBrand, themeShap
 
 /**
  * Framework-neutral contracts shared by every kind's `/react` renderer and `/edit` editor and by
- * `@artkit/react`. They live in the core so kinds and the host agree without importing React here.
+ * `@artkit-ai/react`. They live in the core so kinds and the host agree without importing React here.
  */
 export interface RenderContext {
   theme: Theme;
@@ -27,7 +27,7 @@ export interface EmitOptions {
 /**
  * What a kind editor receives. Editors are controlled: they render `content` and turn every interaction
  * into kind operations through `emit`, never writing whole content (spec §13.6). Batching, optimistic
- * apply, undo/redo, conflicts and locks are handled by the host (`@artkit/react`).
+ * apply, undo/redo, conflicts and locks are handled by the host (`@artkit-ai/react`).
  */
 export interface EditorBindings<Content = unknown, Operation = unknown> {
   content: Content;

@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/example-mcp-server",
+  "name": "@artkit-ai/example-mcp-server",
   "version": "0.0.0",
   "private": true,
   "description": "artkit MCP server over stdio with a filesystem store, for desktop MCP clients.",
@@ -12,13 +12,13 @@
     "start": "node server.mjs"
   },
   "dependencies": {
-    "@artkit/agent": "workspace:^",
-    "@artkit/core": "workspace:^",
-    "@artkit/mcp": "workspace:^",
-    "@artkit/node": "workspace:^",
-    "@artkit/kind-document": "workspace:^",
-    "@artkit/kind-sheet": "workspace:^",
-    "@artkit/kind-slides": "workspace:^",
-    "@artkit/kind-diagram": "workspace:^"
+    "@artkit-ai/agent": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/mcp": "workspace:^",
+    "@artkit-ai/node": "workspace:^",
+    "@artkit-ai/kind-document": "workspace:^",
+    "@artkit-ai/kind-sheet": "workspace:^",
+    "@artkit-ai/kind-slides": "workspace:^",
+    "@artkit-ai/kind-diagram": "workspace:^"
   }
 }

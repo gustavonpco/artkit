@@ -1,11 +1,11 @@
-# @artkit/kind-document
+# @artkit-ai/kind-document
 
 Rich document artifact kind for artkit: proposals, specs, reports and notes made of
 blocks with stable ids. Markdown is a representation of this kind, not a separate one: models can create
 and extend documents with GFM Markdown, and documents export back to `.md`.
 
 ```bash
-pnpm add @artkit/kind-document @artkit/core zod
+pnpm add @artkit-ai/kind-document @artkit-ai/core zod
 # for /react and /edit
 pnpm add react react-dom
 ```
@@ -13,8 +13,8 @@ pnpm add react react-dom
 ## Usage
 
 ```ts
-import { createRegistry, applyOperations } from '@artkit/core';
-import { documentKind, markdownToContent } from '@artkit/kind-document';
+import { createRegistry, applyOperations } from '@artkit-ai/core';
+import { documentKind, markdownToContent } from '@artkit-ai/kind-document';
 
 const registry = createRegistry({ kinds: [documentKind] });
 
@@ -40,12 +40,12 @@ documentKind.project(result.content, { mode: 'full', locale: 'en' });
 
 ## Subpaths
 
-| Import                         | Contents                                                                                                                                                                                    |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@artkit/kind-document`        | Schemas, operations, projection, lint, diff, `parsePartial`, Markdown parser/serializer (`parseMarkdown`, `markdownToContent`, `contentToMarkdown`), the `markdown` input. Pure JS, no DOM. |
-| `@artkit/kind-document/react`  | `<DocumentRenderer content ctx className? />` and `documentCss`. Continuous page view; `ctx.mode === 'print'` adds `@page` size, margins, running header/footer and page numbers.           |
-| `@artkit/kind-document/edit`   | `<DocumentEditor {...EditorBindings} />` (TipTap) plus the pure mapping/diff helpers and `documentEditorCss`.                                                                               |
-| `@artkit/kind-document/export` | `documentExporters`: `docx`, `md`, `html` (all `runtime: 'any'`). PDF comes from `@artkit/node/headless`.                                                                                   |
+| Import                            | Contents                                                                                                                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@artkit-ai/kind-document`        | Schemas, operations, projection, lint, diff, `parsePartial`, Markdown parser/serializer (`parseMarkdown`, `markdownToContent`, `contentToMarkdown`), the `markdown` input. Pure JS, no DOM. |
+| `@artkit-ai/kind-document/react`  | `<DocumentRenderer content ctx className? />` and `documentCss`. Continuous page view; `ctx.mode === 'print'` adds `@page` size, margins, running header/footer and page numbers.           |
+| `@artkit-ai/kind-document/edit`   | `<DocumentEditor {...EditorBindings} />` (TipTap) plus the pure mapping/diff helpers and `documentEditorCss`.                                                                               |
+| `@artkit-ai/kind-document/export` | `documentExporters`: `docx`, `md`, `html` (all `runtime: 'any'`). PDF comes from `@artkit-ai/node/headless`.                                                                                |
 
 ## Model
 
@@ -96,7 +96,7 @@ block level and emitted as `update_block` (only changed fields), `insert_block`,
 `move_block`; pure text edits use `{ kind: 'typing' }`. New nodes get fresh ids that never reuse an id seen
 in the content; wrapping a paragraph in a list keeps its id. Content changes from outside replace only the
 differing nodes, so the selection survives. Images, toc and page breaks are atom nodes that keep every
-field. Undo/redo is left to the host (`@artkit/react`).
+field. Undo/redo is left to the host (`@artkit-ai/react`).
 
 ## Exporters
 

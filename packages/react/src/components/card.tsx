@@ -1,4 +1,4 @@
-import type { ArtifactSummary } from '@artkit/core';
+import type { ArtifactSummary } from '@artkit-ai/core';
 import { ArrowUpRight } from 'lucide-react';
 import { type ReactNode, useId } from 'react';
 import { useArtkit } from '../context.js';

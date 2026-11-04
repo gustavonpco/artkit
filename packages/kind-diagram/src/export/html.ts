@@ -1,4 +1,4 @@
-import { type ArtifactExporter, themeCssText } from '@artkit/core';
+import { type ArtifactExporter, themeCssText } from '@artkit-ai/core';
 import { describeDiagram } from '../describe.js';
 import type { DiagramContent } from '../schema.js';
 import { escapeXml, renderDiagramSvg } from './svg.js';

@@ -1,4 +1,4 @@
-import type { Artifact } from '@artkit/core';
+import type { Artifact } from '@artkit-ai/core';
 import { Assertions, allText, mentionsNumber, near, normalize, runsText } from './checks.js';
 import type { CheckContext, EvalTask, TaskContext, ToolCaller } from './types.js';
 

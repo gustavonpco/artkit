@@ -1,5 +1,5 @@
-import type { ArtifactToolkit } from '@artkit/agent';
-import type { Artifact, ArtifactService, SchemaProfile, Scope } from '@artkit/core';
+import type { ArtifactToolkit } from '@artkit-ai/agent';
+import type { Artifact, ArtifactService, SchemaProfile, Scope } from '@artkit-ai/core';
 import type { LanguageModel } from 'ai';
 
 /** Task categories from spec §21.2. */

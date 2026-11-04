@@ -1,4 +1,4 @@
-import { createMemoryStore, createRegistry } from '@artkit/core';
+import { createMemoryStore, createRegistry } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { type CreateToolOutput, createArtifactToolkit } from '../src/index.js';
 import { agentScope, expectError, otherScope, setup, userScope } from './helpers.js';

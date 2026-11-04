@@ -1,5 +1,5 @@
-import type { ArtifactStatus, ChangeSummary } from '@artkit/core';
-import { isArtifactError } from '@artkit/core';
+import type { ArtifactStatus, ChangeSummary } from '@artkit-ai/core';
+import { isArtifactError } from '@artkit-ai/core';
 import { RotateCw } from 'lucide-react';
 import {
   Component,

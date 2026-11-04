@@ -6,8 +6,8 @@ import {
   createMemoryStore,
   createRegistry,
   type NewArtifact,
-} from '@artkit/core';
-import { defineStoreContractTests } from '@artkit/core/testing';
+} from '@artkit-ai/core';
+import { defineStoreContractTests } from '@artkit-ai/core/testing';
 import { describe, expect, it } from 'vitest';
 import { createFsStore } from '../src/index.js';
 import { agent, otherWorkspace, rejection, tempDir, user } from './helpers.js';

@@ -1,4 +1,4 @@
-import type { Theme } from '@artkit/core';
+import type { Theme } from '@artkit-ai/core';
 import { Plus } from 'lucide-react';
 import { type ReactElement, useEffect, useState } from 'react';
 import { tr } from '../i18n.js';

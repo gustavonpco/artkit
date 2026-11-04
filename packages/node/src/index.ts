@@ -1,11 +1,11 @@
-// The memory adapters live in @artkit/core so they also run in browsers, edge and workers; they are
+// The memory adapters live in @artkit-ai/core so they also run in browsers, edge and workers; they are
 // re-exported here so Node apps can pick every adapter from one package.
 export {
   createMemoryAssetStore,
   createMemoryStore,
   type MemoryAssetStoreOptions,
   type MemoryStoreOptions,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 export {
   type ExportArtifactRequest,
   exportArtifact,

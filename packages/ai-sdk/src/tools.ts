@@ -4,8 +4,8 @@ import type {
   InstructionOptions,
   ToolExecutionContext,
   ToolResult,
-} from '@artkit/agent';
-import { actorSchema, type Scope } from '@artkit/core';
+} from '@artkit-ai/agent';
+import { actorSchema, type Scope } from '@artkit-ai/core';
 import { type JSONSchema7, jsonSchema, type Tool, type ToolApprovalStatus, tool } from 'ai';
 import { z } from 'zod';
 import { type ArtifactPartWriter, writeArtifactDataPart } from './data-parts.js';

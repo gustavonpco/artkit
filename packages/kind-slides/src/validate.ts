@@ -1,4 +1,4 @@
-import type { ErrorIssue } from '@artkit/core';
+import type { ErrorIssue } from '@artkit-ai/core';
 import { checkChartFields, checkElement, checkTableFields } from './elements.js';
 import { CANVAS } from './geometry.js';
 import type { LayoutDefinition, LayoutRegistry } from './layouts.js';

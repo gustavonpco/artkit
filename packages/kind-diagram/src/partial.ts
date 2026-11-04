@@ -1,4 +1,4 @@
-import { IdAllocator } from '@artkit/core';
+import { IdAllocator } from '@artkit-ai/core';
 import {
   type DiagramContent,
   type DiagramEdge,

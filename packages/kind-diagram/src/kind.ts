@@ -1,4 +1,4 @@
-import { type ArtifactKind, defineKind, type ErrorIssue, type IdContext } from '@artkit/core';
+import { type ArtifactKind, defineKind, type ErrorIssue, type IdContext } from '@artkit-ai/core';
 import { z } from 'zod';
 import { diffDiagram } from './diff.js';
 import { diagramInstructions, MERMAID_INPUT_DESCRIPTION } from './instructions.js';

@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/core",
+  "name": "@artkit-ai/core",
   "version": "0.1.0",
   "description": "Artifact envelope, kind registry, operation engine, versioning, migrations, diff, lint, projection and store contracts for AI-generated artifacts.",
   "license": "Apache-2.0",
@@ -42,7 +42,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/core"
   },
   "publishConfig": {

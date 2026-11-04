@@ -8,7 +8,7 @@ import {
   deepEqual,
   type EmitOptions,
   isArtifactError,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 
 /** The editable part of an artifact: content plus the envelope fields operations can change. */
 export interface EnvelopeState {

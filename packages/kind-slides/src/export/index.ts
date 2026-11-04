@@ -1,4 +1,4 @@
-import type { ArtifactExporter } from '@artkit/core';
+import type { ArtifactExporter } from '@artkit-ai/core';
 import type { SlidesContent } from '../schema.js';
 import { createSlidesExporters } from './pptx.js';
 

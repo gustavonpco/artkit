@@ -1,5 +1,11 @@
-import { ArtifactError, applyOperations, createRegistry, defaultTheme, prepareContent } from '@artkit/core';
-import { defineKindConformanceTests } from '@artkit/core/testing';
+import {
+  ArtifactError,
+  applyOperations,
+  createRegistry,
+  defaultTheme,
+  prepareContent,
+} from '@artkit-ai/core';
+import { defineKindConformanceTests } from '@artkit-ai/core/testing';
 import { describe, expect, it } from 'vitest';
 import { createSheetKind, type SheetContent, serialFromIso, sheetKind } from '../src/index.js';
 

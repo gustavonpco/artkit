@@ -1,4 +1,4 @@
-import { COLOR_TOKENS, type Color, type RenderContext, resolveColor } from '@artkit/core';
+import { COLOR_TOKENS, type Color, type RenderContext, resolveColor } from '@artkit-ai/core';
 import {
   Bold,
   Check,

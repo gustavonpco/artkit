@@ -1,4 +1,4 @@
-import type { SchemaProfile } from '@artkit/core';
+import type { SchemaProfile } from '@artkit-ai/core';
 import type { AggregateRow, EvalReport, RunResult } from './types.js';
 
 const mean = (values: number[]) =>

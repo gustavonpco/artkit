@@ -1,4 +1,4 @@
-import { type ArtifactExporter, toDataUrl } from '@artkit/core';
+import { type ArtifactExporter, toDataUrl } from '@artkit-ai/core';
 import { contentToMarkdown } from '../markdown/serialize.js';
 import type { DocumentContent } from '../schema.js';
 import { resolveImages } from './html.js';

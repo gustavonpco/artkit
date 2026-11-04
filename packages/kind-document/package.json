@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/kind-document",
+  "name": "@artkit-ai/kind-document",
   "version": "0.1.0",
   "description": "Rich document artifact kind (Markdown in/out) with renderer, TipTap editor and docx/md/html exporters.",
   "license": "Apache-2.0",
@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/kind-document"
   },
   "publishConfig": {
@@ -55,8 +55,8 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/react": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/react": "workspace:^",
     "@tiptap/core": "^3.32.2",
     "@tiptap/extension-subscript": "^3.32.2",
     "@tiptap/extension-superscript": "^3.32.2",

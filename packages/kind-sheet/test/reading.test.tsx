@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { defaultTheme, type RenderContext } from '@artkit/core';
+import { defaultTheme, type RenderContext } from '@artkit-ai/core';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { SheetRenderer } from '../src/react/index.js';

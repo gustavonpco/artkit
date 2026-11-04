@@ -1,4 +1,4 @@
-# @artkit/ai-sdk
+# @artkit-ai/ai-sdk
 
 Vercel AI SDK 7 adapter for artkit: tools, approval, tool context, `data-artifact` parts and the
 `useArtifacts` hook. Peer dependency: `ai@^7` (and `react@^19` for `/react`).
@@ -18,7 +18,7 @@ import {
   artifactToolApproval,
   artifactTools,
   artifactToolsContext,
-} from '@artkit/ai-sdk';
+} from '@artkit-ai/ai-sdk';
 
 const tools = artifactTools(toolkit);
 const agent = new ToolLoopAgent({
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 ```tsx
 import { useChat } from '@ai-sdk/react';
 import { lastAssistantMessageIsCompleteWithApprovalResponses } from 'ai';
-import { useArtifacts } from '@artkit/ai-sdk/react';
+import { useArtifacts } from '@artkit-ai/ai-sdk/react';
 
 const { messages, addToolApprovalResponse } = useChat({
   sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithApprovalResponses,

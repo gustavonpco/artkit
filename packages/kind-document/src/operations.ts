@@ -1,4 +1,4 @@
-import { type ApplyContext, formatPath, itemIdSchema } from '@artkit/core';
+import { type ApplyContext, formatPath, itemIdSchema } from '@artkit-ai/core';
 import { z } from 'zod';
 import { blockIssues } from './integrity.js';
 import { parseMarkdown } from './markdown/parse.js';

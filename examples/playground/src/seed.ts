@@ -1,4 +1,4 @@
-import type { ArtifactService, Scope } from '@artkit/core';
+import type { ArtifactService, Scope } from '@artkit-ai/core';
 
 /** Example artifacts and one operation scenario per kind, shown in the playground. */
 export async function seed(service: ArtifactService, scope: Scope): Promise<string[]> {

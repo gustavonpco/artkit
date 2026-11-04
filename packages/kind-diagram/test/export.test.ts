@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { createMemoryAssetStore, defaultTheme, silentLogger } from '@artkit/core';
+import { createMemoryAssetStore, defaultTheme, silentLogger } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import {
   contentToMermaid,

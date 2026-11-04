@@ -1,4 +1,4 @@
-import type { EmitOptions, LintIssue, RenderContext } from '@artkit/core';
+import type { EmitOptions, LintIssue, RenderContext } from '@artkit-ai/core';
 import type { SlidesOperation } from '../operations.js';
 
 export type Selection =

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { applyOperations, prepareContent } from '@artkit/core';
+import { applyOperations, prepareContent } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { artkitSkillFiles, createSkillsRegistry, nativeKinds, SKILL_NAMES } from '../src/index.js';
 
@@ -19,7 +19,7 @@ function frontmatter(content: string): Record<string, string> {
   return out;
 }
 
-describe('@artkit/skills', () => {
+describe('@artkit-ai/skills', () => {
   it('generates both skills with Agent Skills frontmatter', () => {
     for (const name of SKILL_NAMES) {
       const skill = byPath.get(`${name}/SKILL.md`);

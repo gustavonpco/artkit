@@ -1,14 +1,14 @@
-# @artkit/agent
+# @artkit-ai/agent
 
 Harness-neutral agent toolkit for artkit: tool definitions, system instructions, guides (Agent Skills) and
-model-facing errors. It depends only on `@artkit/core` and `zod` and runs in browsers, Node, edge and workers.
-Adapters such as `@artkit/ai-sdk` and `@artkit/mcp` wrap it without changing names or schemas.
+model-facing errors. It depends only on `@artkit-ai/core` and `zod` and runs in browsers, Node, edge and workers.
+Adapters such as `@artkit-ai/ai-sdk` and `@artkit-ai/mcp` wrap it without changing names or schemas.
 
 ## Usage
 
 ```ts
-import { createRegistry, createMemoryStore, createMemoryAssetStore } from '@artkit/core';
-import { createArtifactToolkit } from '@artkit/agent';
+import { createRegistry, createMemoryStore, createMemoryAssetStore } from '@artkit-ai/core';
+import { createArtifactToolkit } from '@artkit-ai/agent';
 
 const toolkit = createArtifactToolkit({
   registry: createRegistry({ kinds: [documentKind, sheetKind] }),
@@ -61,7 +61,7 @@ toolkit.instructions({ kinds: ['sheet'], detail: 'full' });
 toolkit.skills(); // [{ path, content }] for artkit-artefatos/ and artkit-integracao/
 toolkit.guide('sheet'); // one reference, as artifact_guide returns it
 
-import { renderSkills } from '@artkit/agent';
+import { renderSkills } from '@artkit-ai/agent';
 renderSkills(registry, { extensions: { 'artkit-artefatos/references/document.md': '## House rules\n…' } });
 ```
 

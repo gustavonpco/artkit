@@ -1,4 +1,4 @@
-import type { LintContext, LintIssue } from '@artkit/core';
+import type { LintContext, LintIssue } from '@artkit-ai/core';
 import { cellKey, columnLetter, parseCellKey, parseRange, rectContains } from './address.js';
 import { formatCellValue, resolveCurrency } from './display.js';
 import { parseCached, walk } from './formula/parser.js';

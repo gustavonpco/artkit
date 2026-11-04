@@ -1,4 +1,4 @@
-import { COLOR_TOKENS, type Color, isColorToken, resolveColor, type Theme } from '@artkit/core';
+import { COLOR_TOKENS, type Color, isColorToken, resolveColor, type Theme } from '@artkit-ai/core';
 import type { LucideIcon } from 'lucide-react';
 import {
   type ButtonHTMLAttributes,

@@ -1,5 +1,5 @@
-import type { ArtifactTool, ArtifactToolkit, ToolExecutionContext } from '@artkit/agent';
-import type { Scope } from '@artkit/core';
+import type { ArtifactTool, ArtifactToolkit, ToolExecutionContext } from '@artkit-ai/agent';
+import type { Scope } from '@artkit-ai/core';
 import type { ToolCaller, ToolCallRecord } from './types.js';
 
 export const MUTATING_TOOLS = new Set(['artifact_create', 'artifact_apply']);
@@ -10,7 +10,7 @@ export function isMutation(name: string): boolean {
 
 /**
  * Wraps a toolkit so every tool execution is recorded. The wrapped toolkit is a drop-in replacement
- * for adapters such as `artifactTools` from `@artkit/ai-sdk`.
+ * for adapters such as `artifactTools` from `@artkit-ai/ai-sdk`.
  */
 export function instrumentToolkit(
   toolkit: ArtifactToolkit,

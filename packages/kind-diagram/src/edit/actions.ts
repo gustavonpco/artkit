@@ -1,4 +1,4 @@
-import { IdAllocator } from '@artkit/core';
+import { IdAllocator } from '@artkit-ai/core';
 import type { DiagramLayout } from '../layout/index.js';
 import type { DiagramOperation } from '../operations.js';
 import type { DiagramContent, DiagramEdge, DiagramNode, EdgeArrow, EdgeStyle } from '../schema.js';

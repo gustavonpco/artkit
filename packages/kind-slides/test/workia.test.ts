@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { createRegistry, defaultTheme, prepareContent, silentLogger } from '@artkit/core';
+import { createRegistry, defaultTheme, prepareContent, silentLogger } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { createSlidesExporters } from '../src/export/index.js';
 import {

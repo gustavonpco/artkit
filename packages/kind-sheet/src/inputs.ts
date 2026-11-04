@@ -1,4 +1,4 @@
-import { ArtifactError, type ContentInput, type InputContext, zodIssuesToErrorIssues } from '@artkit/core';
+import { ArtifactError, type ContentInput, type InputContext, zodIssuesToErrorIssues } from '@artkit-ai/core';
 import { z } from 'zod';
 import { cellKey, columnLetter, MAX_COLS, MAX_ROWS, SHEET_NAME_PATTERN } from './address.js';
 import { type CsvDelimiter, parseCsv } from './csv.js';

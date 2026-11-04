@@ -5,7 +5,7 @@ import type {
   EditorBindings,
   RenderContext,
   Theme,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { type ComponentType, createContext, useContext } from 'react';
 import type { ArtifactCache } from './cache.js';
 import type { ArtifactClient } from './client.js';
@@ -33,7 +33,7 @@ export interface EditorModule {
 
 /**
  * Lazy loaders per kind, so the bundle only pulls what is shown (spec §13.6). Typical use:
- * `renderers: { document: () => import('@artkit/kind-document/react').then((m) => ({ Renderer: m.DocumentRenderer, css: m.documentCss })) }`.
+ * `renderers: { document: () => import('@artkit-ai/kind-document/react').then((m) => ({ Renderer: m.DocumentRenderer, css: m.documentCss })) }`.
  */
 export interface ArtifactLoaders {
   renderers?: Record<string, () => Promise<RendererModule>>;

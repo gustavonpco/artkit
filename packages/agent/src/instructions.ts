@@ -1,4 +1,4 @@
-import { type ArtifactRegistry, COLOR_TOKENS, ERROR_CODES } from '@artkit/core';
+import { type ArtifactRegistry, COLOR_TOKENS, ERROR_CODES } from '@artkit-ai/core';
 import { ERROR_ACTIONS } from './guides/errors.js';
 import { kindGuide } from './guides/kinds.js';
 import {

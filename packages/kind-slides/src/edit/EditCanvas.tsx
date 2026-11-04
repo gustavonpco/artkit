@@ -1,4 +1,4 @@
-import type { Color, LintIssue } from '@artkit/core';
+import type { Color, LintIssue } from '@artkit-ai/core';
 import {
   type CSSProperties,
   type KeyboardEvent,

@@ -1,4 +1,4 @@
-import { type ArtifactExporter, type ExportContext, resolveColor, themeCssText } from '@artkit/core';
+import { type ArtifactExporter, type ExportContext, resolveColor, themeCssText } from '@artkit-ai/core';
 import { cellKey, columnLetter, parseCellKey, parseRange } from '../address.js';
 import { type DisplayOptions, formatCellValue, isNumericDisplay, resolveCurrency } from '../display.js';
 import { DEFAULT_COLUMN_WIDTH } from '../lint.js';

@@ -8,7 +8,7 @@ import {
   createMemoryStore,
   createRegistry,
   type Scope,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { afterAll } from 'vitest';
 import { noteKind } from './note-kind.js';
 

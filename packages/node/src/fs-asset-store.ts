@@ -14,7 +14,7 @@ import {
   sha256Hex,
   t,
   toDataUrl,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { createFileAtomic, hashName, isErrno, readJson } from './fs-utils.js';
 
 export interface PublicUrlContext {

@@ -1,4 +1,4 @@
-import { defaultTheme, ERROR_CODES } from '@artkit/core';
+import { defaultTheme, ERROR_CODES } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { renderSkills, stripFrontmatter } from '../src/index.js';
 import { expectError, setup } from './helpers.js';

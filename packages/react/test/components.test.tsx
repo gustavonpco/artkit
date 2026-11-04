@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { Artifact } from '@artkit/core';
+import type { Artifact } from '@artkit-ai/core';
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -429,7 +429,7 @@ describe('ArtifactEditor', () => {
   it('rolls back and shows the error when the server rejects the batch', async () => {
     const { registry, client, artifact } = await seeded();
     vi.spyOn(client, 'apply').mockRejectedValue(
-      new (await import('@artkit/core')).ArtifactError('PERMISSION_DENIED', 'Action "apply" denied.'),
+      new (await import('@artkit-ai/core')).ArtifactError('PERMISSION_DENIED', 'Action "apply" denied.'),
     );
     const onError = vi.fn();
     await renderWithProvider(<ArtifactEditor artifact={artifact} onError={onError} />, {

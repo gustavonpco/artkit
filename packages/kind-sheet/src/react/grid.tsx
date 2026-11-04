@@ -1,4 +1,4 @@
-import { type RenderContext, resolveColor } from '@artkit/core';
+import { type RenderContext, resolveColor } from '@artkit-ai/core';
 import {
   type ClipboardEvent,
   type CSSProperties,

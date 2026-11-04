@@ -1,4 +1,4 @@
-import { type EditorBindings, type EmitOptions, type LintIssue, themeCssVariables } from '@artkit/core';
+import { type EditorBindings, type EmitOptions, type LintIssue, themeCssVariables } from '@artkit-ai/core';
 import {
   Toolbar,
   ToolbarButton,
@@ -7,7 +7,7 @@ import {
   type ToolbarMenuItem,
   ToolbarSelect,
   useOptionalArtkit,
-} from '@artkit/react';
+} from '@artkit-ai/react';
 import {
   applyNodeChanges,
   Background,

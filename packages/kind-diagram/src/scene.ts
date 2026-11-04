@@ -1,4 +1,4 @@
-import type { ColorToken } from '@artkit/core';
+import type { ColorToken } from '@artkit-ai/core';
 import { nodeContentLayout, polylinePath, shapePrimitives } from './draw.js';
 import { ICON_ELEMENTS } from './icons.js';
 import type { DiagramLayout } from './layout/types.js';

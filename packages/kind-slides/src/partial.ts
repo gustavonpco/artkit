@@ -1,4 +1,4 @@
-import { IdAllocator, type IdContext, ITEM_ID_PATTERN } from '@artkit/core';
+import { IdAllocator, type IdContext, ITEM_ID_PATTERN } from '@artkit-ai/core';
 import { ELEMENT_ID_PREFIX } from './operations.js';
 import {
   backgroundSchema,

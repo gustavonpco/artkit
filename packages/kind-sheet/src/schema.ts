@@ -1,4 +1,4 @@
-import { colorSchema, itemIdSchema } from '@artkit/core';
+import { colorSchema, itemIdSchema } from '@artkit-ai/core';
 import { z } from 'zod';
 import { SHEET_NAME_PATTERN } from './address.js';
 

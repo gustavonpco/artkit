@@ -1,5 +1,5 @@
-import { COLOR_TOKENS } from '@artkit/core';
-import { kitCss } from '@artkit/react';
+import { COLOR_TOKENS } from '@artkit-ai/core';
+import { kitCss } from '@artkit-ai/react';
 import { NEUTRAL_STROKE, NODE_TINT } from '../draw.js';
 
 const tint = Math.round(NODE_TINT * 100);

@@ -1,9 +1,9 @@
-import { type RenderSkillsOptions, renderSkills, type SkillFile } from '@artkit/agent';
-import { type AnyArtifactKind, type ArtifactRegistry, createRegistry } from '@artkit/core';
-import { diagramKind } from '@artkit/kind-diagram';
-import { documentKind } from '@artkit/kind-document';
-import { sheetKind } from '@artkit/kind-sheet';
-import { slidesKind } from '@artkit/kind-slides';
+import { type RenderSkillsOptions, renderSkills, type SkillFile } from '@artkit-ai/agent';
+import { type AnyArtifactKind, type ArtifactRegistry, createRegistry } from '@artkit-ai/core';
+import { diagramKind } from '@artkit-ai/kind-diagram';
+import { documentKind } from '@artkit-ai/kind-document';
+import { sheetKind } from '@artkit-ai/kind-sheet';
+import { slidesKind } from '@artkit-ai/kind-slides';
 
 export type { RenderSkillsOptions, SkillFile };
 
@@ -22,7 +22,7 @@ export function createSkillsRegistry(extraKinds: AnyArtifactKind[] = []): Artifa
 
 /**
  * Files of both skills generated from the registry. The technical parts (fields, operations, limits,
- * examples) always come from the kinds' schemas and instructions; authored prose lives in `@artkit/agent`.
+ * examples) always come from the kinds' schemas and instructions; authored prose lives in `@artkit-ai/agent`.
  * Apps with their own kinds or rules pass a registry and `extensions` instead of editing the base skill.
  */
 export function artkitSkillFiles(

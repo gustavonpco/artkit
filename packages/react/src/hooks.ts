@@ -8,7 +8,7 @@ import {
   silentLogger,
   slugify,
   type VersionEntry,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import type { CacheEntry } from './cache.js';
 import type { ClientExportResult } from './client.js';

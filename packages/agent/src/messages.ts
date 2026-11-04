@@ -1,4 +1,4 @@
-import { catalogLocale } from '@artkit/core';
+import { catalogLocale } from '@artkit-ai/core';
 
 type Template = (params: Record<string, string>) => string;
 

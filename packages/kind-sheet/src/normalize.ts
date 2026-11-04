@@ -1,5 +1,5 @@
-import type { IdContext } from '@artkit/core';
-import { itemIdSchema } from '@artkit/core';
+import type { IdContext } from '@artkit-ai/core';
+import { itemIdSchema } from '@artkit-ai/core';
 import { coerceLiteral, isFormulaText, normalizeAddress } from './cells.js';
 import { canonicalFormula } from './formula/rewrite.js';
 import { sheetIdFor } from './operations.js';

@@ -1,4 +1,4 @@
-import { type ArtifactKind, defineKind } from '@artkit/core';
+import { type ArtifactKind, defineKind } from '@artkit-ai/core';
 import { parseCellKey } from './address.js';
 import { diffSheetContent } from './diff.js';
 import { createFormulaEngine, type FormulaEngine } from './formula/engine.js';

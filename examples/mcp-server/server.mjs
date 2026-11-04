@@ -5,18 +5,18 @@
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { createArtifactToolkit } from '@artkit/agent';
-import { createRegistry } from '@artkit/core';
-import { diagramKind } from '@artkit/kind-diagram';
-import { diagramExporters } from '@artkit/kind-diagram/export';
-import { documentKind } from '@artkit/kind-document';
-import { documentExporters } from '@artkit/kind-document/export';
-import { sheetKind } from '@artkit/kind-sheet';
-import { sheetExporters } from '@artkit/kind-sheet/export';
-import { slidesKind } from '@artkit/kind-slides';
-import { slidesExporters } from '@artkit/kind-slides/export';
-import { connectStdio, createArtkitMcpServer } from '@artkit/mcp';
-import { createFsAssetStore, createFsStore } from '@artkit/node';
+import { createArtifactToolkit } from '@artkit-ai/agent';
+import { createRegistry } from '@artkit-ai/core';
+import { diagramKind } from '@artkit-ai/kind-diagram';
+import { diagramExporters } from '@artkit-ai/kind-diagram/export';
+import { documentKind } from '@artkit-ai/kind-document';
+import { documentExporters } from '@artkit-ai/kind-document/export';
+import { sheetKind } from '@artkit-ai/kind-sheet';
+import { sheetExporters } from '@artkit-ai/kind-sheet/export';
+import { slidesKind } from '@artkit-ai/kind-slides';
+import { slidesExporters } from '@artkit-ai/kind-slides/export';
+import { connectStdio, createArtkitMcpServer } from '@artkit-ai/mcp';
+import { createFsAssetStore, createFsStore } from '@artkit-ai/node';
 
 const { values } = parseArgs({
   options: {

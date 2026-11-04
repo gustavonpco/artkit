@@ -6,7 +6,7 @@ import {
   resolveColor,
   type Theme,
   toDataUrl,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import PptxModule from 'pptxgenjs';
 import { chartLegendPosition } from '../chart-scale.js';
 import {

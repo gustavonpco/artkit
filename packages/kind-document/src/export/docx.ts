@@ -5,7 +5,7 @@ import {
   mixHex,
   type Theme,
   themeBrand,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import {
   AlignmentType,
   Bookmark,

@@ -1,4 +1,4 @@
-import { ArtifactError, type ContentInput } from '@artkit/core';
+import { ArtifactError, type ContentInput } from '@artkit-ai/core';
 import { z } from 'zod';
 import { tr } from './i18n.js';
 import type { Paragraph, Slide, SlidesContent, SlotContent } from './schema.js';

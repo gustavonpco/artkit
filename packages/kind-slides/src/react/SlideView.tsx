@@ -1,4 +1,4 @@
-import type { RenderContext } from '@artkit/core';
+import type { RenderContext } from '@artkit-ai/core';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import { composeSlide, slideTitle } from '../compose.js';
 import { builtInLayouts, type LayoutRegistry } from '../layouts.js';

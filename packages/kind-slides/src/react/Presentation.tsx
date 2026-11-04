@@ -1,4 +1,4 @@
-import type { RenderContext } from '@artkit/core';
+import type { RenderContext } from '@artkit-ai/core';
 import { ChevronLeft, ChevronRight, MonitorSpeaker, TimerReset } from 'lucide-react';
 import { type KeyboardEvent, type ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { tr } from '../i18n.js';

@@ -1,4 +1,4 @@
-import type { KindInstructions } from '@artkit/core';
+import type { KindInstructions } from '@artkit-ai/core';
 import { parseMermaid } from './mermaid.js';
 import { DIAGRAM_LIMITS, NODE_ICONS } from './schema.js';
 

@@ -1,4 +1,4 @@
-import type { Color } from '@artkit/core';
+import type { Color } from '@artkit-ai/core';
 import { CANVAS, EPSILON, insideCanvas, type Rect } from './geometry.js';
 import {
   type Align,

@@ -94,7 +94,7 @@ export interface Lock {
 
 /**
  * Persistence contract (spec §15.1). Implementations must pass the shared contract suite
- * exported from `@artkit/core/testing`.
+ * exported from `@artkit-ai/core/testing`.
  */
 export interface ArtifactStore {
   get(scope: Scope, id: string, opts?: { version?: number }): Promise<StoredArtifact | null>;

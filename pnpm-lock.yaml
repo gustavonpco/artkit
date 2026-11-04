@@ -59,70 +59,70 @@ importers:
 
   examples/mcp-server:
     dependencies:
-      '@artkit/agent':
+      '@artkit-ai/agent':
         specifier: workspace:^
         version: link:../../packages/agent
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../../packages/core
-      '@artkit/kind-diagram':
+      '@artkit-ai/kind-diagram':
         specifier: workspace:^
         version: link:../../packages/kind-diagram
-      '@artkit/kind-document':
+      '@artkit-ai/kind-document':
         specifier: workspace:^
         version: link:../../packages/kind-document
-      '@artkit/kind-sheet':
+      '@artkit-ai/kind-sheet':
         specifier: workspace:^
         version: link:../../packages/kind-sheet
-      '@artkit/kind-slides':
+      '@artkit-ai/kind-slides':
         specifier: workspace:^
         version: link:../../packages/kind-slides
-      '@artkit/mcp':
+      '@artkit-ai/mcp':
         specifier: workspace:^
         version: link:../../packages/mcp
-      '@artkit/node':
+      '@artkit-ai/node':
         specifier: workspace:^
         version: link:../../packages/node
 
   examples/node-script:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../../packages/core
-      '@artkit/kind-diagram':
+      '@artkit-ai/kind-diagram':
         specifier: workspace:^
         version: link:../../packages/kind-diagram
-      '@artkit/kind-document':
+      '@artkit-ai/kind-document':
         specifier: workspace:^
         version: link:../../packages/kind-document
-      '@artkit/kind-sheet':
+      '@artkit-ai/kind-sheet':
         specifier: workspace:^
         version: link:../../packages/kind-sheet
-      '@artkit/kind-slides':
+      '@artkit-ai/kind-slides':
         specifier: workspace:^
         version: link:../../packages/kind-slides
-      '@artkit/node':
+      '@artkit-ai/node':
         specifier: workspace:^
         version: link:../../packages/node
 
   examples/playground:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../../packages/core
-      '@artkit/kind-diagram':
+      '@artkit-ai/kind-diagram':
         specifier: workspace:^
         version: link:../../packages/kind-diagram
-      '@artkit/kind-document':
+      '@artkit-ai/kind-document':
         specifier: workspace:^
         version: link:../../packages/kind-document
-      '@artkit/kind-sheet':
+      '@artkit-ai/kind-sheet':
         specifier: workspace:^
         version: link:../../packages/kind-sheet
-      '@artkit/kind-slides':
+      '@artkit-ai/kind-slides':
         specifier: workspace:^
         version: link:../../packages/kind-slides
-      '@artkit/react':
+      '@artkit-ai/react':
         specifier: workspace:^
         version: link:../../packages/react
       react:
@@ -138,25 +138,25 @@ importers:
 
   examples/workia-migration:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../../packages/core
-      '@artkit/kind-diagram':
+      '@artkit-ai/kind-diagram':
         specifier: workspace:^
         version: link:../../packages/kind-diagram
-      '@artkit/kind-document':
+      '@artkit-ai/kind-document':
         specifier: workspace:^
         version: link:../../packages/kind-document
-      '@artkit/kind-sheet':
+      '@artkit-ai/kind-sheet':
         specifier: workspace:^
         version: link:../../packages/kind-sheet
-      '@artkit/kind-slides':
+      '@artkit-ai/kind-slides':
         specifier: workspace:^
         version: link:../../packages/kind-slides
 
   packages/agent:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
       zod:
@@ -165,10 +165,10 @@ importers:
 
   packages/ai-sdk:
     dependencies:
-      '@artkit/agent':
+      '@artkit-ai/agent':
         specifier: workspace:^
         version: link:../agent
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
       ai:
@@ -189,25 +189,25 @@ importers:
 
   packages/evals:
     dependencies:
-      '@artkit/agent':
+      '@artkit-ai/agent':
         specifier: workspace:^
         version: link:../agent
-      '@artkit/ai-sdk':
+      '@artkit-ai/ai-sdk':
         specifier: workspace:^
         version: link:../ai-sdk
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
-      '@artkit/kind-diagram':
+      '@artkit-ai/kind-diagram':
         specifier: workspace:^
         version: link:../kind-diagram
-      '@artkit/kind-document':
+      '@artkit-ai/kind-document':
         specifier: workspace:^
         version: link:../kind-document
-      '@artkit/kind-sheet':
+      '@artkit-ai/kind-sheet':
         specifier: workspace:^
         version: link:../kind-sheet
-      '@artkit/kind-slides':
+      '@artkit-ai/kind-slides':
         specifier: workspace:^
         version: link:../kind-slides
       ai:
@@ -219,10 +219,10 @@ importers:
 
   packages/kind-diagram:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
-      '@artkit/react':
+      '@artkit-ai/react':
         specifier: workspace:^
         version: link:../react
       '@dagrejs/dagre':
@@ -246,10 +246,10 @@ importers:
 
   packages/kind-document:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
-      '@artkit/react':
+      '@artkit-ai/react':
         specifier: workspace:^
         version: link:../react
       '@tiptap/core':
@@ -303,10 +303,10 @@ importers:
 
   packages/kind-sheet:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
-      '@artkit/react':
+      '@artkit-ai/react':
         specifier: workspace:^
         version: link:../react
       exceljs:
@@ -327,10 +327,10 @@ importers:
 
   packages/kind-slides:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
-      '@artkit/react':
+      '@artkit-ai/react':
         specifier: workspace:^
         version: link:../react
       lucide-react:
@@ -354,10 +354,10 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@artkit/agent':
+      '@artkit-ai/agent':
         specifier: workspace:^
         version: link:../agent
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
       '@modelcontextprotocol/sdk':
@@ -369,7 +369,7 @@ importers:
 
   packages/node:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
       playwright:
@@ -388,7 +388,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
       lucide-react:
@@ -407,22 +407,22 @@ importers:
 
   packages/skills:
     dependencies:
-      '@artkit/agent':
+      '@artkit-ai/agent':
         specifier: workspace:^
         version: link:../agent
-      '@artkit/core':
+      '@artkit-ai/core':
         specifier: workspace:^
         version: link:../core
-      '@artkit/kind-diagram':
+      '@artkit-ai/kind-diagram':
         specifier: workspace:^
         version: link:../kind-diagram
-      '@artkit/kind-document':
+      '@artkit-ai/kind-document':
         specifier: workspace:^
         version: link:../kind-document
-      '@artkit/kind-sheet':
+      '@artkit-ai/kind-sheet':
         specifier: workspace:^
         version: link:../kind-sheet
-      '@artkit/kind-slides':
+      '@artkit-ai/kind-slides':
         specifier: workspace:^
         version: link:../kind-slides
 

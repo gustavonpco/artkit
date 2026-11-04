@@ -1,4 +1,4 @@
-import { type Color, isSafeLink, type RenderContext } from '@artkit/core';
+import { type Color, isSafeLink, type RenderContext } from '@artkit-ai/core';
 import { type CSSProperties, type ReactElement, type ReactNode, useId } from 'react';
 import {
   DEFAULT_SHAPE_TEXT_STYLE,

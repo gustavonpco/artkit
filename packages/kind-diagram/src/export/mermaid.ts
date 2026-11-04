@@ -1,4 +1,4 @@
-import type { ArtifactExporter } from '@artkit/core';
+import type { ArtifactExporter } from '@artkit-ai/core';
 import { describeDiagram } from '../describe.js';
 import type { DiagramContent, DiagramEdge, DiagramNode, NodeShape } from '../schema.js';
 

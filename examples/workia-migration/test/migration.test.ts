@@ -1,10 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
-import { createArtifactService, createMemoryAssetStore, createMemoryStore, type Scope } from '@artkit/core';
-import { documentExporters } from '@artkit/kind-document/export';
-import { serialFromIso } from '@artkit/kind-sheet';
-import { sheetExporters } from '@artkit/kind-sheet/export';
-import { createSlidesExporters } from '@artkit/kind-slides/export';
+import {
+  createArtifactService,
+  createMemoryAssetStore,
+  createMemoryStore,
+  type Scope,
+} from '@artkit-ai/core';
+import { documentExporters } from '@artkit-ai/kind-document/export';
+import { serialFromIso } from '@artkit-ai/kind-sheet';
+import { sheetExporters } from '@artkit-ai/kind-sheet/export';
+import { createSlidesExporters } from '@artkit-ai/kind-slides/export';
 import { describe, expect, it } from 'vitest';
 import {
   createWorkiaRegistry,

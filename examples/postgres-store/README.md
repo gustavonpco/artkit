@@ -20,14 +20,14 @@ app, not a published package: it has no driver dependency and receives a `query(
 - **Locks** are upserts that only replace an expired lock or one held by the same actor.
 - **Storage cost.** Versions keep full content (jsonb is TOAST-compressed) so `get(id, { version })` is
   one row read. For very large, frequently edited artifacts you can null `content` on versions without a
-  `snapshot` and rebuild them by replaying `operations` with `applyOperations` from `@artkit/core`.
+  `snapshot` and rebuild them by replaying `operations` with `applyOperations` from `@artkit-ai/core`.
 - jsonb rejects the `\u0000` character; strip it from content before storing (kinds normally do).
 
 ## Usage
 
 ```ts
 import pg from 'pg';
-import { createArtifactService, createRegistry } from '@artkit/core';
+import { createArtifactService, createRegistry } from '@artkit-ai/core';
 import { createPostgresStore } from './postgres-store.js';
 
 const pool = new pg.Pool({ connectionString: config.databaseUrl });
@@ -46,7 +46,7 @@ psql postgres://postgres:artkit@localhost:54329/postgres -f schema.sql
 // postgres-store.test.ts (in your app, with vitest and pg installed)
 import pg from 'pg';
 import { afterAll, describe, it } from 'vitest';
-import { defineStoreContractTests } from '@artkit/core/testing';
+import { defineStoreContractTests } from '@artkit-ai/core/testing';
 import { createPostgresStore } from './postgres-store.js';
 
 const pool = new pg.Pool({ connectionString: 'postgres://postgres:artkit@localhost:54329/postgres' });

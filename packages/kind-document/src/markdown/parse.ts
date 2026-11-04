@@ -1,4 +1,4 @@
-import { ASSET_REF_PATTERN, ITEM_ID_PATTERN, isSafeLink } from '@artkit/core';
+import { ASSET_REF_PATTERN, ITEM_ID_PATTERN, isSafeLink } from '@artkit-ai/core';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import { gfmFromMarkdown } from 'mdast-util-gfm';
 import { gfm } from 'micromark-extension-gfm';

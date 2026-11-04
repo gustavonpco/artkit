@@ -1,4 +1,4 @@
-import { type ColorToken, normalizeHex, resolveColor, type Theme } from '@artkit/core';
+import { type ColorToken, normalizeHex, resolveColor, type Theme } from '@artkit-ai/core';
 import { CYLINDER_CAP } from './layout/geometry.js';
 import type { Point, Rect } from './layout/types.js';
 import type { DiagramNode, NodeShape } from './schema.js';

@@ -1,6 +1,6 @@
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { type Artifact, ArtifactError, type CommitResult, type Lock, type Scope } from '@artkit/core';
+import { type Artifact, ArtifactError, type CommitResult, type Lock, type Scope } from '@artkit-ai/core';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createArtifactRoutes, httpStatusForError, toNodeHandler } from '../src/index.js';
 import { noteService } from './helpers.js';

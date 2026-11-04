@@ -3,16 +3,16 @@
 // edits them with small operations, and exports every format available in Node.
 // Run after `pnpm build`: node examples/node-script/generate.mjs [outDir]
 import { resolve } from 'node:path';
-import { createArtifactService, createRegistry } from '@artkit/core';
-import { diagramKind } from '@artkit/kind-diagram';
-import { diagramExporters } from '@artkit/kind-diagram/export';
-import { documentKind } from '@artkit/kind-document';
-import { documentExporters } from '@artkit/kind-document/export';
-import { sheetKind } from '@artkit/kind-sheet';
-import { sheetExporters } from '@artkit/kind-sheet/export';
-import { slidesKind } from '@artkit/kind-slides';
-import { slidesExporters } from '@artkit/kind-slides/export';
-import { createFsAssetStore, createFsStore, exportArtifact, writeExportFile } from '@artkit/node';
+import { createArtifactService, createRegistry } from '@artkit-ai/core';
+import { diagramKind } from '@artkit-ai/kind-diagram';
+import { diagramExporters } from '@artkit-ai/kind-diagram/export';
+import { documentKind } from '@artkit-ai/kind-document';
+import { documentExporters } from '@artkit-ai/kind-document/export';
+import { sheetKind } from '@artkit-ai/kind-sheet';
+import { sheetExporters } from '@artkit-ai/kind-sheet/export';
+import { slidesKind } from '@artkit-ai/kind-slides';
+import { slidesExporters } from '@artkit-ai/kind-slides/export';
+import { createFsAssetStore, createFsStore, exportArtifact, writeExportFile } from '@artkit-ai/node';
 
 const outDir = resolve(process.argv[2] ?? 'artkit-output');
 const registry = createRegistry({

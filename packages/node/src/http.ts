@@ -18,7 +18,7 @@ import {
   silentLogger,
   t,
   toModelError,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 
 /** Fetch-standard handler; resolves `undefined` when the request is not for the artifact routes. */
 export type ArtifactRouteHandler = (request: Request) => Promise<Response | undefined>;
@@ -241,7 +241,7 @@ function matchRoute(pathname: string, basePath: string): Route | undefined {
 }
 
 /**
- * HTTP routes for the artifact service, implementing the contract consumed by `@artkit/react`
+ * HTTP routes for the artifact service, implementing the contract consumed by `@artkit-ai/react`
  * (docs/CONVENTIONS.md). Framework-neutral: works with any runtime that speaks fetch `Request`/`Response`
  * (Next.js route handlers, Hono, Bun, Deno) and with `node:http`/Express through {@link toNodeHandler}.
  *

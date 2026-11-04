@@ -1,4 +1,4 @@
-import { ArtifactError } from '@artkit/core';
+import { ArtifactError } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { createServiceClient } from '../src/index.js';
 import { agent, setup, user } from './helpers.js';

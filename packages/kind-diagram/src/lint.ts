@@ -1,4 +1,4 @@
-import type { LintContext, LintIssue } from '@artkit/core';
+import type { LintContext, LintIssue } from '@artkit-ai/core';
 import type { DiagramContent } from './schema.js';
 import {
   COMFORTABLE_LABEL_LENGTH,

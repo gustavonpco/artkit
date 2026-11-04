@@ -1,4 +1,4 @@
-import { type ArtifactKind, defineKind } from '@artkit/core';
+import { type ArtifactKind, defineKind } from '@artkit-ai/core';
 import { diffSlides } from './diff.js';
 import { outlineInput } from './inputs.js';
 import { createInstructions } from './instructions.js';

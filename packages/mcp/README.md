@@ -1,15 +1,15 @@
-# @artkit/mcp
+# @artkit-ai/mcp
 
 MCP server for artkit, built on `@modelcontextprotocol/sdk`:
 
-- **Tools**: the `@artkit/agent` toolkit tools with the same names, descriptions and JSON Schemas.
+- **Tools**: the `@artkit-ai/agent` toolkit tools with the same names, descriptions and JSON Schemas.
 - **Resources**: `artifact://{id}` (outline projection of the latest version) and `artifact://{id}/v/{version}`.
 - **Guides**: every guide topic as a prompt (`artkit-guide-<topic>`) and as a resource `artkit://guide/{topic}`.
 - **Transports**: stdio and stateless streamable HTTP. Authentication is delegated to the host.
 
 ```ts
-import { createArtifactToolkit } from '@artkit/agent';
-import { connectStdio, createArtkitMcpHttpHandler, createArtkitMcpServer } from '@artkit/mcp';
+import { createArtifactToolkit } from '@artkit-ai/agent';
+import { connectStdio, createArtkitMcpHttpHandler, createArtkitMcpServer } from '@artkit-ai/mcp';
 
 const toolkit = createArtifactToolkit({ registry, store, assets, authorize });
 

@@ -1,5 +1,5 @@
-import type { CreateRequest } from '@artkit/core';
-import { columnLetter, type NamedFormat, serialFromIso } from '@artkit/kind-sheet';
+import type { CreateRequest } from '@artkit-ai/core';
+import { columnLetter, type NamedFormat, serialFromIso } from '@artkit-ai/kind-sheet';
 import type { WorkiaCronograma, WorkiaPlanilha } from './types.js';
 
 export interface SheetPlan {

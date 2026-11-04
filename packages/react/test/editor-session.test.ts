@@ -1,4 +1,4 @@
-import { type Artifact, ArtifactError, type CommitResult } from '@artkit/core';
+import { type Artifact, ArtifactError, type CommitResult } from '@artkit-ai/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type ArtifactClient,

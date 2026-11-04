@@ -1,4 +1,4 @@
-import type { EditorBindings, EmitOptions } from '@artkit/core';
+import type { EditorBindings, EmitOptions } from '@artkit-ai/core';
 import {
   Button,
   IconButton,
@@ -9,7 +9,7 @@ import {
   ToolbarMenu,
   ToolbarSelect,
   themeSwatches,
-} from '@artkit/react';
+} from '@artkit-ai/react';
 import {
   AlignCenter,
   AlignLeft,

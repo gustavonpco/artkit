@@ -1,4 +1,4 @@
-import type { IdContext } from '@artkit/core';
+import type { IdContext } from '@artkit-ai/core';
 import { normalizeRuns } from './runs.js';
 import { type Block, type BlockInput, ID_PREFIX, type ListItem, type Run } from './schema.js';
 

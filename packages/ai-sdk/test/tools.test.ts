@@ -1,5 +1,5 @@
-import { createArtifactToolkit } from '@artkit/agent';
-import { createMemoryStore, createRegistry, type Scope } from '@artkit/core';
+import { createArtifactToolkit } from '@artkit-ai/agent';
+import { createMemoryStore, createRegistry, type Scope } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import {
   type ArtifactDataPart,

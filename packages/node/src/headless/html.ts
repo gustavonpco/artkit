@@ -1,5 +1,5 @@
-import { type Theme, themeCssText } from '@artkit/core';
-import { soraFontFaceCss } from '@artkit/core/fonts';
+import { type Theme, themeCssText } from '@artkit-ai/core';
+import { soraFontFaceCss } from '@artkit-ai/core/fonts';
 
 /** Page size: a paper name, or a fixed size in CSS pixels (e.g. 1280×720 for 16:9 slides). */
 export type PageSize = 'A4' | 'Letter' | { width: number; height: number };

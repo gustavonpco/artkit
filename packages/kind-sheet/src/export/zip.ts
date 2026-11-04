@@ -1,4 +1,4 @@
-import { type ArtifactExporter, createZip } from '@artkit/core';
+import { type ArtifactExporter, createZip } from '@artkit-ai/core';
 import type { SheetContent } from '../schema.js';
 import { sheetToCsv } from './csv.js';
 

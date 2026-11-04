@@ -1,4 +1,4 @@
-import type { Color } from '@artkit/core';
+import type { Color } from '@artkit-ai/core';
 import type { Paragraph, Run } from '../schema.js';
 import { denormalizeParagraph, mergeRuns, type NormalizedParagraph } from '../text.js';
 

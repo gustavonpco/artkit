@@ -41,7 +41,7 @@ Dependencies are declared per package; versions are pinned in the lockfile. Addi
 | `memory.ts`     | `createMemoryStore`, `createMemoryAssetStore`                                                                                                                                                       |
 | `testing/`      | `defineKindConformanceTests`, `defineStoreContractTests`                                                                                                                                            |
 
-## Kind packages (`@artkit/kind-*`)
+## Kind packages (`@artkit-ai/kind-*`)
 
 ```
 src/index.ts            "."        model: schemas, operations, apply, projection, lint, diff,
@@ -54,7 +54,7 @@ src/export/index.ts     "/export"  exporters (`xExporters: ArtifactExporter[]`)
 
 Rules:
 
-- The `.` entry (everything outside `react/`, `edit/`, `export/`) imports only `@artkit/core`, `zod` and pure-JS parsers the kind needs (document: mdast). No `window`, `document`, React or Node APIs. Checked by `pnpm check:deps`.
+- The `.` entry (everything outside `react/`, `edit/`, `export/`) imports only `@artkit-ai/core`, `zod` and pure-JS parsers the kind needs (document: mdast). No `window`, `document`, React or Node APIs. Checked by `pnpm check:deps`.
 - Export a ready instance (`documentKind`) and a factory when the kind is configurable (`createSheetKind({ formulaEngine })`, `createSlidesKind({ layouts })`).
 - `version: 1`, `migrations: []` for the first schema.
 - Item ids follow `itemIdSchema` and are unique across the whole artifact. Ids are optional on creation: implement `normalize(raw, ctx)` to fill missing ids with `ctx.nextId(prefix)`; in operations, optional `id` fields fall back to `ctx.nextId`. Reserve explicit ids with `ctx.reserveId` and reject collisions with `ctx.fail`.
@@ -83,16 +83,16 @@ Rules:
 - Controlled: render the given content; every interaction becomes kind operations via `emit`. Never emit `replace_content` for normal editing.
 - A continuous gesture (drag, resize) emits one operation at the end with `{ kind: 'continuous' }`; text typing uses `{ kind: 'typing' }` so the host can batch.
 - Keyboard accessible, visible focus, `aria-*` labels on controls.
-- The host (`@artkit/react` `ArtifactEditor`) owns batching, optimistic apply, undo/redo, conflict handling and locks.
+- The host (`@artkit-ai/react` `ArtifactEditor`) owns batching, optimistic apply, undo/redo, conflict handling and locks.
 
 ### Exporters (`/export`)
 
 - `ArtifactExporter` with `runtime: 'any'` when the library runs in browsers too, `'node'` otherwise.
 - Resolve assets with `ctx.assets.resolve(ref)`; report lossy conversions with `ctx.warn(message)`.
 - Tests re-read the produced file with the format library when possible (spec §21.1).
-- PDF and PNG come from headless rendering of the `/react` renderer in `@artkit/node/headless`, not from kind packages.
+- PDF and PNG come from headless rendering of the `/react` renderer in `@artkit-ai/node/headless`, not from kind packages.
 
-## HTTP contract (`@artkit/node` routes ↔ `@artkit/react` client)
+## HTTP contract (`@artkit-ai/node` routes ↔ `@artkit-ai/react` client)
 
 Base path configurable (default `/api/artifacts`). JSON bodies; errors return the `ModelErrorPayload` body.
 

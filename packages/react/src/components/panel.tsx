@@ -1,4 +1,4 @@
-import type { Actor, Artifact, ArtifactStatus, VersionEntry } from '@artkit/core';
+import type { Actor, Artifact, ArtifactStatus, VersionEntry } from '@artkit-ai/core';
 import { Archive, Check, ChevronDown, Copy, Download, Eye, History, Rocket, Send, X } from 'lucide-react';
 import {
   type KeyboardEvent,

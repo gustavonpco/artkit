@@ -1,4 +1,4 @@
-import { kitCss } from '@artkit/react';
+import { kitCss } from '@artkit-ai/react';
 import { documentCss } from '../react/css.js';
 
 /** Renderer styles plus the editor chrome, so the editor alone styles every block (callouts, tables…). */

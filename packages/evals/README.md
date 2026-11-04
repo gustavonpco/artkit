@@ -1,4 +1,4 @@
-# @artkit/evals
+# @artkit-ai/evals
 
 Evaluation suite that measures how easy the artkit standard is for models (spec §21.2). It runs built-in tasks per kind through a real AI SDK 7 `ToolLoopAgent` with the artkit tools and reports, per kind × model × schema profile × with/without the `artkit-artefatos` skill:
 
@@ -8,7 +8,7 @@ Evaluation suite that measures how easy the artkit standard is for models (spec 
 - the skill gain (success with the skill minus without it).
 
 ```bash
-npm install -D @artkit/evals ai @ai-sdk/anthropic @ai-sdk/openai
+npm install -D @artkit-ai/evals ai @ai-sdk/anthropic @ai-sdk/openai
 ```
 
 ## Built-in tasks
@@ -57,7 +57,7 @@ It writes `evals-report/report.json` and `report.md` and exits with code 2 when 
 ## Programmatic use
 
 ```ts
-import { defaultTasks, runEvals, reportToMarkdown } from '@artkit/evals';
+import { defaultTasks, runEvals, reportToMarkdown } from '@artkit-ai/evals';
 
 const report = await runEvals({
   models,

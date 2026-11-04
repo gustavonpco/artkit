@@ -1,4 +1,4 @@
-import { applyOperations, createRegistry, defaultTheme, prepareContent } from '@artkit/core';
+import { applyOperations, createRegistry, defaultTheme, prepareContent } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import {
   columnLetter,

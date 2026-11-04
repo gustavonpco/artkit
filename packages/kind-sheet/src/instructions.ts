@@ -1,4 +1,4 @@
-import type { KindInstructions } from '@artkit/core';
+import type { KindInstructions } from '@artkit-ai/core';
 import { FUNCTIONS } from './formula/functions.js';
 
 const byCategory = (category: string) =>

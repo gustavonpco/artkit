@@ -1,4 +1,4 @@
-import type { ArtifactExporter } from '@artkit/core';
+import type { ArtifactExporter } from '@artkit-ai/core';
 import { composeSlide, slideTitle, slotPlainText } from '../compose.js';
 import { tr } from '../i18n.js';
 import { builtInLayouts, type LayoutRegistry } from '../layouts.js';

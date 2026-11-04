@@ -1,5 +1,5 @@
-import type { ArtifactTool, ArtifactToolkit, ToolResult } from '@artkit/agent';
-import { type ModelErrorPayload, type Scope, toModelError } from '@artkit/core';
+import type { ArtifactTool, ArtifactToolkit, ToolResult } from '@artkit-ai/agent';
+import { type ModelErrorPayload, type Scope, toModelError } from '@artkit-ai/core';
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import {

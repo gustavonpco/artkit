@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/mcp",
+  "name": "@artkit-ai/mcp",
   "version": "0.1.0",
   "description": "MCP server exposing artkit tools, artifact resources and guide prompts (stdio and streamable HTTP).",
   "license": "Apache-2.0",
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/mcp"
   },
   "publishConfig": {
@@ -40,8 +40,8 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/agent": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/agent": "workspace:^",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "zod": "^4.6.7"
   }

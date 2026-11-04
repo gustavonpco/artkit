@@ -1,4 +1,4 @@
-import { type Projection, type ProjectionItem, type ProjectionOptions, paginate } from '@artkit/core';
+import { type Projection, type ProjectionItem, type ProjectionOptions, paginate } from '@artkit-ai/core';
 import type { DiagramContent, DiagramEdge, DiagramNode } from './schema.js';
 import { isPt, quote } from './text.js';
 

@@ -1,4 +1,4 @@
-import { type ApplyContext, colorSchema, itemIdSchema } from '@artkit/core';
+import { type ApplyContext, colorSchema, itemIdSchema } from '@artkit-ai/core';
 import { z } from 'zod';
 import {
   cellKey,

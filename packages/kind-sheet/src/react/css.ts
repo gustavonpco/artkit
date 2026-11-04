@@ -1,4 +1,4 @@
-import { kitCss } from '@artkit/react';
+import { kitCss } from '@artkit-ai/react';
 
 /** Styles of the sheet renderer (class prefix `ak-sheet-`, colors from theme CSS variables). */
 export const sheetCss = `${kitCss}

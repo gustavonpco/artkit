@@ -1,4 +1,4 @@
-import { ArtifactError, applyOperations, createRegistry, defaultTheme, silentLogger } from '@artkit/core';
+import { ArtifactError, applyOperations, createRegistry, defaultTheme, silentLogger } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { autoSumOps, sortOps } from '../src/edit/ops.js';
 import { sheetMarkdownExporter, sheetToMarkdown, sheetZipExporter } from '../src/export/index.js';

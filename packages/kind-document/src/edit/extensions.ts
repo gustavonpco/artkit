@@ -1,4 +1,4 @@
-import { ASSET_REF_PATTERN, IdAllocator, isSafeLink, type LintIssue } from '@artkit/core';
+import { ASSET_REF_PATTERN, IdAllocator, isSafeLink, type LintIssue } from '@artkit-ai/core';
 import { type AnyExtension, Extension, Mark, mergeAttributes, Node } from '@tiptap/core';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';

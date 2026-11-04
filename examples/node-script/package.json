@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/example-node-script",
+  "name": "@artkit-ai/example-node-script",
   "version": "0.0.0",
   "private": true,
   "description": "Generates, edits and exports one artifact of each kind from a Node script.",
@@ -9,11 +9,11 @@
     "start": "node generate.mjs"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/node": "workspace:^",
-    "@artkit/kind-document": "workspace:^",
-    "@artkit/kind-sheet": "workspace:^",
-    "@artkit/kind-slides": "workspace:^",
-    "@artkit/kind-diagram": "workspace:^"
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/node": "workspace:^",
+    "@artkit-ai/kind-document": "workspace:^",
+    "@artkit-ai/kind-sheet": "workspace:^",
+    "@artkit-ai/kind-slides": "workspace:^",
+    "@artkit-ai/kind-diagram": "workspace:^"
   }
 }

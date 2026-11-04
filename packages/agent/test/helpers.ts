@@ -5,7 +5,7 @@ import {
   createRegistry,
   type ModelErrorPayload,
   type Scope,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import {
   type ArtifactToolkitOptions,
   createArtifactToolkit,

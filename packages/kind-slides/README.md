@@ -1,33 +1,33 @@
-# @artkit/kind-slides
+# @artkit-ai/kind-slides
 
 Slide deck artifact kind for [artkit](../../docs/spec.md) (spec §11.3). It ships the model the agent reads and edits through
 operations, a React renderer, a visual editor and an editable PowerPoint exporter. All of them share one geometry.
 
 ```bash
-pnpm add @artkit/kind-slides @artkit/core zod
+pnpm add @artkit-ai/kind-slides @artkit-ai/core zod
 # renderer and editor: react@19 react-dom@19 (optional peers)
 ```
 
 ## Subpaths
 
-| Import                       | Contents                                                                                                                                                                                                                                 |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@artkit/kind-slides`        | `slidesKind`, `createSlidesKind({ layouts })`, schemas, operations, projection, lint, diff, `parsePartial`, the `outline` input, and pure helpers: `composeSlide`, text metrics, chart scales. Depends only on `@artkit/core` and `zod`. |
-| `@artkit/kind-slides/react`  | `SlidesRenderer`, `SlideView`, `SlideThumbnails`, `SlideNotes`, `SlidesPresentation`, `ChartSvg`, and `slidesCss`                                                                                                                        |
-| `@artkit/kind-slides/edit`   | `SlidesEditor` (`EditorBindings`), pure geometry (`snapMove`, `snapResize`, `resizeRect`, `alignRects`, `distributeRects`), rich-text helpers, and `slidesEditorCss`                                                                     |
-| `@artkit/kind-slides/export` | `slidesExporters` and `createSlidesExporters({ layouts })`, a pptx exporter built on pptxgenjs (`runtime: 'any'`)                                                                                                                        |
+| Import                          | Contents                                                                                                                                                                                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@artkit-ai/kind-slides`        | `slidesKind`, `createSlidesKind({ layouts })`, schemas, operations, projection, lint, diff, `parsePartial`, the `outline` input, and pure helpers: `composeSlide`, text metrics, chart scales. Depends only on `@artkit-ai/core` and `zod`. |
+| `@artkit-ai/kind-slides/react`  | `SlidesRenderer`, `SlideView`, `SlideThumbnails`, `SlideNotes`, `SlidesPresentation`, `ChartSvg`, and `slidesCss`                                                                                                                           |
+| `@artkit-ai/kind-slides/edit`   | `SlidesEditor` (`EditorBindings`), pure geometry (`snapMove`, `snapResize`, `resizeRect`, `alignRects`, `distributeRects`), rich-text helpers, and `slidesEditorCss`                                                                        |
+| `@artkit-ai/kind-slides/export` | `slidesExporters` and `createSlidesExporters({ layouts })`, a pptx exporter built on pptxgenjs (`runtime: 'any'`)                                                                                                                           |
 
 ```ts
-import { createRegistry } from '@artkit/core';
-import { slidesKind } from '@artkit/kind-slides';
-import { slidesExporters } from '@artkit/kind-slides/export';
+import { createRegistry } from '@artkit-ai/core';
+import { slidesKind } from '@artkit-ai/kind-slides';
+import { slidesExporters } from '@artkit-ai/kind-slides/export';
 
 const registry = createRegistry({ kinds: [slidesKind], exporters: slidesExporters });
 ```
 
 ```tsx
-import { SlidesRenderer, slidesCss } from '@artkit/kind-slides/react';
-import { SlidesEditor, slidesEditorCss } from '@artkit/kind-slides/edit';
+import { SlidesRenderer, slidesCss } from '@artkit-ai/kind-slides/react';
+import { SlidesEditor, slidesEditorCss } from '@artkit-ai/kind-slides/edit';
 
 <style>{slidesEditorCss}</style>
 <SlidesRenderer content={content} ctx={ctx} />            // viewer: thumbnails, notes, "Present"

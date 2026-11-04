@@ -1,4 +1,4 @@
-import type { LintIssue } from '@artkit/core';
+import type { LintIssue } from '@artkit-ai/core';
 import { createContext, useContext } from 'react';
 import type { DiagramScene } from '../scene.js';
 

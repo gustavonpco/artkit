@@ -1,18 +1,18 @@
-# @artkit/core
+# @artkit-ai/core
 
 The runtime-neutral heart of artkit: artifact envelope, kind contract and registry, the atomic operation engine, versioning with automatic rebase, migrations, diff, lint and projection helpers, the error catalog, store/asset/event contracts and the high-level artifact service.
 
 Its only dependency is `zod`. It runs in browsers, Node 22+, edge runtimes and workers (no DOM, no Node APIs).
 
 ```bash
-npm install @artkit/core
+npm install @artkit-ai/core
 ```
 
 ## Usage
 
 ```ts
-import { createArtifactService, createMemoryStore, createRegistry } from '@artkit/core';
-import { documentKind } from '@artkit/kind-document';
+import { createArtifactService, createMemoryStore, createRegistry } from '@artkit-ai/core';
+import { documentKind } from '@artkit-ai/kind-document';
 
 const registry = createRegistry({ kinds: [documentKind] });
 const service = createArtifactService({
@@ -51,15 +51,15 @@ console.log(result.version, result.diff, result.lint);
 | Security      | `sanitizeDeep` (control characters, NFC), `linkSchema`, `checkAsset` (magic-byte MIME sniffing, size, domains), `sanitizeSvg`                                                                              |
 | Schemas       | `toJsonSchema` with `default`, `strict` and `compact` profiles; `stripNulls`                                                                                                                               |
 | Stores        | `ArtifactStore`, `AssetStore` contracts; `createMemoryStore`, `createMemoryAssetStore` (reference adapters)                                                                                                |
-| UI contracts  | `RenderContext`, `EditorBindings`, `themeCssVariables` (shared by renderers, editors and `@artkit/react`)                                                                                                  |
+| UI contracts  | `RenderContext`, `EditorBindings`, `themeCssVariables` (shared by renderers, editors and `@artkit-ai/react`)                                                                                               |
 | Events & logs | `createEventBus`, `Logger` (metadata only), metric hooks                                                                                                                                                   |
 
-`@artkit/core/testing` exports `defineStoreContractTests` (every store adapter must pass it) and `defineKindConformanceTests` (every kind, native or third-party).
+`@artkit-ai/core/testing` exports `defineStoreContractTests` (every store adapter must pass it) and `defineKindConformanceTests` (every kind, native or third-party).
 
 ## Notes
 
 - `apply` is pure and deterministic: no clock, network or randomness. Replays always produce the same content.
-- The memory store lives here (not in `@artkit/node`) so it also works in the browser playground and in edge runtimes; `@artkit/node` re-exports it.
+- The memory store lives here (not in `@artkit-ai/node`) so it also works in the browser playground and in edge runtimes; `@artkit-ai/node` re-exports it.
 - `INTERNAL_ERROR` extends the spec's error catalog for unexpected failures, so details never reach the model.
 
 License: Apache-2.0.

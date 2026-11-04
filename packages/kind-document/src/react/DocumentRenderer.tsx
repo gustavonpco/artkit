@@ -1,4 +1,4 @@
-import { isSafeLink, type RenderContext } from '@artkit/core';
+import { isSafeLink, type RenderContext } from '@artkit-ai/core';
 import type { CSSProperties, ReactNode } from 'react';
 import type {
   Block,

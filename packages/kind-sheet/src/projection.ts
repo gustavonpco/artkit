@@ -4,7 +4,7 @@ import {
   type ProjectionItem,
   type ProjectionOptions,
   paginate,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { cellKey, formatRange, parseCellKey, parseRange, type Rect, rectContains } from './address.js';
 import { resolveCurrency } from './display.js';
 import { isoFromSerial } from './formula/dates.js';

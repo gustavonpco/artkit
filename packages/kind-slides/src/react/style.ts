@@ -1,4 +1,4 @@
-import { type Color, isColorToken, resolveColor, type Theme } from '@artkit/core';
+import { type Color, isColorToken, resolveColor, type Theme } from '@artkit-ai/core';
 
 /** CSS color for a token (theme variable with the resolved value as fallback) or a hex value. */
 export function colorCss(theme: Theme, color: Color): string {

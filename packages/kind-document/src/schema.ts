@@ -1,4 +1,4 @@
-import { assetRefSchema, itemIdSchema, linkSchema } from '@artkit/core';
+import { assetRefSchema, itemIdSchema, linkSchema } from '@artkit-ai/core';
 import { z } from 'zod';
 
 /** Inline text with formatting. Adjacent runs with identical formatting are merged on write. */

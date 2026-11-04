@@ -1,4 +1,4 @@
-import { type ChangeSummary, deepEqual } from '@artkit/core';
+import { type ChangeSummary, deepEqual } from '@artkit-ai/core';
 import { formatRange, parseCellKey, type Rect } from './address.js';
 import { formatCellValue, resolveCurrency } from './display.js';
 import { DIFF_DETAIL_LIMIT } from './operations.js';

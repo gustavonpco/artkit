@@ -1,4 +1,4 @@
-import type { Artifact, RenderContext } from '@artkit/core';
+import type { Artifact, RenderContext } from '@artkit-ai/core';
 import { Suspense, use, useMemo, useRef } from 'react';
 import { type ArtkitContextValue, useArtkit } from '../context.js';
 import { useArtifact } from '../hooks.js';

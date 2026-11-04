@@ -6,8 +6,8 @@ import {
   createRegistry,
   defaultTheme,
   prepareContent,
-} from '@artkit/core';
-import { defineKindConformanceTests } from '@artkit/core/testing';
+} from '@artkit-ai/core';
+import { defineKindConformanceTests } from '@artkit-ai/core/testing';
 import { describe, expect, it } from 'vitest';
 import {
   createSlidesKind,

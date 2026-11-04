@@ -1,4 +1,4 @@
-import { IdAllocator, itemIdSchema } from '@artkit/core';
+import { IdAllocator, itemIdSchema } from '@artkit-ai/core';
 import { parseRange } from './address.js';
 import type { FormulaEngine } from './formula/engine.js';
 import { normalizeSheetContent } from './normalize.js';

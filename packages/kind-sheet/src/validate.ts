@@ -1,4 +1,4 @@
-import type { ErrorIssue } from '@artkit/core';
+import type { ErrorIssue } from '@artkit-ai/core';
 import {
   columnIndex,
   looksLikeReference,

@@ -5,7 +5,7 @@ import {
   ellipsis,
   itemIdSchema,
   projectItems,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { z } from 'zod';
 
 const itemSchema = z.object({ id: itemIdSchema, text: z.string().max(500) }).strict();

@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/node",
+  "name": "@artkit-ai/node",
   "version": "0.1.0",
   "description": "Node adapters for artkit: filesystem stores, asset store, export orchestration, HTTP routes and headless PNG/PDF rendering.",
   "license": "Apache-2.0",
@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/node"
   },
   "publishConfig": {
@@ -45,7 +45,7 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^"
+    "@artkit-ai/core": "workspace:^"
   },
   "peerDependencies": {
     "playwright": "^1.50.0",

@@ -3,7 +3,7 @@
 Converts the four artifact types of the Workia workspace (`documento`, `planilha`, `deck`, `cronograma`) into artkit artifacts and imports them through the artkit pipeline (validated creation, then a versioned follow-up batch). It is the starting point for replacing Workia's artifact system with artkit; it is not published.
 
 ```ts
-import { createArtifactService, createMemoryStore } from '@artkit/core';
+import { createArtifactService, createMemoryStore } from '@artkit-ai/core';
 import { createWorkiaRegistry, importWorkiaArtifact } from './src/index.ts';
 
 const service = createArtifactService({

@@ -4,7 +4,7 @@ import {
   createMemoryStore,
   createRegistry,
   prepareContent,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { diagramKind, MermaidSyntaxError, mermaidToContent, parseMermaid } from '../src/index.js';
 

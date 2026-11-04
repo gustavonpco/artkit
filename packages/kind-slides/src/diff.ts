@@ -1,4 +1,4 @@
-import { type ChangeSummary, deepEqual, diffCollection, ellipsis } from '@artkit/core';
+import { type ChangeSummary, deepEqual, diffCollection, ellipsis } from '@artkit-ai/core';
 import { elementPlainText, slideTitle } from './compose.js';
 import type { LayoutRegistry } from './layouts.js';
 import type { Slide, SlideElement, SlidesContent } from './schema.js';

@@ -4,11 +4,11 @@ import {
   type CommitResult,
   createRegistry,
   type Scope,
-} from '@artkit/core';
-import { diagramKind } from '@artkit/kind-diagram';
-import { documentKind } from '@artkit/kind-document';
-import { sheetKind } from '@artkit/kind-sheet';
-import { createSlidesKind } from '@artkit/kind-slides';
+} from '@artkit-ai/core';
+import { diagramKind } from '@artkit-ai/kind-diagram';
+import { documentKind } from '@artkit-ai/kind-document';
+import { sheetKind } from '@artkit-ai/kind-sheet';
+import { createSlidesKind } from '@artkit-ai/kind-slides';
 import { documentoRequest } from './document.js';
 import { cronogramaPlan, planilhaPlan, type SheetPlan } from './sheet.js';
 import { deckRequest, workiaLayouts } from './slides.js';

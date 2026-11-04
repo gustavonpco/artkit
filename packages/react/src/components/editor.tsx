@@ -1,4 +1,4 @@
-import type { Actor, Artifact, ArtifactError, CommitResult, EmitOptions, LintIssue } from '@artkit/core';
+import type { Actor, Artifact, ArtifactError, CommitResult, EmitOptions, LintIssue } from '@artkit-ai/core';
 import { Redo2, RotateCcw, Undo2 } from 'lucide-react';
 import {
   type FocusEvent,

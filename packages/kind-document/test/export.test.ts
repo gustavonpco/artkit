@@ -1,4 +1,4 @@
-import { defaultTheme, type ExportContext, silentLogger } from '@artkit/core';
+import { defaultTheme, type ExportContext, silentLogger } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
 import { documentExporters, imageSize } from '../src/export/index.js';
 import { markdownToContent } from '../src/index.js';

@@ -1,10 +1,10 @@
-# @artkit/node
+# @artkit-ai/node
 
 Node adapters for artkit: filesystem stores, a content-addressed asset store, export orchestration,
 fetch-standard HTTP routes and headless PNG/PDF rendering. Node 22+.
 
 ```bash
-npm install @artkit/core @artkit/node
+npm install @artkit-ai/core @artkit-ai/node
 # headless PNG/PDF only:
 npm install react react-dom playwright && npx playwright install chromium
 ```
@@ -12,8 +12,8 @@ npm install react react-dom playwright && npx playwright install chromium
 ## Stores
 
 ```ts
-import { createArtifactService, createRegistry } from '@artkit/core';
-import { createFsAssetStore, createFsStore } from '@artkit/node';
+import { createArtifactService, createRegistry } from '@artkit-ai/core';
+import { createFsAssetStore, createFsStore } from '@artkit-ai/node';
 
 const service = createArtifactService({
   registry: createRegistry({ kinds: [documentKind] }),
@@ -22,7 +22,7 @@ const service = createArtifactService({
 });
 ```
 
-- `createMemoryStore` / `createMemoryAssetStore` are re-exported from `@artkit/core`. They live in the core so
+- `createMemoryStore` / `createMemoryAssetStore` are re-exported from `@artkit-ai/core`. They live in the core so
   they also run in browsers, edge runtimes and workers (tests, playgrounds, prototypes).
 - `createFsStore({ dir, snapshotEvery?, now?, locale? })` passes the core store contract suite. One directory
   per workspace (sha256 of the id) and artifact; ids are checked against the `art_<ULID>` pattern before any
@@ -39,7 +39,7 @@ const service = createArtifactService({
 ## Export
 
 ```ts
-import { exportArtifact, writeExportFile } from '@artkit/node';
+import { exportArtifact, writeExportFile } from '@artkit-ai/node';
 
 const result = await exportArtifact(service, scope, { artifactId, format: 'pdf', timeoutMs: 30_000, signal });
 const path = await writeExportFile(result, { dir: './out' }); // fails if the file exists unless overwrite: true
@@ -54,7 +54,7 @@ accepted.
 
 ```ts
 import { createServer } from 'node:http';
-import { createArtifactRoutes, toNodeHandler } from '@artkit/node';
+import { createArtifactRoutes, toNodeHandler } from '@artkit-ai/node';
 
 const routes = createArtifactRoutes({
   service,
@@ -83,11 +83,11 @@ capped by `maxLockTtlMs` (default 1 hour). Exports stream the bytes with `Conten
 `Content-Disposition` and `X-Artkit-Warnings` (URI-encoded JSON array) and are aborted when the client
 disconnects. Pass a `logger` to receive metadata-only error logs.
 
-## Headless PNG/PDF (`@artkit/node/headless`)
+## Headless PNG/PDF (`@artkit-ai/node/headless`)
 
 ```ts
-import { createHeadlessExporters, createHeadlessRenderer } from '@artkit/node/headless';
-import { DocumentRenderer, documentCss } from '@artkit/kind-document/react';
+import { createHeadlessExporters, createHeadlessRenderer } from '@artkit-ai/node/headless';
+import { DocumentRenderer, documentCss } from '@artkit-ai/kind-document/react';
 
 const renderer = createHeadlessRenderer({ concurrency: 2, pageTimeoutMs: 30_000 });
 for (const exporter of createHeadlessExporters({

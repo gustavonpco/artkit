@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Embeds the Sora variable font (latin subset, SIL OFL 1.1) as a base64 module in @artkit/core/fonts, so
+// Embeds the Sora variable font (latin subset, SIL OFL 1.1) as a base64 module in @artkit-ai/core/fonts, so
 // the Mouts design system typography works offline, in headless export (network blocked) and without a
 // bundler, and no request ever goes to a third-party font CDN.
 // Run after updating @fontsource-variable/sora: node scripts/generate-fonts.mjs

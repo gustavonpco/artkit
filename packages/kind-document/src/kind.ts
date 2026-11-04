@@ -1,4 +1,10 @@
-import { ArtifactError, type ArtifactKind, type ContentInput, defineKind, IdAllocator } from '@artkit/core';
+import {
+  ArtifactError,
+  type ArtifactKind,
+  type ContentInput,
+  defineKind,
+  IdAllocator,
+} from '@artkit-ai/core';
 import { z } from 'zod';
 import { diffDocument } from './diff.js';
 import { blockIssues, DOCUMENT_LIMITS, measureDocument, validateDocument } from './integrity.js';

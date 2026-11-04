@@ -1,5 +1,5 @@
-import { defaultTheme, toJsonSchema } from '@artkit/core';
-import { defineKindConformanceTests } from '@artkit/core/testing';
+import { defaultTheme, toJsonSchema } from '@artkit-ai/core';
+import { defineKindConformanceTests } from '@artkit-ai/core/testing';
 import { describe, expect, it } from 'vitest';
 import {
   type DocumentContent,

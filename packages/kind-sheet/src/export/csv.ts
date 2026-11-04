@@ -1,4 +1,4 @@
-import { ArtifactError, type ArtifactExporter, type ExportContext } from '@artkit/core';
+import { ArtifactError, type ArtifactExporter, type ExportContext } from '@artkit-ai/core';
 import { cellKey, parseCellKey } from '../address.js';
 import { csvField } from '../csv.js';
 import { isoFromSerial } from '../formula/dates.js';

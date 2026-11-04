@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/example-workia-migration",
+  "name": "@artkit-ai/example-workia-migration",
   "version": "0.0.0",
   "private": true,
   "description": "Migration from the Workia artifact model (documento, planilha, deck, cronograma) to artkit.",
@@ -9,10 +9,10 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/kind-document": "workspace:^",
-    "@artkit/kind-sheet": "workspace:^",
-    "@artkit/kind-slides": "workspace:^",
-    "@artkit/kind-diagram": "workspace:^"
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/kind-document": "workspace:^",
+    "@artkit-ai/kind-sheet": "workspace:^",
+    "@artkit-ai/kind-slides": "workspace:^",
+    "@artkit-ai/kind-diagram": "workspace:^"
   }
 }

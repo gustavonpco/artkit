@@ -1,4 +1,4 @@
-import { ellipsis, type LintContext, type LintIssue } from '@artkit/core';
+import { ellipsis, type LintContext, type LintIssue } from '@artkit-ai/core';
 import { blockText, runsText } from './runs.js';
 import type { Block, DocumentContent, ListItem, Run } from './schema.js';
 import { DEFAULT_TOC_LEVEL, tocEntries } from './toc.js';

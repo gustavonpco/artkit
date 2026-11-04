@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/kind-slides",
+  "name": "@artkit-ai/kind-slides",
   "version": "0.1.0",
   "description": "Slide deck artifact kind with semantic layouts, renderer, visual editor and pptx exporter.",
   "license": "Apache-2.0",
@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/kind-slides"
   },
   "publishConfig": {
@@ -55,8 +55,8 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/react": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/react": "workspace:^",
     "lucide-react": "^1.68.0",
     "pptxgenjs": "^4.0.1",
     "react-moveable": "^0.56.0",

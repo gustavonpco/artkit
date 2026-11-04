@@ -1,4 +1,4 @@
-import type { ArtifactStatus } from '@artkit/core';
+import type { ArtifactStatus } from '@artkit-ai/core';
 import type { UIMessage } from 'ai';
 import { ARTIFACT_DATA_PART_TYPE, type ArtifactDataPart } from './data-parts.js';
 

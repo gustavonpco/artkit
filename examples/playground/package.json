@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/example-playground",
+  "name": "@artkit-ai/example-playground",
   "version": "0.0.0",
   "private": true,
   "description": "Browser playground: the four kinds with renderers, editors, agent view, operation scenarios and export.",
@@ -11,12 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/react": "workspace:^",
-    "@artkit/kind-document": "workspace:^",
-    "@artkit/kind-sheet": "workspace:^",
-    "@artkit/kind-slides": "workspace:^",
-    "@artkit/kind-diagram": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/react": "workspace:^",
+    "@artkit-ai/kind-document": "workspace:^",
+    "@artkit-ai/kind-sheet": "workspace:^",
+    "@artkit-ai/kind-slides": "workspace:^",
+    "@artkit-ai/kind-diagram": "workspace:^",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

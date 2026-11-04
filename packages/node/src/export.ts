@@ -8,7 +8,7 @@ import {
   type ExportResult,
   type Scope,
   t,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { createFileAtomic, writeFileAtomic } from './fs-utils.js';
 
 export interface ExportArtifactRequest extends ExportRequest {

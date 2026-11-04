@@ -1,4 +1,4 @@
-import { type EditorBindings, IdAllocator } from '@artkit/core';
+import { type EditorBindings, IdAllocator } from '@artkit-ai/core';
 import {
   Toolbar,
   ToolbarButton,
@@ -7,7 +7,7 @@ import {
   ToolbarMenu,
   ToolbarSelect,
   themeSwatches,
-} from '@artkit/react';
+} from '@artkit-ai/react';
 import {
   AlignCenterHorizontal,
   AlignCenterVertical,

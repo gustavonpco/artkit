@@ -1,4 +1,4 @@
-import { ArtifactError, IdAllocator, ITEM_ID_PATTERN } from '@artkit/core';
+import { ArtifactError, IdAllocator, ITEM_ID_PATTERN } from '@artkit-ai/core';
 import {
   type DiagramContent,
   type DiagramEdge,

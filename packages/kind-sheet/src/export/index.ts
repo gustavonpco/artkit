@@ -1,4 +1,4 @@
-import type { ArtifactExporter } from '@artkit/core';
+import type { ArtifactExporter } from '@artkit-ai/core';
 import type { SheetContent } from '../schema.js';
 import { sheetCsvExporter } from './csv.js';
 import { sheetHtmlExporter } from './html.js';
@@ -12,7 +12,7 @@ export { sheetMarkdownExporter, sheetToMarkdown } from './md.js';
 export { buildWorkbook, sheetXlsxExporter } from './xlsx.js';
 export { sheetZipExporter } from './zip.js';
 
-/** xlsx, csv, zip (all sheets as CSV), md and html exporters for the sheet kind (PDF/PNG come from headless rendering in @artkit/node). */
+/** xlsx, csv, zip (all sheets as CSV), md and html exporters for the sheet kind (PDF/PNG come from headless rendering in @artkit-ai/node). */
 export const sheetExporters: ArtifactExporter<SheetContent>[] = [
   sheetXlsxExporter,
   sheetCsvExporter,

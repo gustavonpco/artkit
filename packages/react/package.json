@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/react",
+  "name": "@artkit-ai/react",
   "version": "0.1.0",
   "description": "React host for artkit artifacts: provider, view, editor, panel, card, approval, version diff, hooks and streaming preview.",
   "license": "Apache-2.0",
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/react"
   },
   "publishConfig": {
@@ -40,7 +40,7 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
     "lucide-react": "^1.68.0"
   },
   "peerDependencies": {

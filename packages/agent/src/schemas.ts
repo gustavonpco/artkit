@@ -4,7 +4,7 @@ import {
   type ArtifactRegistry,
   envelopeOperationSchema,
   localeSchema,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { z } from 'zod';
 
 /**
@@ -26,7 +26,7 @@ const versionSchema = z.number().int().min(1);
 const messageSchema = z.string().max(500);
 
 function nonEmptyEnum(values: string[], what: string): z.ZodEnum<Record<string, string>> {
-  if (values.length === 0) throw new Error(`@artkit/agent: no ${what} available to build tool schemas.`);
+  if (values.length === 0) throw new Error(`@artkit-ai/agent: no ${what} available to build tool schemas.`);
   return z.enum(values as [string, ...string[]]);
 }
 

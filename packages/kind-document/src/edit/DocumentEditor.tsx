@@ -1,5 +1,5 @@
-import { deepEqual, type EditorBindings, IdAllocator, isSafeLink } from '@artkit/core';
-import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarMenu, ToolbarSelect } from '@artkit/react';
+import { deepEqual, type EditorBindings, IdAllocator, isSafeLink } from '@artkit-ai/core';
+import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarMenu, ToolbarSelect } from '@artkit-ai/react';
 import type { Editor, JSONContent } from '@tiptap/core';
 import { Fragment } from '@tiptap/pm/model';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';

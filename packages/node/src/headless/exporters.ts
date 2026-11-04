@@ -1,5 +1,5 @@
-import type { ArtifactExporter, ExportContext, RenderContext } from '@artkit/core';
-import { toDataUrl } from '@artkit/core';
+import type { ArtifactExporter, ExportContext, RenderContext } from '@artkit-ai/core';
+import { toDataUrl } from '@artkit-ai/core';
 import type { ReactElement } from 'react';
 import { buildPrintHtml, type PageSize, pageDimensions } from './html.js';
 import type { HeadlessRenderer } from './renderer.js';

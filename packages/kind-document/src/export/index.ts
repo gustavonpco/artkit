@@ -1,4 +1,4 @@
-import type { ArtifactExporter } from '@artkit/core';
+import type { ArtifactExporter } from '@artkit-ai/core';
 import type { DocumentContent } from '../schema.js';
 import { documentDocxExporter } from './docx.js';
 import { documentHtmlExporter } from './html.js';
@@ -9,7 +9,7 @@ export { blockHtml, documentBodyHtml, documentHtmlExporter, escapeHtml, runsHtml
 export { imageSize } from './image-size.js';
 export { documentMarkdownExporter } from './md.js';
 
-/** docx, md and html exporters (all run in Node and browsers). PDF comes from `@artkit/node/headless`. */
+/** docx, md and html exporters (all run in Node and browsers). PDF comes from `@artkit-ai/node/headless`. */
 export const documentExporters: ArtifactExporter<DocumentContent>[] = [
   documentDocxExporter,
   documentMarkdownExporter,

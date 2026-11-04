@@ -1,4 +1,4 @@
-import type { Color, LintIssue } from '@artkit/core';
+import type { Color, LintIssue } from '@artkit-ai/core';
 import { type ReactElement, useRef } from 'react';
 import { CANVAS, type Rect } from '../geometry.js';
 import type { LayoutDefinition, LayoutRegistry, LayoutSlot } from '../layouts.js';

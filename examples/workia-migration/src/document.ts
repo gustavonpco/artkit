@@ -1,4 +1,4 @@
-import type { CreateRequest } from '@artkit/core';
+import type { CreateRequest } from '@artkit-ai/core';
 import type { WorkiaDocumento } from './types.js';
 
 /**

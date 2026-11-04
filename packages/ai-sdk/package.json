@@ -1,5 +1,5 @@
 {
-  "name": "@artkit/ai-sdk",
+  "name": "@artkit-ai/ai-sdk",
   "version": "0.1.0",
   "description": "Vercel AI SDK 7 adapter for artkit: tools, approval, context, data parts and the useArtifacts hook.",
   "license": "Apache-2.0",
@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
     "directory": "packages/ai-sdk"
   },
   "publishConfig": {
@@ -45,8 +45,8 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@artkit/core": "workspace:^",
-    "@artkit/agent": "workspace:^",
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/agent": "workspace:^",
     "zod": "^4.6.7"
   },
   "peerDependencies": {

@@ -1,5 +1,5 @@
-import { type RenderContext, themeCssVariables } from '@artkit/core';
-import { Toolbar, ToolbarButton, ToolbarGroup, useOptionalArtkit } from '@artkit/react';
+import { type RenderContext, themeCssVariables } from '@artkit-ai/core';
+import { Toolbar, ToolbarButton, ToolbarGroup, useOptionalArtkit } from '@artkit-ai/react';
 import { ChevronDown, ChevronUp, Maximize2, Search, ZoomIn, ZoomOut } from 'lucide-react';
 import {
   type CSSProperties,

@@ -1,15 +1,15 @@
-# @artkit/react
+# @artkit-ai/react
 
 React layer for [artkit](../../docs/spec.md) artifacts (spec §13): provider, read-only views, kind editor host, assistant-style panel, chat card, approval screen, version diff, hooks and streaming preview.
 
-The React layer never touches a store. It talks to an `ArtifactClient`: HTTP against the `@artkit/node` routes, or an in-process `ArtifactService` for playgrounds, tests and local apps.
+The React layer never touches a store. It talks to an `ArtifactClient`: HTTP against the `@artkit-ai/node` routes, or an in-process `ArtifactService` for playgrounds, tests and local apps.
 
 ## Install
 
 ```bash
-pnpm add @artkit/react @artkit/core react react-dom
+pnpm add @artkit-ai/react @artkit-ai/core react react-dom
 # plus the kinds you show, e.g.
-pnpm add @artkit/kind-document
+pnpm add @artkit-ai/kind-document
 ```
 
 Requires React 19.
@@ -17,9 +17,9 @@ Requires React 19.
 ## Provider
 
 ```tsx
-import { createRegistry } from '@artkit/core';
-import { documentKind } from '@artkit/kind-document';
-import { ArtifactProvider, createHttpClient } from '@artkit/react';
+import { createRegistry } from '@artkit-ai/core';
+import { documentKind } from '@artkit-ai/kind-document';
+import { ArtifactProvider, createHttpClient } from '@artkit-ai/react';
 
 const registry = createRegistry({ kinds: [documentKind] });
 const client = createHttpClient({
@@ -31,18 +31,18 @@ const loaders = {
   // Renderers load the first time a kind is shown.
   renderers: {
     document: () =>
-      import('@artkit/kind-document/react').then((m) => ({
+      import('@artkit-ai/kind-document/react').then((m) => ({
         Renderer: m.DocumentRenderer,
         css: m.documentCss,
       })),
   },
   // Editors load only when the user enters edit mode (spec §13.6).
   editors: {
-    document: () => import('@artkit/kind-document/edit').then((m) => ({ Editor: m.DocumentEditor })),
+    document: () => import('@artkit-ai/kind-document/edit').then((m) => ({ Editor: m.DocumentEditor })),
   },
   // Exporters with runtime 'any' | 'browser' run in the browser; other formats go through the server.
   exporters: {
-    document: () => import('@artkit/kind-document/export').then((m) => m.documentExporters),
+    document: () => import('@artkit-ai/kind-document/export').then((m) => m.documentExporters),
   },
 };
 

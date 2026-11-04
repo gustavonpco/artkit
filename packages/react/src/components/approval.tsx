@@ -1,4 +1,4 @@
-import type { Artifact } from '@artkit/core';
+import type { Artifact } from '@artkit-ai/core';
 import { Check, X } from 'lucide-react';
 import { type CSSProperties, useId, useState } from 'react';
 import { useArtkit } from '../context.js';

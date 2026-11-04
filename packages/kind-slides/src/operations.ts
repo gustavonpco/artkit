@@ -1,4 +1,4 @@
-import { type ApplyContext, itemIdSchema } from '@artkit/core';
+import { type ApplyContext, itemIdSchema } from '@artkit-ai/core';
 import { z } from 'zod';
 import { slotPrimitives } from './compose.js';
 import { checkElement } from './elements.js';

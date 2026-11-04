@@ -1,4 +1,4 @@
-import { type ArtifactExporter, type ExportContext, resolveColor } from '@artkit/core';
+import { type ArtifactExporter, type ExportContext, resolveColor } from '@artkit-ai/core';
 import type ExcelJS from 'exceljs';
 import { columnIndex, parseCellKey } from '../address.js';
 import { resolveCurrency, xlsxNumberFormat } from '../display.js';

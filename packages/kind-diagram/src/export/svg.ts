@@ -4,7 +4,7 @@ import {
   type ExportContext,
   resolveColor,
   type Theme,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { describeDiagram } from '../describe.js';
 import { diagramPaint, nodePaint } from '../draw.js';
 import { type DiagramLayout, type LayoutEngine, layoutDiagram } from '../layout/index.js';

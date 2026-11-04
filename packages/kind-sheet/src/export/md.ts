@@ -1,4 +1,4 @@
-import type { ArtifactExporter } from '@artkit/core';
+import type { ArtifactExporter } from '@artkit-ai/core';
 import { cellKey, columnLetter } from '../address.js';
 import { formatCellValue, isNumericDisplay, resolveCurrency } from '../display.js';
 import { usedRange } from '../projection.js';

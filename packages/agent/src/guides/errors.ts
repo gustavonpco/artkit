@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@artkit/core';
+import type { ErrorCode } from '@artkit-ai/core';
 
 /** Corrective action the model is expected to take for each catalog code (spec §10.3, §14.7). */
 export const ERROR_ACTIONS: Record<ErrorCode, string> = {

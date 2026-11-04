@@ -1,4 +1,4 @@
-import type { RenderContext } from '@artkit/core';
+import type { RenderContext } from '@artkit-ai/core';
 import type { KeyboardEvent, ReactElement, ReactNode } from 'react';
 import { slideTitle } from '../compose.js';
 import { tr } from '../i18n.js';

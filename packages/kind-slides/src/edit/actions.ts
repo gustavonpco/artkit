@@ -1,4 +1,4 @@
-import { IdAllocator } from '@artkit/core';
+import { IdAllocator } from '@artkit-ai/core';
 import type { Rect } from '../geometry.js';
 import { ELEMENT_ID_PREFIX, type SlidesOperation } from '../operations.js';
 import type { ElementInput, Slide, SlideElement, SlidesContent } from '../schema.js';

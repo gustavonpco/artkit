@@ -1,5 +1,5 @@
 import { inflateRawSync } from 'node:zlib';
-import { type ArtifactError, applyOperations, createRegistry, prepareContent } from '@artkit/core';
+import { type ArtifactError, applyOperations, createRegistry, prepareContent } from '@artkit-ai/core';
 import { type DocumentContent, documentKind } from '../src/index.js';
 
 export const registry = createRegistry({ kinds: [documentKind] });

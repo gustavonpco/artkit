@@ -4,7 +4,7 @@ import {
   type ProjectionItem,
   type ProjectionOptions,
   projectItems,
-} from '@artkit/core';
+} from '@artkit-ai/core';
 import { blockToMarkdown } from './markdown/serialize.js';
 import { blockText } from './runs.js';
 import type { Block, Cover, DocumentContent, PageSetup } from './schema.js';

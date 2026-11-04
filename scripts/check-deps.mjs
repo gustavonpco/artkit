@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Enforces the dependency rules of spec §5.3:
 // - no circular dependencies between workspace packages;
-// - @artkit/core imports only zod (no React, Node APIs, DOM or AI SDK);
+// - @artkit-ai/core imports only zod (no React, Node APIs, DOM or AI SDK);
 // - the "." entry of every kind package (files outside react/, edit/, export/) imports only
-//   @artkit/core, zod and the pure parsers allowed for that kind, and never touches DOM or Node globals;
-// - @artkit/agent never imports the AI SDK;
+//   @artkit-ai/core, zod and the pure parsers allowed for that kind, and never touches DOM or Node globals;
+// - @artkit-ai/agent never imports the AI SDK;
 // - every import of a workspace or npm package is declared in the importing package.json.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { builtinModules } from 'node:module';
@@ -70,14 +70,14 @@ function packageOf(specifier) {
 const NODE_BUILTINS = new Set(builtinModules.flatMap((m) => [m, `node:${m}`]));
 const KIND_MODEL_ALLOWED = {
   'kind-document': [
-    '@artkit/core',
+    '@artkit-ai/core',
     'zod',
     'mdast-util-from-markdown',
     'mdast-util-gfm',
     'micromark-extension-gfm',
   ],
   // Pure-JS layout shared by renderer, svg exporter and editor; runs in every runtime.
-  'kind-diagram': ['@artkit/core', 'zod', '@dagrejs/dagre'],
+  'kind-diagram': ['@artkit-ai/core', 'zod', '@dagrejs/dagre'],
 };
 const DOM_GLOBALS = /\b(window|document|navigator|localStorage|sessionStorage|HTMLElement)\s*[.[]/;
 
@@ -112,10 +112,11 @@ for (const { dir, pkg, path } of packages) {
           errors.push(`${where}: React is not allowed here`);
       }
       if (dir === 'core' && name !== 'zod')
-        errors.push(`${where}: @artkit/core may only import zod (found "${specifier}")`);
-      if (dir === 'agent' && name === 'ai') errors.push(`${where}: @artkit/agent must not import the AI SDK`);
+        errors.push(`${where}: @artkit-ai/core may only import zod (found "${specifier}")`);
+      if (dir === 'agent' && name === 'ai')
+        errors.push(`${where}: @artkit-ai/agent must not import the AI SDK`);
       if (isKindModel) {
-        const allowed = KIND_MODEL_ALLOWED[dir] ?? ['@artkit/core', 'zod'];
+        const allowed = KIND_MODEL_ALLOWED[dir] ?? ['@artkit-ai/core', 'zod'];
         if (!allowed.includes(name))
           errors.push(
             `${where}: the "." entry of a kind may only import ${allowed.join(', ')} (found "${specifier}")`,

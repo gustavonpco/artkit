@@ -7,12 +7,12 @@ import {
   type ProjectionMode,
   type Scope,
   toModelError,
-} from '@artkit/core';
-import { diagramKind } from '@artkit/kind-diagram';
-import { documentKind } from '@artkit/kind-document';
-import { sheetKind } from '@artkit/kind-sheet';
-import { slidesKind } from '@artkit/kind-slides';
-import { ArtifactCard, ArtifactPanel, ArtifactProvider, createServiceClient } from '@artkit/react';
+} from '@artkit-ai/core';
+import { diagramKind } from '@artkit-ai/kind-diagram';
+import { documentKind } from '@artkit-ai/kind-document';
+import { sheetKind } from '@artkit-ai/kind-sheet';
+import { slidesKind } from '@artkit-ai/kind-slides';
+import { ArtifactCard, ArtifactPanel, ArtifactProvider, createServiceClient } from '@artkit-ai/react';
 import { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { SCENARIOS, seed } from './seed.js';
@@ -35,35 +35,41 @@ const seeded = seed(service, userScope);
 const loaders = {
   renderers: {
     document: () =>
-      import('@artkit/kind-document/react').then((m) => ({
+      import('@artkit-ai/kind-document/react').then((m) => ({
         Renderer: m.DocumentRenderer,
         css: m.documentCss,
       })),
     sheet: () =>
-      import('@artkit/kind-sheet/react').then((m) => ({ Renderer: m.SheetRenderer, css: m.sheetCss })),
+      import('@artkit-ai/kind-sheet/react').then((m) => ({ Renderer: m.SheetRenderer, css: m.sheetCss })),
     slides: () =>
-      import('@artkit/kind-slides/react').then((m) => ({ Renderer: m.SlidesRenderer, css: m.slidesCss })),
+      import('@artkit-ai/kind-slides/react').then((m) => ({ Renderer: m.SlidesRenderer, css: m.slidesCss })),
     diagram: () =>
-      import('@artkit/kind-diagram/react').then((m) => ({ Renderer: m.DiagramRenderer, css: m.diagramCss })),
+      import('@artkit-ai/kind-diagram/react').then((m) => ({
+        Renderer: m.DiagramRenderer,
+        css: m.diagramCss,
+      })),
   },
   editors: {
     document: () =>
-      import('@artkit/kind-document/edit').then((m) => ({
+      import('@artkit-ai/kind-document/edit').then((m) => ({
         Editor: m.DocumentEditor,
         css: m.documentEditorCss,
       })),
     sheet: () =>
-      import('@artkit/kind-sheet/edit').then((m) => ({ Editor: m.SheetEditor, css: m.sheetEditorCss })),
+      import('@artkit-ai/kind-sheet/edit').then((m) => ({ Editor: m.SheetEditor, css: m.sheetEditorCss })),
     slides: () =>
-      import('@artkit/kind-slides/edit').then((m) => ({ Editor: m.SlidesEditor, css: m.slidesEditorCss })),
+      import('@artkit-ai/kind-slides/edit').then((m) => ({ Editor: m.SlidesEditor, css: m.slidesEditorCss })),
     diagram: () =>
-      import('@artkit/kind-diagram/edit').then((m) => ({ Editor: m.DiagramEditor, css: m.diagramEditorCss })),
+      import('@artkit-ai/kind-diagram/edit').then((m) => ({
+        Editor: m.DiagramEditor,
+        css: m.diagramEditorCss,
+      })),
   },
   exporters: {
-    document: () => import('@artkit/kind-document/export').then((m) => m.documentExporters),
-    sheet: () => import('@artkit/kind-sheet/export').then((m) => m.sheetExporters),
-    slides: () => import('@artkit/kind-slides/export').then((m) => m.slidesExporters),
-    diagram: () => import('@artkit/kind-diagram/export').then((m) => m.diagramExporters),
+    document: () => import('@artkit-ai/kind-document/export').then((m) => m.documentExporters),
+    sheet: () => import('@artkit-ai/kind-sheet/export').then((m) => m.sheetExporters),
+    slides: () => import('@artkit-ai/kind-slides/export').then((m) => m.slidesExporters),
+    diagram: () => import('@artkit-ai/kind-diagram/export').then((m) => m.diagramExporters),
   },
 };
 

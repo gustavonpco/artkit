@@ -1,4 +1,4 @@
-import { colorTokenSchema, itemIdSchema } from '@artkit/core';
+import { colorTokenSchema, itemIdSchema } from '@artkit-ai/core';
 import { z } from 'zod';
 
 export const DIRECTIONS = ['TB', 'LR'] as const;

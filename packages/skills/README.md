@@ -1,4 +1,4 @@
-# @artkit/skills
+# @artkit-ai/skills
 
 Agent Skills that teach agents to use artkit (spec §14.7), generated from the kind registry:
 
@@ -8,7 +8,7 @@ Agent Skills that teach agents to use artkit (spec §14.7), generated from the k
 The technical parts (fields, operations, limits, examples) are generated from each kind's schemas and instructions, never written by hand, so the skills always match the installed version. CI fails when the shipped folder is out of date or an example stops validating.
 
 ```bash
-npm install @artkit/skills
+npm install @artkit-ai/skills
 ```
 
 ## Use the shipped folder
@@ -16,13 +16,13 @@ npm install @artkit/skills
 Harnesses with native skills support (Claude Code, `HarnessAgent`…) load the folder directly:
 
 ```bash
-cp -r node_modules/@artkit/skills/skills/artkit-artefatos .claude/skills/
+cp -r node_modules/@artkit-ai/skills/skills/artkit-artefatos .claude/skills/
 ```
 
 ## Generate with your own kinds or rules
 
 ```ts
-import { artkitSkillFiles, createSkillsRegistry } from '@artkit/skills';
+import { artkitSkillFiles, createSkillsRegistry } from '@artkit-ai/skills';
 
 const files = artkitSkillFiles({
   registry: createSkillsRegistry([myCustomKind]),
@@ -34,7 +34,7 @@ const files = artkitSkillFiles({
 // files: { path, content }[] — write them where your harness expects skills.
 ```
 
-Agents without native skills support get the same content on demand through the `artifact_guide` tool of `@artkit/agent` (progressive disclosure), and MCP clients through `@artkit/mcp` prompts and `artkit://guide/{topic}` resources.
+Agents without native skills support get the same content on demand through the `artifact_guide` tool of `@artkit-ai/agent` (progressive disclosure), and MCP clients through `@artkit-ai/mcp` prompts and `artkit://guide/{topic}` resources.
 
 ## Maintainers
 

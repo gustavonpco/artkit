@@ -1,0 +1,24 @@
+{
+  "name": "@artkit/example-mcp-server",
+  "version": "0.0.0",
+  "private": true,
+  "description": "artkit MCP server over stdio with a filesystem store, for desktop MCP clients.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "artkit-mcp-server": "./server.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@artkit/agent": "workspace:^",
+    "@artkit/core": "workspace:^",
+    "@artkit/mcp": "workspace:^",
+    "@artkit/node": "workspace:^",
+    "@artkit/kind-document": "workspace:^",
+    "@artkit/kind-sheet": "workspace:^",
+    "@artkit/kind-slides": "workspace:^",
+    "@artkit/kind-diagram": "workspace:^"
+  }
+}

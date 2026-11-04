@@ -1,0 +1,58 @@
+{
+  "name": "@artkit/evals",
+  "version": "0.1.0",
+  "description": "Evaluation suite for artkit kinds across models and schema profiles.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "artkit-evals": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "directory": "packages/evals"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@artkit/core": "workspace:^",
+    "@artkit/agent": "workspace:^",
+    "@artkit/ai-sdk": "workspace:^",
+    "@artkit/kind-document": "workspace:^",
+    "@artkit/kind-sheet": "workspace:^",
+    "@artkit/kind-slides": "workspace:^",
+    "@artkit/kind-diagram": "workspace:^",
+    "zod": "^4.6.7"
+  },
+  "peerDependencies": {
+    "ai": "^7.0.0"
+  }
+}

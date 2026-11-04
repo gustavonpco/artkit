@@ -1,0 +1,103 @@
+{
+  "tipo": "deck",
+  "schemaVersion": 1,
+  "titulo": "Apresentação Comercial Acme",
+  "slides": [
+    {
+      "id": "s1",
+      "layout": "capa",
+      "titulo": "Portal do Cliente",
+      "destaque": "Acme Indústria",
+      "subtitulo": "Proposta comercial 2026",
+      "notas": "Abrir com o contexto da reunião de descoberta.",
+      "blocos": []
+    },
+    {
+      "id": "s2",
+      "layout": "titulo-texto",
+      "titulo": "O desafio",
+      "blocos": [
+        {
+          "id": "b1",
+          "tipo": "texto",
+          "markdown": "A Acme opera com **três sistemas** legados.\n\n- Retrabalho manual\n- Dados divergentes\n  - Relatórios atrasados\n\nInvestimento previsto: {{ref:estimativa.totais.total|moeda}}."
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "layout": "indicadores",
+      "titulo": "Resultados esperados",
+      "destaque": "em 12 meses",
+      "notas": "Reforçar que os números vêm do piloto.",
+      "blocos": [
+        { "id": "k1", "tipo": "indicador", "valor": "40%", "rotulo": "menos retrabalho" },
+        { "id": "k2", "tipo": "indicador", "valor": "3x", "rotulo": "mais rapidez nos relatórios" },
+        { "id": "k3", "tipo": "indicador", "valor": "1", "rotulo": "portal único" }
+      ]
+    },
+    {
+      "id": "s4",
+      "layout": "etapas",
+      "titulo": "Como vamos trabalhar",
+      "blocos": [
+        {
+          "id": "e1",
+          "tipo": "etapa",
+          "indice": "01",
+          "titulo": "Descoberta",
+          "descricao": "Entrevistas e mapa de processos."
+        },
+        { "id": "e2", "tipo": "etapa", "indice": "02", "titulo": "Construção" },
+        {
+          "id": "e3",
+          "tipo": "etapa",
+          "indice": "03",
+          "titulo": "Implantação",
+          "descricao": "Treinamento e operação assistida."
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "layout": "lista-cartoes",
+      "titulo": "Diferenciais",
+      "blocos": [
+        {
+          "id": "c1",
+          "tipo": "cartao",
+          "titulo": "Escalabilidade",
+          "itens": ["Nuvem elástica", "Arquitetura modular"]
+        },
+        { "id": "c2", "tipo": "cartao", "titulo": "Visão 360" },
+        { "id": "c3", "tipo": "imagem", "inputId": "in_arquitetura", "legenda": "Arquitetura proposta" }
+      ]
+    },
+    {
+      "id": "s6",
+      "layout": "duas-colunas",
+      "titulo": "Escopo",
+      "blocos": [
+        { "id": "d1", "tipo": "texto", "markdown": "1. Login\n2. Relatórios" },
+        {
+          "id": "d2",
+          "tipo": "texto",
+          "markdown": "Fora do escopo: *migração de dados históricos*.  \nSujeito a aditivo."
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "layout": "secao",
+      "titulo": "Investimento",
+      "blocos": []
+    },
+    {
+      "id": "s8",
+      "layout": "encerramento",
+      "titulo": "Obrigado",
+      "subtitulo": "contato@mouts.info",
+      "blocos": []
+    }
+  ]
+}

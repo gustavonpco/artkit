@@ -1,0 +1,48 @@
+{
+  "tipo": "cronograma",
+  "schemaVersion": 1,
+  "titulo": "Cronograma de implantação",
+  "inicio": "2026-11-02",
+  "calendario": { "diasUteis": [1, 2, 3, 4, 5], "feriados": ["2026-11-20"] },
+  "notas": "1. Datas sujeitas à aprovação do escopo.",
+  "tarefas": [
+    {
+      "id": "t1",
+      "nome": "Descoberta",
+      "grupo": "Fase 1",
+      "duracaoDias": 5,
+      "dependencias": [],
+      "responsavel": "Ana",
+      "descricao": "Entrevistas e levantamento de requisitos."
+    },
+    {
+      "id": "t2",
+      "nome": "Desenho da solução",
+      "grupo": "Fase 1",
+      "duracaoDias": 3,
+      "dependencias": [{ "tarefaId": "t1", "tipo": "FS" }]
+    },
+    {
+      "id": "t3",
+      "nome": "Documentação",
+      "grupo": "Fase 1",
+      "duracaoDias": 2,
+      "dependencias": [{ "tarefaId": "t1", "tipo": "SS", "defasagemDias": 2 }]
+    },
+    {
+      "id": "t4",
+      "nome": "Construção",
+      "grupo": "Fase 2",
+      "duracaoDias": 10,
+      "dependencias": [{ "tarefaId": "t2", "tipo": "FS" }],
+      "responsavel": "Bruno"
+    },
+    {
+      "id": "m1",
+      "nome": "Entrega",
+      "duracaoDias": 0,
+      "marco": true,
+      "dependencias": [{ "tarefaId": "t4", "tipo": "FS" }, { "tarefaId": "t3", "tipo": "FS" }]
+    }
+  ]
+}

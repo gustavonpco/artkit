@@ -1,0 +1,10 @@
+{
+  "frontmatter": {
+    "tipo": "documento",
+    "schemaVersion": 1,
+    "titulo": "Proposta Técnica",
+    "subtitulo": "Portal do Cliente Acme",
+    "campos": { "cliente": "Acme Indústria" }
+  },
+  "body": "Documento preparado para {{campo:cliente}}.\n\n## Contexto\n\nA Acme precisa de um **portal único** com *autenticação* e `SSO`, conforme o [site da Mouts](https://mouts.info).\nO portal substitui três sistemas legados & planilhas.\n\n## Escopo\n\n- Login e perfis\n- Relatórios gerenciais\n  - Exportação em PDF\n- Integração com o ERP\n\n1. Descoberta\n2. Construção\n3. Implantação\n\n### Premissas\n\n> O cliente fornece acesso ao ambiente de homologação.\n\n| Módulo | Horas | Responsável |\n| --- | ---: | --- |\n| Login | 40 | Ana |\n| Relatórios | 80 |\n\n```\nGET /api/v1/clientes\nPOST /api/v1/pedidos\n```\n\n---\n\n## Investimento\n\nTotal estimado: {{ref:estimativa.totais.total|moeda}}."
+}

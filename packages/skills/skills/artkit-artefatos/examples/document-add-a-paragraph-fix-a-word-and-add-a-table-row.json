@@ -1,0 +1,130 @@
+{
+  "kind": "document",
+  "schemaVersion": 1,
+  "title": "Add a paragraph, fix a word and add a table row",
+  "content": {
+    "cover": {
+      "eyebrow": "Technical proposal",
+      "title": "Supplier Portal",
+      "fields": [
+        {
+          "label": "Client",
+          "value": "Acme"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "scope",
+        "type": "heading",
+        "level": 1,
+        "runs": [
+          {
+            "text": "Scope"
+          }
+        ]
+      },
+      {
+        "id": "scope-p1",
+        "type": "paragraph",
+        "runs": [
+          {
+            "text": "The portal centralizes "
+          },
+          {
+            "text": "supplier onboarding",
+            "bold": true
+          },
+          {
+            "text": "."
+          }
+        ]
+      },
+      {
+        "id": "cost",
+        "type": "table",
+        "header": [
+          [
+            {
+              "text": "Module"
+            }
+          ],
+          [
+            {
+              "text": "Hours"
+            }
+          ]
+        ],
+        "rows": [
+          [
+            [
+              {
+                "text": "Login"
+              }
+            ],
+            [
+              {
+                "text": "40"
+              }
+            ]
+          ]
+        ],
+        "align": [
+          "left",
+          "right"
+        ],
+        "footer": [
+          [
+            {
+              "text": "Total"
+            }
+          ],
+          [
+            {
+              "text": "40"
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "operations": [
+    {
+      "op": "insert_block",
+      "after": "scope-p1",
+      "block": {
+        "type": "paragraph",
+        "runs": [
+          {
+            "text": "Integration with the ERP is out of scope."
+          }
+        ]
+      }
+    },
+    {
+      "op": "replace_text",
+      "id": "scope-p1",
+      "find": "centralizes",
+      "replace": "unifies"
+    },
+    {
+      "op": "table_insert_row",
+      "id": "cost",
+      "cells": [
+        "Reports",
+        "80"
+      ]
+    },
+    {
+      "op": "table_set_cells",
+      "id": "cost",
+      "cells": [
+        {
+          "section": "footer",
+          "col": 1,
+          "value": "120"
+        }
+      ]
+    }
+  ]
+}

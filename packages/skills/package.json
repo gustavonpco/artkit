@@ -1,0 +1,53 @@
+{
+  "name": "@artkit/skills",
+  "version": "0.1.0",
+  "description": "Agent Skills for artkit (runtime use and integration), generated from the kind registry.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "skills",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TODO-OWNER/artkit.git",
+    "directory": "packages/skills"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "generate": "node scripts/generate.mjs",
+    "check": "node scripts/generate.mjs --check"
+  },
+  "dependencies": {
+    "@artkit/core": "workspace:^",
+    "@artkit/agent": "workspace:^",
+    "@artkit/kind-document": "workspace:^",
+    "@artkit/kind-sheet": "workspace:^",
+    "@artkit/kind-slides": "workspace:^",
+    "@artkit/kind-diagram": "workspace:^"
+  }
+}

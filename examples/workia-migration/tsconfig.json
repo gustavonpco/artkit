@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "rootDir": ".",
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "customConditions": ["@artkit/source"],
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src", "test"]
+}

@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": ["ES2023"],
+    "types": ["node"]
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../agent"
+    },
+    {
+      "path": "../ai-sdk"
+    },
+    {
+      "path": "../kind-document"
+    },
+    {
+      "path": "../kind-sheet"
+    },
+    {
+      "path": "../kind-slides"
+    },
+    {
+      "path": "../kind-diagram"
+    }
+  ]
+}

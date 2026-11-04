@@ -1,0 +1,90 @@
+{
+  "kind": "diagram",
+  "schemaVersion": 1,
+  "title": "Layered architecture with bands, then add a cache",
+  "content": {
+    "direction": "TB",
+    "layout": "bands",
+    "groups": [
+      {
+        "id": "channels",
+        "label": "Channels",
+        "kind": "band"
+      },
+      {
+        "id": "services",
+        "label": "Services",
+        "kind": "band"
+      },
+      {
+        "id": "data",
+        "label": "Data",
+        "kind": "band"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "web",
+        "label": "Web portal",
+        "shape": "box",
+        "icon": "web",
+        "group": "channels"
+      },
+      {
+        "id": "app",
+        "label": "Mobile app",
+        "shape": "box",
+        "icon": "mobile",
+        "group": "channels"
+      },
+      {
+        "id": "api",
+        "label": "API",
+        "shape": "round",
+        "tone": "accent",
+        "group": "services"
+      },
+      {
+        "id": "pg",
+        "label": "PostgreSQL",
+        "shape": "cylinder",
+        "group": "data"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": "web",
+        "to": "api",
+        "label": "HTTPS"
+      },
+      {
+        "id": "e2",
+        "from": "app",
+        "to": "api",
+        "label": "HTTPS"
+      },
+      {
+        "id": "e3",
+        "from": "api",
+        "to": "pg"
+      }
+    ]
+  },
+  "operations": [
+    {
+      "op": "add_node",
+      "id": "cache",
+      "label": "Redis",
+      "shape": "cylinder",
+      "group": "data"
+    },
+    {
+      "op": "add_edge",
+      "from": "api",
+      "to": "cache",
+      "label": "cache",
+      "style": "dashed"
+    }
+  ]
+}

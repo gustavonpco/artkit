@@ -1,0 +1,75 @@
+{
+  "kind": "slides",
+  "schemaVersion": 1,
+  "title": "Edit slots, add a slide and notes",
+  "content": {
+    "slides": [
+      {
+        "id": "cover",
+        "layout": "title",
+        "slots": {
+          "title": "Quarterly review"
+        }
+      },
+      {
+        "id": "results",
+        "layout": "title-content",
+        "slots": {
+          "title": "Revenue grew 18%",
+          "body": {
+            "type": "bullets",
+            "items": [
+              "New region",
+              "Upsell"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "operations": [
+    {
+      "op": "set_slot",
+      "slide": "cover",
+      "slot": "subtitle",
+      "content": "Board meeting · Q3 2026"
+    },
+    {
+      "op": "add_slide",
+      "after": "results",
+      "slide": {
+        "id": "next",
+        "layout": "two-columns",
+        "slots": {
+          "title": "Two bets for next quarter",
+          "left": {
+            "type": "bullets",
+            "items": [
+              "Self-service onboarding",
+              "Partner channel"
+            ]
+          },
+          "right": {
+            "type": "stats",
+            "items": [
+              {
+                "value": "+12%",
+                "label": "expected revenue"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "set_notes",
+      "slide": "results",
+      "notes": "Growth came mostly from the new region."
+    },
+    {
+      "op": "move_slide",
+      "slide": "next",
+      "position": 2
+    }
+  ]
+}

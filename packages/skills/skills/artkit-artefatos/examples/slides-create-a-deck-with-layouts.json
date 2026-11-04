@@ -1,0 +1,112 @@
+{
+  "kind": "slides",
+  "schemaVersion": 1,
+  "title": "Create a deck with layouts",
+  "content": {
+    "slides": [
+      {
+        "id": "intro",
+        "layout": "title",
+        "slots": {
+          "title": "Supplier portal: one place for every vendor",
+          "subtitle": "Proposal · November 2026"
+        }
+      },
+      {
+        "id": "problem",
+        "layout": "title-content",
+        "slots": {
+          "title": "Manual onboarding takes 12 days per supplier",
+          "body": {
+            "type": "bullets",
+            "items": [
+              "Three disconnected systems",
+              "Data typed twice by hand",
+              {
+                "text": "Reports arrive a week late",
+                "level": 1
+              }
+            ]
+          }
+        },
+        "notes": "Mention the audit findings from March."
+      },
+      {
+        "id": "impact",
+        "layout": "big-number",
+        "slots": {
+          "title": "The pilot cut onboarding time by 40%",
+          "stat": {
+            "type": "stats",
+            "items": [
+              {
+                "value": "40%",
+                "label": "faster onboarding"
+              },
+              {
+                "value": "3x",
+                "label": "fewer data errors"
+              }
+            ]
+          },
+          "caption": "Pilot with 25 suppliers, Q3 2026"
+        }
+      },
+      {
+        "id": "plan",
+        "layout": "title-content",
+        "slots": {
+          "title": "Delivery in three phases",
+          "body": {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Discovery",
+                "description": "Interviews and process map"
+              },
+              {
+                "title": "Build",
+                "description": "Portal and integrations"
+              },
+              {
+                "title": "Rollout",
+                "description": "Training and support"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "growth",
+        "layout": "title-content",
+        "slots": {
+          "title": "Registered suppliers double every quarter",
+          "body": {
+            "type": "chart",
+            "chartType": "column",
+            "categories": [
+              "Q1",
+              "Q2",
+              "Q3"
+            ],
+            "series": [
+              {
+                "name": "Suppliers",
+                "values": [
+                  120,
+                  250,
+                  510
+                ]
+              }
+            ],
+            "showValues": true
+          }
+        }
+      }
+    ],
+    "footer": {
+      "text": "Acme · Confidential",
+      "slideNumber": true
+    }
+  }
+}

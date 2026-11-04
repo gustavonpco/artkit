@@ -1,0 +1,48 @@
+{
+  "name": "artkit-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "clean": "node scripts/clean.mjs",
+    "typecheck": "tsc -b tsconfig.build.json --noEmit false",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check:deps": "node scripts/check-deps.mjs",
+    "check:licenses": "node scripts/check-licenses.mjs",
+    "check:publish": "node scripts/check-publish.mjs",
+    "skills:generate": "node packages/skills/scripts/generate.mjs",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish",
+    "skills:check": "node packages/skills/scripts/generate.mjs --check",
+    "typecheck:examples": "tsc -p examples/workia-migration",
+    "verify": "pnpm build && pnpm typecheck:examples && pnpm lint && pnpm test && pnpm check:deps && pnpm check:licenses && pnpm check:publish && pnpm skills:check",
+    "fonts:generate": "node scripts/generate-fonts.mjs",
+    "icons:generate": "node scripts/generate-icons.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.5",
+    "@changesets/cli": "3.0.3",
+    "@fontsource-variable/sora": "5.3.0",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "^24.0.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "ai": "7.0.162",
+    "jsdom": "30.1.3",
+    "lucide": "1.68.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
+  }
+}

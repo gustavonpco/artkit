@@ -1,0 +1,14 @@
+artkit
+Copyright 2026 The artkit authors
+
+This product includes software developed by the artkit contributors.
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Default visual identity: Mouts design system (colors, typography, shapes).
+
+This product bundles the Sora font (packages/core/src/fonts), Copyright 2019 The Sora Project Authors
+(https://github.com/sora-xor/sora-font), licensed under the SIL Open Font License 1.1
+(packages/core/fonts/OFL-Sora.txt).
+
+Diagram node icons (packages/kind-diagram/src/icons.ts) are generated from Lucide (https://lucide.dev),
+Copyright (c) Lucide Contributors, ISC License.

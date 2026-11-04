@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": ["ES2023"],
+    "types": []
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../agent"
+    },
+    {
+      "path": "../kind-document"
+    },
+    {
+      "path": "../kind-sheet"
+    },
+    {
+      "path": "../kind-slides"
+    },
+    {
+      "path": "../kind-diagram"
+    }
+  ]
+}

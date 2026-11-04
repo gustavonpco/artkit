@@ -1,0 +1,106 @@
+{
+  "kind": "slides",
+  "schemaVersion": 1,
+  "title": "Free elements on a blank slide",
+  "content": {
+    "slides": [
+      {
+        "id": "cover",
+        "layout": "title",
+        "slots": {
+          "title": "Quarterly review"
+        }
+      },
+      {
+        "id": "results",
+        "layout": "title-content",
+        "slots": {
+          "title": "Revenue grew 18%",
+          "body": {
+            "type": "bullets",
+            "items": [
+              "New region",
+              "Upsell"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "operations": [
+    {
+      "op": "add_slide",
+      "slide": {
+        "id": "custom",
+        "layout": "blank",
+        "elements": [
+          {
+            "id": "headline",
+            "type": "text",
+            "x": 0.6,
+            "y": 0.4,
+            "w": 12.1,
+            "h": 1,
+            "paragraphs": [
+              "Three markets, one platform"
+            ],
+            "fontSize": 32,
+            "bold": true
+          },
+          {
+            "id": "panel",
+            "type": "shape",
+            "shape": "roundRect",
+            "x": 0.6,
+            "y": 1.8,
+            "w": 5.8,
+            "h": 4.6,
+            "fill": "surface"
+          },
+          {
+            "id": "panel-text",
+            "type": "text",
+            "x": 0.9,
+            "y": 2.1,
+            "w": 5.2,
+            "h": 4,
+            "bullets": [
+              "Brazil",
+              "Mexico",
+              "Chile"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "op": "update_element",
+      "element": "panel",
+      "set": {
+        "fill": "info"
+      }
+    },
+    {
+      "op": "update_element",
+      "element": "panel-text",
+      "set": {
+        "color": "background"
+      }
+    },
+    {
+      "op": "add_element",
+      "slide": "custom",
+      "element": {
+        "type": "text",
+        "x": 6.9,
+        "y": 1.8,
+        "w": 5.8,
+        "h": 1,
+        "paragraphs": [
+          "Rollout starts in March"
+        ],
+        "color": "muted"
+      }
+    }
+  ]
+}

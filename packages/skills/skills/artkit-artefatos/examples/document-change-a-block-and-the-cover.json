@@ -1,0 +1,125 @@
+{
+  "kind": "document",
+  "schemaVersion": 1,
+  "title": "Change a block and the cover",
+  "content": {
+    "cover": {
+      "eyebrow": "Technical proposal",
+      "title": "Supplier Portal",
+      "fields": [
+        {
+          "label": "Client",
+          "value": "Acme"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "scope",
+        "type": "heading",
+        "level": 1,
+        "runs": [
+          {
+            "text": "Scope"
+          }
+        ]
+      },
+      {
+        "id": "scope-p1",
+        "type": "paragraph",
+        "runs": [
+          {
+            "text": "The portal centralizes "
+          },
+          {
+            "text": "supplier onboarding",
+            "bold": true
+          },
+          {
+            "text": "."
+          }
+        ]
+      },
+      {
+        "id": "cost",
+        "type": "table",
+        "header": [
+          [
+            {
+              "text": "Module"
+            }
+          ],
+          [
+            {
+              "text": "Hours"
+            }
+          ]
+        ],
+        "rows": [
+          [
+            [
+              {
+                "text": "Login"
+              }
+            ],
+            [
+              {
+                "text": "40"
+              }
+            ]
+          ]
+        ],
+        "align": [
+          "left",
+          "right"
+        ],
+        "footer": [
+          [
+            {
+              "text": "Total"
+            }
+          ],
+          [
+            {
+              "text": "40"
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "operations": [
+    {
+      "op": "update_block",
+      "id": "scope",
+      "fields": {
+        "level": 2
+      }
+    },
+    {
+      "op": "update_block",
+      "id": "scope-p1",
+      "fields": {
+        "type": "callout",
+        "tone": "info",
+        "runs": [
+          {
+            "text": "Scope agreed on the kickoff."
+          }
+        ]
+      }
+    },
+    {
+      "op": "set_cover",
+      "cover": {
+        "title": "Supplier Portal",
+        "subtitle": "Version 2"
+      }
+    },
+    {
+      "op": "move_block",
+      "id": "cost",
+      "after": "scope"
+    }
+  ]
+}

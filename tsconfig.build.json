@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/kind-document" },
+    { "path": "packages/kind-sheet" },
+    { "path": "packages/kind-slides" },
+    { "path": "packages/kind-diagram" },
+    { "path": "packages/react" },
+    { "path": "packages/node" },
+    { "path": "packages/agent" },
+    { "path": "packages/ai-sdk" },
+    { "path": "packages/mcp" },
+    { "path": "packages/skills" },
+    { "path": "packages/evals" }
+  ]
+}

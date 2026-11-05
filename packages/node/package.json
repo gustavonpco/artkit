@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/node",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Node adapters for artkit: filesystem stores, asset store, export orchestration, HTTP routes and headless PNG/PDF rendering.",
   "license": "Apache-2.0",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/format-openui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "OpenUI Lang native format for artkit: declarations, validation against the artkit component library, compact reading, operations, lint and diff.",
   "license": "Apache-2.0",
   "type": "module",

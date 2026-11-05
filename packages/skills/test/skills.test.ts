@@ -1,8 +1,11 @@
+// @vitest-environment node
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { applyOperations, prepareContent } from '@artkit-ai/core';
+import { applyOperations, createRegistry, prepareContent } from '@artkit-ai/core';
+import { createSheetFormat, emptyWorkbook } from '@artkit-ai/format-sheet';
+import { createUniverEngine } from '@artkit-ai/format-sheet/server';
 import { describe, expect, it } from 'vitest';
-import { artkitSkillFiles, createSkillsRegistry, nativeKinds, SKILL_NAMES } from '../src/index.js';
+import { artkitSkillFiles, createSkillsRegistry, nativeFormats, SKILL_NAMES } from '../src/index.js';
 
 const files = artkitSkillFiles();
 const byPath = new Map(files.map((file) => [file.path, file.content]));
@@ -14,7 +17,7 @@ function frontmatter(content: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const line of match[1]!.split('\n')) {
     const field = /^([a-z-]+):\s*(.+)$/.exec(line);
-    if (field) out[field[1]!] = JSON.parse(field[2]!);
+    if (field) out[field[1]!] = field[2]!.replace(/^"|"$/g, '');
   }
   return out;
 }
@@ -26,47 +29,30 @@ describe('@artkit-ai/skills', () => {
       expect(skill, name).toBeDefined();
       const meta = frontmatter(skill!);
       expect(meta.name).toBe(name);
-      expect(meta.description?.length).toBeGreaterThan(40);
+      expect(meta.description!.length).toBeGreaterThan(40);
     }
   });
 
-  it('has one reference per native kind plus themes and errors', () => {
-    for (const kind of nativeKinds())
-      expect(byPath.has(`artkit-artefatos/references/${kind.kind}.md`)).toBe(true);
-    expect(byPath.has('artkit-artefatos/references/themes.md')).toBe(true);
-    expect(byPath.has('artkit-artefatos/references/errors.md')).toBe(true);
-  });
-
-  it('documents every operation of every kind', () => {
-    for (const kind of nativeKinds()) {
-      const reference = byPath.get(`artkit-artefatos/references/${kind.kind}.md`)!;
-      const ops = (kind.operationSchema as unknown as { options: { shape: { op: { value: string } } }[] })
-        .options;
-      for (const option of ops)
-        expect(reference, `${kind.kind}.${option.shape.op.value}`).toContain(option.shape.op.value);
+  it('documents every native format with a reference file', () => {
+    for (const format of nativeFormats().map((adapter) => adapter.format)) {
+      expect(byPath.has(`artkit-artefatos/references/${format}.md`), format).toBe(true);
     }
+    expect(byPath.has('artkit-artefatos/references/erros.md')).toBe(true);
   });
 
-  it('ships only examples that validate against the current schemas (spec §14.7)', () => {
+  it('every instruction example of the markdown and OpenUI formats applies on the adapter', async () => {
     const registry = createSkillsRegistry();
-    const blocks = files.flatMap((file) =>
-      [...file.content.matchAll(/```json\n([\s\S]*?)```/g)].map((match) => ({
-        path: file.path,
-        json: match[1]!,
-      })),
-    );
-    expect(blocks.length).toBeGreaterThan(0);
-    for (const block of blocks) expect(() => JSON.parse(block.json), block.path).not.toThrow();
-    for (const kind of nativeKinds()) {
-      for (const example of kind.instructions.examples) {
-        const content =
+    for (const format of ['markdown', 'openui']) {
+      const adapter = registry.get(format);
+      for (const example of adapter.instructions.examples) {
+        const base =
           example.content === undefined
-            ? kind.empty()
-            : prepareContent(registry, kind.kind, example.content).content;
+            ? adapter.empty()
+            : prepareContent(registry, format, example.content).content;
         if (example.operations) {
-          applyOperations(
+          await applyOperations(
             registry,
-            { kind: kind.kind, content, title: 'Example', themeId: 'default', locale: 'en' },
+            { format, content: base, title: 'Example', themeId: 'default', locale: 'en' },
             example.operations,
           );
         }
@@ -74,10 +60,28 @@ describe('@artkit-ai/skills', () => {
     }
   });
 
-  it('keeps the distributed folder in sync with the generator', () => {
+  it('every instruction example of the sheet format runs on Univer headless', async () => {
+    const sheet = createSheetFormat(createUniverEngine());
+    const registry = createRegistry({ formats: [sheet] });
+    for (const example of sheet.instructions.examples) {
+      await applyOperations(
+        registry,
+        {
+          format: 'univer-sheet',
+          content: emptyWorkbook('wb', 'Planilha', 'pt-BR'),
+          title: 'Example',
+          themeId: 'default',
+          locale: 'pt-BR',
+        },
+        example.operations ?? [],
+      );
+    }
+  });
+
+  it('the committed skills folder matches the generated files when present', () => {
     if (!existsSync(skillsDir)) return;
-    for (const file of files) {
-      expect(readFileSync(join(skillsDir, file.path), 'utf8'), file.path).toBe(file.content);
+    for (const [path, content] of byPath) {
+      expect(readFileSync(join(skillsDir, path), 'utf8'), path).toBe(content);
     }
   });
 });

@@ -1,4 +1,4 @@
-import type { LintIssue } from './kind.js';
+import type { LintIssue } from './adapter.js';
 import { COLOR_TOKENS, mixHex, safeFontFamily, type Theme, themeBrand, themeShape } from './theme.js';
 
 /**
@@ -29,6 +29,22 @@ export interface EmitOptions {
  * into kind operations through `emit`, never writing whole content (spec §13.6). Batching, optimistic
  * apply, undo/redo, conflicts and locks are handled by the host (`@artkit-ai/react`).
  */
+/**
+ * Draft actions the host gives every editor: undo, redo and save. The host draws them unless the editor declares that it
+ * draws its own toolbar (see `EditorModule.toolbar` in `@artkit-ai/react`).
+ */
+export interface EditorActions {
+  canUndo: boolean;
+  canRedo: boolean;
+  undo(): void;
+  redo(): void;
+  /** The draft differs from the last saved version. */
+  dirty: boolean;
+  saving: boolean;
+  canSave: boolean;
+  save(): void;
+}
+
 export interface EditorBindings<Content = unknown, Operation = unknown> {
   content: Content;
   ctx: RenderContext;
@@ -36,6 +52,8 @@ export interface EditorBindings<Content = unknown, Operation = unknown> {
   readOnly: boolean;
   /** Lint issues of the current version, for inline indicators. */
   lint?: LintIssue[];
+  /** Undo, redo and save of the draft. */
+  actions?: EditorActions;
 }
 
 /** Default CSS class prefix for every artkit component (spec §13.5). */
@@ -64,9 +82,11 @@ export function themeCssVariables(theme: Theme): Record<string, string> {
   const shape = themeShape(theme);
   const fonts = themeFontStacks(theme);
   for (const token of COLOR_TOKENS) vars[`--ak-color-${token}`] = colors[token];
-  // Hairline tones: the design system draws every boundary with a 1px line of the text color.
-  vars['--ak-color-border'] = mixHex(colors.background, colors.text, 0.15);
-  vars['--ak-color-border-strong'] = mixHex(colors.background, colors.text, 0.5);
+  // Hairlines of the Mouts design system: every card, panel and control is outlined by a 1px line of the text color
+  // (border-hairline); dividers inside a surface use the same line at 40% (border-hairline-soft).
+  vars['--ak-color-border'] = colors.text;
+  vars['--ak-color-border-strong'] = colors.text;
+  vars['--ak-color-border-soft'] = mixHex(colors.background, colors.text, 0.4);
   vars['--ak-color-hover'] = mixHex(colors.background, colors.text, 0.06);
   vars['--ak-color-active'] = mixHex(colors.background, colors.text, 0.1);
   vars['--ak-color-selected'] = mixHex(colors.background, brand.primary, 0.12);

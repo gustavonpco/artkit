@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { artifactIdSchema } from './ids.js';
 
-export const ARTIFACT_STATUSES = ['draft', 'pending_approval', 'published', 'archived'] as const;
-export type ArtifactStatus = (typeof ARTIFACT_STATUSES)[number];
-export const artifactStatusSchema = z.enum(ARTIFACT_STATUSES);
-
 export const actorSchema = z.object({
   type: z.enum(['agent', 'user', 'system']),
   id: z.string().min(1).max(128),
@@ -25,19 +21,20 @@ export const metaSchema = z.object({
   createdBy: actorSchema,
   updatedBy: actorSchema,
   tags: z.array(z.string().max(64)).max(32).default([]),
-  /** Last approved version, kept as the reference while a newer draft waits for approval (spec §15.3). */
-  publishedVersion: z.number().int().min(1).optional(),
 });
 export type ArtifactMeta = z.infer<typeof metaSchema>;
 
-/** Envelope (spec §6.1). Only `content` is produced by the model; everything else is system-owned. */
+/**
+ * Envelope. Only `content` is produced by the model; everything else is system-owned. The library keeps the current
+ * content and a `version` counter for optimistic concurrency. It keeps no history: saving and versioning belong to the
+ * harness, which receives the save action from the editor (see `onSave` in `@artkit-ai/react`).
+ */
 export const envelopeSchema = z.object({
   id: artifactIdSchema,
-  kind: z.string().min(1).max(64),
-  schemaVersion: z.number().int().min(1),
+  format: z.string().min(1).max(64),
+  formatVersion: z.string().min(1).max(64),
   version: z.number().int().min(1),
   title: titleSchema,
-  status: artifactStatusSchema,
   locale: localeSchema,
   themeId: z.string().min(1).max(64),
   content: z.unknown(),
@@ -46,11 +43,10 @@ export const envelopeSchema = z.object({
 
 export interface Artifact<Content = unknown> {
   id: string;
-  kind: string;
-  schemaVersion: number;
+  format: string;
+  formatVersion: string;
   version: number;
   title: string;
-  status: ArtifactStatus;
   locale: string;
   themeId: string;
   content: Content;
@@ -60,10 +56,9 @@ export interface Artifact<Content = unknown> {
 /** Lightweight reference carried in chat messages and lists (no content). */
 export interface ArtifactSummary {
   id: string;
-  kind: string;
+  format: string;
   title: string;
   version: number;
-  status: ArtifactStatus;
   locale: string;
   updatedAt: string;
 }
@@ -71,23 +66,10 @@ export interface ArtifactSummary {
 export function summarize(artifact: Artifact): ArtifactSummary {
   return {
     id: artifact.id,
-    kind: artifact.kind,
+    format: artifact.format,
     title: artifact.title,
     version: artifact.version,
-    status: artifact.status,
     locale: artifact.locale,
     updatedAt: artifact.meta.updatedAt,
   };
-}
-
-/** Allowed lifecycle transitions (spec §15.3). */
-export const STATUS_TRANSITIONS: Record<ArtifactStatus, readonly ArtifactStatus[]> = {
-  draft: ['pending_approval', 'published', 'archived'],
-  pending_approval: ['published', 'draft', 'archived'],
-  published: ['archived', 'draft'],
-  archived: ['draft'],
-};
-
-export function canTransition(from: ArtifactStatus, to: ArtifactStatus): boolean {
-  return STATUS_TRANSITIONS[from].includes(to);
 }

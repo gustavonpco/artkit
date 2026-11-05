@@ -4,15 +4,18 @@ import type { ReactElement } from 'react';
 import { buildPrintHtml, type PageSize, pageDimensions } from './html.js';
 import type { HeadlessRenderer } from './renderer.js';
 
-export type HeadlessFormat = 'pdf' | 'png';
+/** File formats the headless renderer can print. */
+export type HeadlessTarget = 'pdf' | 'png';
 
-export interface HeadlessKind<Content = unknown> {
-  kind: string;
-  /** Renders the kind's `/react` renderer, e.g. `(content, ctx) => <DocumentRenderer content={content} ctx={ctx} />`. */
+/** A native format rendered by its own React renderer and exported through headless Chromium. */
+export interface HeadlessSource<Content = unknown> {
+  /** Native format name, e.g. `openui`. */
+  format: string;
+  /** Renders the format's `/react` renderer, e.g. `(content, ctx) => <DeckRenderer content={content} ctx={ctx} />`. */
   render(content: Content, ctx: RenderContext): ReactElement;
-  /** CSS exported by the kind (`documentCss`…); the theme variables are always included. */
+  /** CSS exported by the format; the theme variables are always included. */
   css?: string | readonly string[];
-  formats: readonly HeadlessFormat[];
+  targets: readonly HeadlessTarget[];
   /** Default `'A4'`. Use `{ width: 1280, height: 720 }` for 16:9 slides. */
   page?: PageSize;
   /** Device pixel ratio of PNG output (default 1). */
@@ -21,15 +24,15 @@ export interface HeadlessKind<Content = unknown> {
 
 export interface HeadlessExportersOptions {
   renderer: HeadlessRenderer;
-  // biome-ignore lint/suspicious/noExplicitAny: kinds with different content types share one list.
-  kinds: readonly HeadlessKind<any>[];
+  // biome-ignore lint/suspicious/noExplicitAny: formats with different content types share one list.
+  sources: readonly HeadlessSource<any>[];
   /** Maximum total bytes of assets inlined into one page (default 50 MiB); the rest get placeholders. */
   maxAssetBytes?: number;
   /** Markup renderer; defaults to `renderToStaticMarkup` from `react-dom/server` (optional peer). */
   renderToStaticMarkup?(element: ReactElement): string;
 }
 
-const MIME: Record<HeadlessFormat, string> = { pdf: 'application/pdf', png: 'image/png' };
+const MIME: Record<HeadlessTarget, string> = { pdf: 'application/pdf', png: 'image/png' };
 const ASSET_REF_IN_TEXT = /asset:\/\/[A-Za-z0-9][A-Za-z0-9_.-]{0,127}/g;
 const MAX_DEPTH = 64;
 
@@ -98,7 +101,7 @@ function loadStaticMarkup(): Promise<(element: ReactElement) => string> {
  * Exporters for PNG and PDF (spec §12.3) that render the kind's own React renderer in headless
  * Chromium, so files match what users see. For each export: asset references in the content are
  * resolved through `ctx.assets` and inlined as data URLs (the browser has no network), the element is
- * rendered with `ctx.mode = 'print'`, wrapped with the theme variables and the kind CSS, and printed.
+ * rendered with `ctx.mode = 'print'`, wrapped with the theme variables and the format CSS, and printed.
  *
  * PDF follows the CSS page size; PNG is one image of the whole page height (multi-page content is
  * stacked vertically in a single PNG). Unresolvable assets become placeholders and a warning.
@@ -108,19 +111,19 @@ export function createHeadlessExporters(options: HeadlessExportersOptions): Arti
   const maxAssetBytes = options.maxAssetBytes ?? 50 * 1024 * 1024;
   const markup = options.renderToStaticMarkup;
   const exporters: ArtifactExporter[] = [];
-  for (const config of options.kinds) {
+  for (const config of options.sources) {
     const page = config.page ?? 'A4';
     pageDimensions(page);
     const css =
       config.css === undefined ? [] : typeof config.css === 'string' ? [config.css] : [...config.css];
-    for (const format of new Set(config.formats)) {
-      if (format !== 'pdf' && format !== 'png')
-        throw new TypeError(`Unsupported headless format "${String(format)}" for kind ${config.kind}.`);
+    for (const target of new Set(config.targets)) {
+      if (target !== 'pdf' && target !== 'png')
+        throw new TypeError(`Unsupported headless target "${String(target)}" for format ${config.format}.`);
       exporters.push({
-        kind: config.kind,
-        format,
-        mimeType: MIME[format],
-        extension: format,
+        format: config.format,
+        target,
+        mimeType: MIME[target],
+        extension: target,
         runtime: 'node',
         async export(content, ctx) {
           const assets = await resolveAssets(content, ctx, maxAssetBytes);
@@ -142,10 +145,10 @@ export function createHeadlessExporters(options: HeadlessExportersOptions): Arti
           });
           return renderer.render({
             html,
-            format,
+            format: target,
             page,
             ...(ctx.signal ? { signal: ctx.signal } : {}),
-            ...(format === 'png' && config.scale ? { scale: config.scale } : {}),
+            ...(target === 'png' && config.scale ? { scale: config.scale } : {}),
           });
         },
       });

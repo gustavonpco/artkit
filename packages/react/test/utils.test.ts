@@ -1,67 +1,6 @@
 import { defaultTheme } from '@artkit-ai/core';
 import { describe, expect, it } from 'vitest';
-import {
-  createTranslator,
-  darkTheme,
-  diffLines,
-  mixColors,
-  parsePartialJson,
-  themeStyles,
-  toSplitRows,
-} from '../src/index.js';
-
-describe('diffLines', () => {
-  it('finds insertions, deletions and unchanged lines with line numbers', () => {
-    const diff = diffLines('a\nb\nc\nd', 'a\nc\nx\nd');
-    expect(diff).toEqual([
-      { type: 'equal', text: 'a', oldLine: 1, newLine: 1 },
-      { type: 'delete', text: 'b', oldLine: 2 },
-      { type: 'equal', text: 'c', oldLine: 3, newLine: 2 },
-      { type: 'insert', text: 'x', newLine: 3 },
-      { type: 'equal', text: 'd', oldLine: 4, newLine: 4 },
-    ]);
-  });
-
-  it('handles empty sides and CRLF', () => {
-    expect(diffLines('', 'a\r\nb')).toEqual([
-      { type: 'insert', text: 'a', newLine: 1 },
-      { type: 'insert', text: 'b', newLine: 2 },
-    ]);
-    expect(diffLines('a', '')).toEqual([{ type: 'delete', text: 'a', oldLine: 1 }]);
-    expect(diffLines('same', 'same')).toEqual([{ type: 'equal', text: 'same', oldLine: 1, newLine: 1 }]);
-  });
-
-  it('keeps the longest common subsequence', () => {
-    const before = ['x', 'a', 'b', 'c', 'y'].join('\n');
-    const after = ['a', 'q', 'b', 'c', 'z'].join('\n');
-    const equal = diffLines(before, after)
-      .filter((entry) => entry.type === 'equal')
-      .map((entry) => entry.text);
-    expect(equal).toEqual(['a', 'b', 'c']);
-  });
-
-  it('falls back to a block replacement above maxCells, keeping prefix and suffix', () => {
-    const diff = diffLines('head\n1\n2\ntail', 'head\n3\n4\ntail', { maxCells: 1 });
-    expect(diff.map((entry) => `${entry.type}:${entry.text}`)).toEqual([
-      'equal:head',
-      'delete:1',
-      'delete:2',
-      'insert:3',
-      'insert:4',
-      'equal:tail',
-    ]);
-  });
-
-  it('pairs deletions and insertions for the split layout', () => {
-    const rows = toSplitRows(diffLines('a\nb\nc', 'a\nB\nC\nD'));
-    expect(rows.map((row) => [row.left?.text, row.right?.text])).toEqual([
-      ['a', 'a'],
-      ['b', 'B'],
-      ['c', 'C'],
-      [undefined, 'D'],
-    ]);
-  });
-});
+import { createTranslator, darkTheme, mixColors, parsePartialJson, themeStyles } from '../src/index.js';
 
 describe('parsePartialJson', () => {
   it('parses complete JSON directly', () => {
@@ -104,17 +43,17 @@ describe('parsePartialJson', () => {
 
 describe('i18n', () => {
   it('picks pt-BR for Portuguese tags and English otherwise, with overrides', () => {
-    expect(createTranslator('pt-BR')('tabHistory')).toBe('Histórico');
-    expect(createTranslator('pt-PT')('tabHistory')).toBe('Histórico');
-    expect(createTranslator('de')('tabHistory')).toBe('History');
+    expect(createTranslator('pt-BR')('tabEdit')).toBe('Editar');
+    expect(createTranslator('pt-PT')('tabEdit')).toBe('Editar');
+    expect(createTranslator('de')('tabEdit')).toBe('Edit');
     const es = createTranslator('es-MX', {
-      es: { tabHistory: 'Historial' },
+      es: { tabEdit: 'Editar ES' },
       'es-MX': { tabCode: 'Código MX' },
     });
-    expect(es('tabHistory')).toBe('Historial');
+    expect(es('tabEdit')).toBe('Editar ES');
     expect(es('tabCode')).toBe('Código MX');
     expect(es('tabView')).toBe('View');
-    expect(createTranslator('en')('savedVersion', { version: 3 })).toBe('Saved version 3');
+    expect(createTranslator('en')('save')).toBe('Save');
   });
 });
 

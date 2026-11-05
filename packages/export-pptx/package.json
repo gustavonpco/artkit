@@ -1,0 +1,48 @@
+{
+  "name": "@artkit-ai/export-pptx",
+  "version": "0.1.0",
+  "description": "pptx exporter for OpenUI decks (pptxgenjs): slides from the artkit layouts with native text, bullets, tables and speaker notes.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts",
+    "pptx"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
+    "directory": "packages/export-pptx"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/format-openui": "workspace:^",
+    "pptxgenjs": "^4.0.1"
+  }
+}

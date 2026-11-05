@@ -310,10 +310,10 @@ describe('createHeadlessExporters', () => {
     const { launch } = fakeBrowser();
     const exporters = createHeadlessExporters({
       renderer: createHeadlessRenderer({ launch }),
-      kinds: [{ kind: 'note', render: noteRender, formats: ['pdf', 'png', 'pdf'] }],
+      sources: [{ format: 'note', render: noteRender, targets: ['pdf', 'png', 'pdf'] }],
     });
     expect(
-      exporters.map((e: ArtifactExporter) => [e.kind, e.format, e.mimeType, e.extension, e.runtime]),
+      exporters.map((e: ArtifactExporter) => [e.format, e.target, e.mimeType, e.extension, e.runtime]),
     ).toEqual([
       ['note', 'pdf', 'application/pdf', 'pdf', 'node'],
       ['note', 'png', 'image/png', 'png', 'node'],
@@ -327,12 +327,12 @@ describe('createHeadlessExporters', () => {
     const stored = await assets.put(user, PNG, { mimeType: 'image/png' });
     const [pdf] = createHeadlessExporters({
       renderer,
-      kinds: [
+      sources: [
         {
-          kind: 'note',
+          format: 'note',
           render: noteRender,
           css: '.ak-note { color: var(--ak-color-text); }',
-          formats: ['pdf'],
+          targets: ['pdf'],
           page: { width: 1280, height: 720 },
         },
       ],
@@ -369,7 +369,7 @@ describe('createHeadlessExporters', () => {
     const [png] = createHeadlessExporters({
       renderer,
       maxAssetBytes: 4,
-      kinds: [{ kind: 'note', render: noteRender, formats: ['png'], scale: 2 }],
+      sources: [{ format: 'note', render: noteRender, targets: ['png'], scale: 2 }],
     });
     const ctx = exportContext({ assets: { resolve: (ref) => assets.get(user, ref) } });
     await png!.export({ items: [{ id: 'a', text: 'x', image: stored.ref }] }, ctx);
@@ -385,7 +385,7 @@ describe('createHeadlessExporters', () => {
     const [pdf] = createHeadlessExporters({
       renderer,
       renderToStaticMarkup: () => '<main>custom</main>',
-      kinds: [{ kind: 'note', render: noteRender, formats: ['pdf'] }],
+      sources: [{ format: 'note', render: noteRender, targets: ['pdf'] }],
     });
     await pdf!.export({ items: [] }, exportContext());
     expect(log.html[0]).toContain('<main>custom</main>');
@@ -413,8 +413,8 @@ describe.skipIf(!realBrowser)('headless rendering in real Chromium', () => {
       const stored = await assets.put(user, PNG, { mimeType: 'image/png' });
       const exporters = createHeadlessExporters({
         renderer,
-        kinds: [
-          { kind: 'note', render: noteRender, formats: ['pdf', 'png'], page: { width: 640, height: 360 } },
+        sources: [
+          { format: 'note', render: noteRender, targets: ['pdf', 'png'], page: { width: 640, height: 360 } },
         ],
       });
       const content: NoteContent = { items: [{ id: 'a', text: 'Hello', image: stored.ref }] };

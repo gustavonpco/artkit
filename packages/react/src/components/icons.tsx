@@ -8,7 +8,7 @@ export const KIND_ICONS: Record<string, LucideIcon> = {
   diagram: Workflow,
 };
 
-export function KindIcon({ kind, className }: { kind: string; className?: string }) {
-  const Icon = KIND_ICONS[kind] ?? File;
+export function KindIcon({ format, className }: { format: string; className?: string }) {
+  const Icon = KIND_ICONS[format] ?? File;
   return <Icon aria-hidden="true" focusable="false" className={className} />;
 }

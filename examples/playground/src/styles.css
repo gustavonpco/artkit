@@ -1,0 +1,61 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #111;
+}
+.pg-layout {
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr) 16rem;
+  gap: 1rem;
+  padding: 1rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+.pg-list h1 {
+  font-size: 1.1rem;
+}
+.pg-main {
+  min-width: 0;
+}
+.pg-mode {
+  display: flex;
+  gap: 0.5rem;
+  border: 0;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+.pg-mode button[aria-pressed="true"] {
+  font-weight: 600;
+  text-decoration: underline;
+}
+.pg-scenario {
+  border-left: 1px solid #ddd;
+  padding-left: 1rem;
+}
+@media (max-width: 760px) {
+  .pg-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pg-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.pg-toolbar .pg-mode {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.pg-toolbar .pg-mode legend {
+  font-size: 12px;
+  padding: 0 6px 0 0;
+}
+.pg-notice {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ak-color-success, #0f7a5a);
+}

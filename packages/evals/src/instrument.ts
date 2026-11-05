@@ -49,15 +49,13 @@ export function instrumentToolkit(
   };
 }
 
-/** Executes toolkit tools directly with a fixed scope, generating unique idempotency keys. */
+/** Executes toolkit tools directly with a fixed scope. */
 export function createToolCaller(toolkit: ArtifactToolkit, scope: Scope): ToolCaller {
-  let counter = 0;
   return {
     async call(name, input) {
       const tool = toolkit.tool(name);
       if (!tool) throw new Error(`Unknown tool ${name}`);
-      counter += 1;
-      return (await tool.execute(input, { scope, idempotencyKey: `ref-${counter}` })) as never;
+      return (await tool.execute(input, { scope })) as never;
     },
   };
 }

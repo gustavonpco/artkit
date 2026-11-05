@@ -8,23 +8,10 @@
   },
   "include": ["src"],
   "references": [
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../agent"
-    },
-    {
-      "path": "../kind-document"
-    },
-    {
-      "path": "../kind-sheet"
-    },
-    {
-      "path": "../kind-slides"
-    },
-    {
-      "path": "../kind-diagram"
-    }
+    { "path": "../core" },
+    { "path": "../agent" },
+    { "path": "../format-markdown" },
+    { "path": "../format-sheet" },
+    { "path": "../format-openui" }
   ]
 }

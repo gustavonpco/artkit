@@ -1,13 +1,11 @@
 import { randomBytes } from 'node:crypto';
 import { mkdir, readdir } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import {
-  type Actor,
   ARTIFACT_ID_PATTERN,
   type Artifact,
   ArtifactError,
   type ArtifactFilter,
-  type ArtifactStatus,
   type ArtifactStore,
   type ArtifactSummary,
   type Commit,
@@ -18,7 +16,6 @@ import {
   type Scope,
   summarize,
   t,
-  type VersionEntry,
 } from '@artkit-ai/core';
 import {
   hashName,
@@ -33,8 +30,6 @@ import {
 export interface FsStoreOptions {
   /** Root directory. Created on first write. */
   dir: string;
-  /** Snapshot every N versions in the history (the first version always has one). Default 10. */
-  snapshotEvery?: number;
   now?: () => Date;
   /** Locale of error messages (pt-BR or en). */
   locale?: string;
@@ -44,37 +39,25 @@ const DEFAULT_PAGE = 50;
 const MAX_PAGE = 500;
 const READ_CONCURRENCY = 16;
 
-interface IdempotencyRecord {
-  key: string;
-  version: number;
-}
-
 /**
- * Filesystem `ArtifactStore` (spec §15.2) for local tools, CLIs and development agents.
+ * Filesystem `ArtifactStore` (spec §15.2) for local tools, CLIs and development agents. It keeps only the current
+ * envelope of each artifact: there is no history, so saving versions is the harness's job.
  *
  * Layout, per workspace (directory name = sha256 of the workspace id) and artifact:
  *
  * ```
  * <dir>/workspaces/<sha256(workspaceId)>/artifacts/<artifactId>/
- *   head.json                 current envelope; replacing it is the commit point
- *   versions/<n>.json         envelopes of superseded versions (immutable)
- *   history/<n>.json          VersionEntry per version (snapshots every `snapshotEvery`)
- *   idempotency/<sha256>.json idempotency key → version
- *   lock.json                 advisory edit lock with expiry
+ *   head.json   current envelope; replacing it is the commit point
+ *   lock.json   advisory edit lock with expiry
  * ```
  *
- * Every file is written atomically (temp file + fsync + rename). Writes to one artifact are serialized
- * by an in-process mutex, so concurrent commits in one process get `VERSION_CONFLICT` on a stale
- * `baseVersion`. The store assumes a single writing process per directory; use a database store
- * (see `examples/postgres-store`) when several processes write.
+ * Every file is written atomically (temp file + fsync + rename). Writes to one artifact are serialized by an
+ * in-process mutex, so concurrent commits in one process get `VERSION_CONFLICT` on a stale `baseVersion`. The store
+ * assumes a single writing process per directory.
  */
 export function createFsStore(options: FsStoreOptions): ArtifactStore {
   if (typeof options?.dir !== 'string' || options.dir.trim() === '') {
     throw new TypeError('createFsStore: `dir` must be a non-empty path.');
-  }
-  const snapshotEvery = options.snapshotEvery ?? 10;
-  if (!Number.isInteger(snapshotEvery) || snapshotEvery < 1) {
-    throw new TypeError('createFsStore: `snapshotEvery` must be a positive integer.');
   }
   const root = resolve(options.dir);
   const now = options.now ?? (() => new Date());
@@ -82,21 +65,9 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
   const mutex = new KeyedMutex();
 
   const workspaceDir = (scope: Scope) => join(root, 'workspaces', hashName(scope.workspaceId), 'artifacts');
-  // Workspace-level index of creation idempotency keys → artifact id (spans artifacts, unlike `idempotency/`).
-  const createKeyFile = (scope: Scope, key: string) =>
-    join(root, 'workspaces', hashName(scope.workspaceId), 'creates', `${hashName(key)}.json`);
-  const artifactDir = (scope: Scope, id: string) => join(workspaceDir(scope), id);
-  const versionName = (version: number) => `${String(version).padStart(10, '0')}.json`;
   const files = (scope: Scope, id: string) => {
-    const base = artifactDir(scope, id);
-    return {
-      base,
-      head: join(base, 'head.json'),
-      lock: join(base, 'lock.json'),
-      version: (v: number) => join(base, 'versions', versionName(v)),
-      history: (v: number) => join(base, 'history', versionName(v)),
-      idempotency: (key: string) => join(base, 'idempotency', `${hashName(key)}.json`),
-    };
+    const base = join(workspaceDir(scope), id);
+    return { base, head: join(base, 'head.json'), lock: join(base, 'lock.json') };
   };
 
   const notFound = (id: string): never => {
@@ -113,10 +84,6 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
 
   async function requireHead(scope: Scope, id: string): Promise<Artifact> {
     return (await readHead(scope, id)) ?? notFound(String(id));
-  }
-
-  function withHeadStatus(entry: VersionEntry, head: Artifact): VersionEntry {
-    return entry.version === head.version ? { ...entry, status: head.status } : entry;
   }
 
   async function activeLock(scope: Scope, id: string): Promise<Lock | null> {
@@ -139,13 +106,8 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
   }
 
   const store: ArtifactStore = {
-    async get(scope, id, opts) {
-      const head = await readHead(scope, id);
-      if (!head) return null;
-      const version = opts?.version;
-      if (version === undefined || version === head.version) return head;
-      if (!Number.isInteger(version) || version < 1 || version > head.version) return null;
-      return (await readJson<Artifact>(files(scope, id).version(version))) ?? null;
+    async get(scope, id) {
+      return (await readHead(scope, id)) ?? null;
     },
 
     async create(scope, input: NewArtifact) {
@@ -155,21 +117,19 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
       for (;;) {
         await mkdir(workspaceDir(scope), { recursive: true });
         try {
-          await mkdir(artifactDir(scope, id));
+          await mkdir(files(scope, id).base);
           break;
         } catch (error) {
           if (!isErrno(error, 'EEXIST')) throw error;
           id = createArtifactId(at.getTime());
         }
       }
-      const paths = files(scope, id);
       const artifact: Artifact = {
         id,
-        kind: input.kind,
-        schemaVersion: input.schemaVersion,
+        format: input.format,
+        formatVersion: input.formatVersion,
         version: 1,
         title: input.title,
-        status: input.status,
         locale: input.locale,
         themeId: input.themeId,
         content: structuredClone(input.content),
@@ -181,45 +141,8 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
           tags: input.tags ?? [],
         },
       };
-      const entry: VersionEntry = {
-        version: 1,
-        actor: scope.actor,
-        createdAt: at.toISOString(),
-        operations: [],
-        diff: [],
-        createdIds: input.createdIds ?? [],
-        status: input.status,
-        ...(input.message ? { message: input.message } : {}),
-        ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}),
-        snapshot: { schemaVersion: input.schemaVersion, content: input.content },
-      };
-      await mutex.run(lockKey(scope, id), async () => {
-        await writeJsonAtomic(paths.history(1), entry);
-        if (input.idempotencyKey) {
-          await writeJsonAtomic(paths.idempotency(input.idempotencyKey), {
-            key: input.idempotencyKey,
-            version: 1,
-          } satisfies IdempotencyRecord);
-        }
-        await writeJsonAtomic(paths.head, artifact);
-        // Written after the head (the commit point), so a crash never indexes a missing artifact.
-        if (input.idempotencyKey) {
-          await mkdir(dirname(createKeyFile(scope, input.idempotencyKey)), { recursive: true });
-          await writeJsonAtomic(createKeyFile(scope, input.idempotencyKey), {
-            key: input.idempotencyKey,
-            id,
-          });
-        }
-      });
+      await mutex.run(lockKey(scope, id), () => writeJsonAtomic(files(scope, id).head, artifact));
       return artifact;
-    },
-
-    async findCreatedByIdempotencyKey(scope, key) {
-      const record = await readJson<{ key: string; id: string }>(createKeyFile(scope, key));
-      if (!record || record.key !== key) return null;
-      const head = await readHead(scope, record.id);
-      const creator = head?.meta.createdBy;
-      return head && creator?.type === scope.actor.type && creator.id === scope.actor.id ? head : null;
     },
 
     async commit(scope, id, change: Commit) {
@@ -236,64 +159,20 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
             { details: { currentVersion: current.version } },
           );
         }
-        const paths = files(scope, id);
-        const at = now().toISOString();
-        const version = current.version + 1;
         const next: Artifact = {
           ...current,
-          schemaVersion: change.schemaVersion,
-          version,
+          formatVersion: change.formatVersion,
+          version: current.version + 1,
           title: change.title,
           locale: change.locale,
           themeId: change.themeId,
-          status: change.status ?? current.status,
           content: structuredClone(change.content),
-          meta: { ...current.meta, updatedAt: at, updatedBy: scope.actor },
+          meta: { ...current.meta, updatedAt: now().toISOString(), updatedBy: scope.actor },
         };
-        const entry: VersionEntry = {
-          version,
-          actor: scope.actor,
-          createdAt: at,
-          operations: change.operations,
-          diff: change.diff,
-          createdIds: change.createdIds ?? [],
-          status: next.status,
-          ...(change.message ? { message: change.message } : {}),
-          ...(change.idempotencyKey ? { idempotencyKey: change.idempotencyKey } : {}),
-          ...(change.restoredFrom ? { restoredFrom: change.restoredFrom } : {}),
-          ...(version % snapshotEvery === 0
-            ? { snapshot: { schemaVersion: change.schemaVersion, content: change.content } }
-            : {}),
-        };
-        // Order matters for crash safety: everything a reader may follow is written before head.json,
-        // the commit point. Files left by an interrupted commit are ignored (version > head) and overwritten.
-        await writeJsonAtomic(paths.version(current.version), current);
-        await writeJsonAtomic(paths.history(version), entry);
-        if (change.idempotencyKey) {
-          await writeJsonAtomic(paths.idempotency(change.idempotencyKey), {
-            key: change.idempotencyKey,
-            version,
-          } satisfies IdempotencyRecord);
-        }
-        await writeJsonAtomic(paths.head, next);
+        // A single rename of head.json is the commit point: an interrupted write leaves the previous head in place.
+        await writeJsonAtomic(files(scope, id).head, next);
         return next;
       });
-    },
-
-    async history(scope, id, page) {
-      const head = await requireHead(scope, id);
-      const { start, limit } = paginateOffset(head.version, page);
-      const versions: number[] = [];
-      for (let v = head.version - start; v >= 1 && versions.length < limit; v--) versions.push(v);
-      const paths = files(scope, id);
-      const entries = await mapLimit(versions, READ_CONCURRENCY, async (v) => {
-        const entry = await readJson<VersionEntry>(paths.history(v));
-        if (!entry) throw new Error(`artkit fs store: history entry ${v} of ${id} is missing`);
-        return withHeadStatus(entry, head);
-      });
-      return start + limit < head.version
-        ? { items: entries, nextCursor: String(start + limit) }
-        : { items: entries };
     },
 
     async list(scope, filter: ArtifactFilter, page) {
@@ -309,8 +188,7 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
       const title = filter.title?.toLowerCase();
       for (const artifact of heads) {
         if (!artifact) continue;
-        if (filter.kind && artifact.kind !== filter.kind) continue;
-        if (filter.status && artifact.status !== filter.status) continue;
+        if (filter.format && artifact.format !== filter.format) continue;
         if (title && !artifact.title.toLowerCase().includes(title)) continue;
         if (filter.tag && !artifact.meta.tags.includes(filter.tag)) continue;
         items.push(summarize(artifact));
@@ -324,36 +202,6 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
       return start + limit < items.length
         ? { items: slice, nextCursor: String(start + limit) }
         : { items: slice };
-    },
-
-    async setStatus(scope, id, status: ArtifactStatus, actor: Actor, message?: string) {
-      if (!validId(id)) return notFound(String(id));
-      return mutex.run(lockKey(scope, id), async () => {
-        const current = await requireHead(scope, id);
-        const at = now().toISOString();
-        const updated: Artifact = {
-          ...current,
-          status,
-          meta: {
-            ...current.meta,
-            updatedAt: at,
-            updatedBy: actor,
-            ...(status === 'published' ? { publishedVersion: current.version } : {}),
-          },
-        };
-        const paths = files(scope, id);
-        await writeJsonAtomic(paths.head, updated);
-        const entry = await readJson<VersionEntry>(paths.history(current.version));
-        if (entry) {
-          const change = { status, actor, at, ...(message ? { message } : {}) };
-          await writeJsonAtomic(paths.history(current.version), {
-            ...entry,
-            status,
-            statusLog: [...(entry.statusLog ?? []), change],
-          });
-        }
-        return updated;
-      });
     },
 
     async lock(scope, id, actor, ttlMs) {
@@ -399,17 +247,6 @@ export function createFsStore(options: FsStoreOptions): ArtifactStore {
         await requireHead(scope, id);
         return activeLock(scope, id);
       });
-    },
-
-    async findByIdempotencyKey(scope, id, key) {
-      const head = await requireHead(scope, id);
-      const paths = files(scope, id);
-      const record = await readJson<IdempotencyRecord>(paths.idempotency(key));
-      // Records left by an interrupted commit point past the head or at an entry with another key.
-      if (!record || record.key !== key || record.version > head.version) return null;
-      const entry = await readJson<VersionEntry>(paths.history(record.version));
-      if (!entry || entry.idempotencyKey !== key) return null;
-      return withHeadStatus(entry, head);
     },
   };
   return store;

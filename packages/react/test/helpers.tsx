@@ -15,7 +15,7 @@ import {
   type ArtifactProviderProps,
   createServiceClient,
 } from '../src/index.js';
-import { noteKind } from './note-kind.js';
+import { noteFormat } from './note-format.js';
 
 export const user: Scope = { workspaceId: 'ws', actor: { type: 'user', id: 'u1' } };
 export const agent: Scope = { workspaceId: 'ws', actor: { type: 'agent', id: 'a1' } };
@@ -30,10 +30,10 @@ type NoteOperation =
   | { op: 'remove'; id: string };
 
 export function setup(options: Partial<ArtifactServiceOptions> = {}) {
-  const registry = createRegistry({ kinds: [noteKind] });
+  const registry = createRegistry({ formats: [noteFormat] });
   registry.registerExporter({
-    kind: 'note',
-    format: 'md',
+    format: 'note',
+    target: 'md',
     mimeType: 'text/markdown',
     extension: 'md',
     runtime: 'any',

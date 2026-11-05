@@ -12,15 +12,13 @@ import {
 } from '../src/index.js';
 
 describe('built-in tasks', () => {
-  const tasks = defaultTasks();
+  const tasks = defaultTasks;
 
-  it('cover every category and kind of spec §21.2', () => {
+  it('cover every category and format of spec §23.2', () => {
     expect(new Set(tasks.map((t) => t.category))).toEqual(
-      new Set(['create', 'edit', 'fix', 'restructure', 'large', 'cross']),
+      new Set(['create', 'edit', 'restructure', 'cross']),
     );
-    expect(new Set(tasks.flatMap((t) => t.kinds))).toEqual(
-      new Set(['document', 'sheet', 'slides', 'diagram']),
-    );
+    expect(new Set(tasks.flatMap((t) => t.formats))).toEqual(new Set(['markdown', 'univer-sheet', 'openui']));
     expect(new Set(tasks.map((t) => t.id)).size).toBe(tasks.length);
   });
 
@@ -33,16 +31,8 @@ describe('built-in tasks', () => {
     });
   }
 
-  it('the conflict task really forces a VERSION_CONFLICT on the first apply', async () => {
-    const run = await runReference(tasks.find((t) => t.id === 'diagram-fix-after-conflict')!);
-    const applies = run.calls.filter((c) => c.name === 'artifact_apply');
-    expect(applies[0]).toMatchObject({ ok: false, code: 'VERSION_CONFLICT' });
-    expect(applies[1]?.ok).toBe(true);
-    expect(run.corrections).toBe(1);
-  });
-
   it('checks fail on wrong answers', async () => {
-    const task = tasks.find((t) => t.id === 'slides-restructure')!;
+    const task = tasks.find((t) => t.id === 'openui-edit-deck')!;
     const wrong = { ...task, reference: async () => {} };
     const run = await runReference(wrong);
     expect(run.check.passed).toBe(false);
@@ -52,7 +42,7 @@ describe('built-in tasks', () => {
 
 describe('runner with a scripted model', () => {
   it('measures a full ToolLoopAgent run end to end', async () => {
-    const task = defaultTasks().find((t) => t.id === 'document-edit-point')!;
+    const task = defaultTasks.find((t) => t.id === 'markdown-edit-section')!;
     const model = createScriptedModel([
       (prompt) => ({
         toolCalls: [{ name: 'artifact_read', input: { id: lastArtifactId(prompt), mode: 'full' } }],
@@ -65,7 +55,7 @@ describe('runner with a scripted model', () => {
             input: {
               id: lastArtifactId(prompt),
               baseVersion: 1,
-              operations: [{ op: 'replace_text', id: 'prazo', find: '99 semanas', replace: 'x' }],
+              operations: [{ op: 'replace_text', section: 'cronograma', find: '99 semanas', replace: 'x' }],
             },
           },
         ],
@@ -78,12 +68,7 @@ describe('runner with a scripted model', () => {
               id: lastArtifactId(prompt),
               baseVersion: 1,
               operations: [
-                { op: 'replace_text', id: 'prazo', find: '16 semanas', replace: '18 semanas' },
-                {
-                  op: 'insert_block',
-                  after: 'prazo',
-                  block: { type: 'paragraph', runs: [{ text: 'Inclui operação assistida de 4 semanas.' }] },
-                },
+                { op: 'replace_text', section: 'cronograma', find: '16 semanas', replace: '12 semanas' },
               ],
             },
           },
@@ -104,14 +89,14 @@ describe('runner with a scripted model', () => {
       validFirstTry: false,
       corrections: 1,
       successWithinTwo: true,
-      operations: 2,
+      operations: 1,
       toolCalls: 3,
     });
     expect(run.inputTokens).toBeGreaterThan(0);
   });
 
   it('runs the matrix and builds a report with skill gain and exit criteria', async () => {
-    const task = defaultTasks().find((t) => t.id === 'sheet-create-estimate')!;
+    const task = defaultTasks.find((t) => t.id === 'sheet-create-estimate')!;
     const report = await runEvals({
       tasks: [task],
       models: [
@@ -128,25 +113,27 @@ describe('runner with a scripted model', () => {
     });
     expect(report.runs).toHaveLength(4);
     expect(report.rows.map((r) => r.key).sort()).toEqual([
-      'sheet|scripted|default|no-skill',
-      'sheet|scripted|default|skill',
-      'sheet|scripted|strict|no-skill',
-      'sheet|scripted|strict|skill',
+      'univer-sheet|scripted|default|no-skill',
+      'univer-sheet|scripted|default|skill',
+      'univer-sheet|scripted|strict|no-skill',
+      'univer-sheet|scripted|strict|skill',
     ]);
-    expect(report.criteria).toEqual([{ kind: 'sheet', model: 'scripted', successRate: 0, passed: false }]);
+    expect(report.criteria).toEqual([
+      { format: 'univer-sheet', model: 'scripted', successRate: 0, passed: false },
+    ]);
     expect(report.passed).toBe(false);
     const markdown = reportToMarkdown(report);
-    expect(markdown).toContain('| sheet | scripted | default | yes | 1 |');
+    expect(markdown).toContain('| univer-sheet | scripted | default | yes | 1 |');
     expect(markdown).toContain('## Failed runs');
   });
 
-  it('aggregates multi-kind tasks into each kind', () => {
+  it('aggregates multi-format tasks into each format', () => {
     const report = buildReport(
       [
         {
           taskId: 'x',
           category: 'cross',
-          kinds: ['sheet', 'document'],
+          formats: ['sheet', 'document'],
           model: 'm',
           profile: 'default',
           skill: true,
@@ -166,7 +153,7 @@ describe('runner with a scripted model', () => {
       ],
       { startedAt: 'now', threshold: 0.9 },
     );
-    expect(report.criteria.map((c) => c.kind).sort()).toEqual(['document', 'sheet']);
+    expect(report.criteria.map((c) => c.format).sort()).toEqual(['document', 'sheet']);
     expect(report.passed).toBe(true);
   });
 });

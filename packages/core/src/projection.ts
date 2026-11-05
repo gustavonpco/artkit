@@ -1,6 +1,24 @@
-import type { Projection, ProjectionOptions } from './kind.js';
+import type { ReadMode } from './adapter.js';
 
 export const DEFAULT_CHARS_PER_TOKEN = 4;
+
+export interface Projection {
+  text: string;
+  truncated: boolean;
+  /** Present when truncated: pass it back to continue reading. */
+  cursor?: string;
+  /** Outline of what was left out, so the model can jump with `range`. */
+  remainingOutline?: string;
+}
+
+export interface ProjectionOptions {
+  mode: ReadMode;
+  /** Format-specific range: anchors, A1 ranges, declaration names or 1-based positions ("3-5"). */
+  range?: string;
+  maxTokens?: number;
+  cursor?: string;
+  charsPerToken?: number;
+}
 
 export function estimateTokens(text: string, charsPerToken = DEFAULT_CHARS_PER_TOKEN): number {
   return Math.ceil(text.length / Math.max(1, charsPerToken));
@@ -9,7 +27,7 @@ export function estimateTokens(text: string, charsPerToken = DEFAULT_CHARS_PER_T
 /** One unit of projected text. Truncation only happens between items. */
 export interface ProjectionItem {
   id: string;
-  /** Full text for `full` and `range` modes. */
+  /** Full text for `full`, `section` and `range` modes. */
   text: string;
   /** One-line summary used for `outline` and for the remaining outline after truncation. */
   outline: string;
@@ -32,8 +50,8 @@ function decodeCursor(cursor: string | undefined): number {
 }
 
 /**
- * Joins items under a token budget (spec §9.2). When the budget runs out, the text is cut at an item
- * boundary and a cursor plus the outline of the remaining items is returned.
+ * Joins items under a token budget (spec §10.2 of the reading rules). When the budget runs out, the text is cut at an
+ * item boundary and a cursor plus the outline of the remaining items is returned.
  */
 export function paginate(items: ProjectionItem[], options: PaginateOptions = {}): Projection {
   const start = Math.min(decodeCursor(options.cursor), items.length);
@@ -65,7 +83,7 @@ export function paginate(items: ProjectionItem[], options: PaginateOptions = {})
   return { text: parts.join('\n'), truncated: false };
 }
 
-/** Wraps a projection between explicit data markers so the model treats it as data, not instructions (spec §16). */
+/** Wraps a projection between explicit data markers so the model treats it as data, not instructions (spec §18). */
 export function delimitProjection(artifactId: string, text: string): string {
   return `<artifact-content id="${artifactId}">\n${text}\n</artifact-content>`;
 }
@@ -110,14 +128,14 @@ function resolvePosition(ids: readonly string[], token: string): number | undefi
   return undefined;
 }
 
-/** Applies mode/range/budget to a list of items. Kinds with simple ordered items can use it directly. */
+/** Applies mode/range/budget to a list of items. Adapters with ordered items can use it directly. */
 export function projectItems(
   items: ProjectionItem[],
   options: ProjectionOptions,
   extras: { header?: string; footer?: string } = {},
 ): Projection {
   let selected = items;
-  if (options.mode === 'range') {
+  if (options.mode === 'range' || options.mode === 'statements' || options.mode === 'section') {
     const ids = selectRange(
       items.map((item) => item.id),
       options.range,

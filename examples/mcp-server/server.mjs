@@ -7,14 +7,13 @@ import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { createArtifactToolkit } from '@artkit-ai/agent';
 import { createRegistry } from '@artkit-ai/core';
-import { diagramKind } from '@artkit-ai/kind-diagram';
-import { diagramExporters } from '@artkit-ai/kind-diagram/export';
-import { documentKind } from '@artkit-ai/kind-document';
-import { documentExporters } from '@artkit-ai/kind-document/export';
-import { sheetKind } from '@artkit-ai/kind-sheet';
-import { sheetExporters } from '@artkit-ai/kind-sheet/export';
-import { slidesKind } from '@artkit-ai/kind-slides';
-import { slidesExporters } from '@artkit-ai/kind-slides/export';
+import { markdownDocxExporter } from '@artkit-ai/export-docx';
+import { deckPptxExporter } from '@artkit-ai/export-pptx';
+import { sheetXlsxExporter } from '@artkit-ai/export-xlsx';
+import { markdownFormat } from '@artkit-ai/format-markdown';
+import { markdownExporters } from '@artkit-ai/format-markdown/export';
+import { openuiFormat } from '@artkit-ai/format-openui';
+import { sheetFormat } from '@artkit-ai/format-sheet/server';
 import { connectStdio, createArtkitMcpServer } from '@artkit-ai/mcp';
 import { createFsAssetStore, createFsStore } from '@artkit-ai/node';
 
@@ -33,8 +32,8 @@ if (!['default', 'strict', 'compact'].includes(values.profile)) {
 
 const dir = resolve(values.dir);
 const registry = createRegistry({
-  kinds: [documentKind, sheetKind, slidesKind, diagramKind],
-  exporters: [...documentExporters, ...sheetExporters, ...slidesExporters, ...diagramExporters],
+  formats: [markdownFormat, sheetFormat, openuiFormat],
+  exporters: [...markdownExporters, markdownDocxExporter, sheetXlsxExporter, deckPptxExporter],
 });
 const toolkit = createArtifactToolkit({
   registry,

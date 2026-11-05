@@ -3,13 +3,13 @@ import { ArrowUpRight } from 'lucide-react';
 import { type ReactNode, useId } from 'react';
 import { useArtkit } from '../context.js';
 import { KindIcon } from './icons.js';
-import { cx, kindLabel, rootAttributes, type Slots, StatusBadge, slot } from './shared.js';
+import { cx, formatLabel, rootAttributes, type Slots, slot } from './shared.js';
 
 export type ArtifactCardPart = 'body' | 'title' | 'meta' | 'open';
 
 export interface ArtifactCardProps {
   /** Summary or full artifact (only the summary fields are used). */
-  artifact: Pick<ArtifactSummary, 'id' | 'kind' | 'title' | 'version' | 'status'>;
+  artifact: Pick<ArtifactSummary, 'id' | 'format' | 'title' | 'version'>;
   onOpen?(artifact: ArtifactCardProps['artifact']): void;
   /** Render the open action as a link instead of a button. */
   href?: string;
@@ -23,7 +23,7 @@ export interface ArtifactCardProps {
   slots?: Slots<ArtifactCardPart>;
 }
 
-/** Compact card for chat messages: title, kind, version, status and an open action (spec §13.1). */
+/** Compact card for chat messages: title, format, version and an open action (spec §13.1). */
 export function ArtifactCard(props: ArtifactCardProps) {
   const ctx = useArtkit();
   const { t } = ctx;
@@ -35,11 +35,11 @@ export function ArtifactCard(props: ArtifactCardProps) {
       className={cx('ak-root ak-card', props.className)}
       {...rootAttributes(ctx)}
       aria-labelledby={titleId}
-      data-kind={artifact.kind}
+      data-format={artifact.format}
     >
       {props.icon ?? (
         <span className="ak-card-icon">
-          <KindIcon kind={artifact.kind} />
+          <KindIcon format={artifact.format} />
         </span>
       )}
       <div {...slot(props.slots, 'body', 'ak-card-body')}>
@@ -47,12 +47,11 @@ export function ArtifactCard(props: ArtifactCardProps) {
           {artifact.title}
         </h3>
         <div {...slot(props.slots, 'meta', 'ak-card-meta')}>
-          <span>{kindLabel(ctx, artifact.kind)}</span>
+          <span>{formatLabel(ctx, artifact.format)}</span>
           <span>
             <span className="ak-sr-only">{`${t('version')} ${artifact.version}`}</span>
             <span aria-hidden="true">{t('versionShort', { version: artifact.version })}</span>
           </span>
-          <StatusBadge status={artifact.status} />
           {props.streaming ? (
             <span className="ak-badge" data-variant="provisional" role="status">
               {t('generating')}

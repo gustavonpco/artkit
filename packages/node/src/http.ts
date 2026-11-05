@@ -1,11 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { Readable } from 'node:stream';
 import {
-  ARTIFACT_STATUSES,
   ArtifactError,
   type ArtifactFilter,
   type ArtifactService,
-  type ArtifactStatus,
   type CreateRequest,
   catalogLocale,
   type ErrorCode,
@@ -13,7 +11,7 @@ import {
   isArtifactError,
   type Lock,
   type Logger,
-  type ProjectionMode,
+  type ReadMode,
   type Scope,
   silentLogger,
   t,
@@ -48,8 +46,7 @@ const DEFAULT_MAX_BODY_BYTES = 6 * 1024 * 1024;
 const DEFAULT_MAX_LOCK_TTL_MS = 60 * 60 * 1000;
 const MAX_KEY_LENGTH = 256;
 const MAX_MESSAGE_LENGTH = 4000;
-const STATUS_ACTIONS = ['submit', 'approve', 'reject', 'publish', 'archive'] as const;
-const READ_MODES: readonly ProjectionMode[] = ['outline', 'full', 'range'];
+const READ_MODES: readonly ReadMode[] = ['outline', 'section', 'statements', 'range', 'full'];
 
 /** HTTP status for each error code of the catalog (docs/CONVENTIONS.md, HTTP contract). */
 export function httpStatusForError(code: ErrorCode): number {
@@ -57,7 +54,6 @@ export function httpStatusForError(code: ErrorCode): number {
     case 'NOT_FOUND':
       return 404;
     case 'PERMISSION_DENIED':
-    case 'APPROVAL_REQUIRED':
       return 403;
     case 'VERSION_CONFLICT':
       return 409;
@@ -69,7 +65,7 @@ export function httpStatusForError(code: ErrorCode): number {
     case 'INTERNAL_ERROR':
       return 500;
     default:
-      // INVALID_*, UNSUPPORTED_VERSION, MIGRATION_FAILED, OPERATION_FAILED, UNKNOWN_KIND, ASSET_REJECTED…
+      // INVALID_*, UNSUPPORTED_FORMAT_VERSION, MIGRATION_FAILED, OPERATION_FAILED, UNKNOWN_FORMAT, ASSET_REJECTED…
       return 422;
   }
 }
@@ -195,9 +191,9 @@ function contentDisposition(filename: string): string {
 type Route =
   | { name: 'collection' }
   | { name: 'artifact'; id: string }
-  | { name: 'read' | 'apply' | 'preview' | 'history' | 'restore' | 'status' | 'lock' | 'export'; id: string };
+  | { name: 'read' | 'apply' | 'preview' | 'lock' | 'export'; id: string };
 
-const SUB_ROUTES = ['read', 'apply', 'preview', 'history', 'restore', 'status', 'lock', 'export'] as const;
+const SUB_ROUTES = ['read', 'apply', 'preview', 'lock', 'export'] as const;
 
 const ALLOWED_METHODS: Record<Route['name'], readonly string[]> = {
   collection: ['GET', 'POST'],
@@ -205,9 +201,6 @@ const ALLOWED_METHODS: Record<Route['name'], readonly string[]> = {
   read: ['GET'],
   apply: ['POST'],
   preview: ['POST'],
-  history: ['GET'],
-  restore: ['POST'],
-  status: ['POST'],
   lock: ['GET', 'POST', 'DELETE'],
   export: ['POST'],
 };
@@ -326,15 +319,11 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
     const operations = Array.isArray(body.operations)
       ? (body.operations as unknown[])
       : v.fail('operations', m.expectedArray);
-    const idempotencyKey = v.string(body.idempotencyKey, 'idempotencyKey', { max: MAX_KEY_LENGTH });
-    const message = v.string(body.message, 'message');
     v.throwIfInvalid(locale);
     return {
       artifactId: id,
       baseVersion: baseVersion!,
       operations: operations!,
-      ...(idempotencyKey ? { idempotencyKey } : {}),
-      ...(message ? { message } : {}),
     };
   }
 
@@ -345,20 +334,14 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
       case 'collection': {
         if (method === 'GET') {
           const v = new Validator(m);
-          const status = v.oneOf<ArtifactStatus>(
-            query.get('status') ?? undefined,
-            ARTIFACT_STATUSES,
-            'query.status',
-          );
           const limit = v.int(query.get('limit') ?? undefined, 'query.limit', { max: 500 });
           const filter: ArtifactFilter = {};
-          for (const key of ['kind', 'title', 'tag'] as const) {
+          for (const key of ['format', 'title', 'tag'] as const) {
             const value = v.string(query.get(key) ?? undefined, `query.${key}`, { max: 200 });
             if (value) filter[key] = value;
           }
           const cursor = v.string(query.get('cursor') ?? undefined, 'query.cursor', { max: MAX_KEY_LENGTH });
           v.throwIfInvalid(locale);
-          if (status) filter.status = status;
           return json(
             200,
             await service.list(scope, filter, { ...(limit ? { limit } : {}), ...(cursor ? { cursor } : {}) }),
@@ -366,12 +349,8 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
         }
         const body = await bodyObject(request, true);
         const v = new Validator(m);
-        const kind = v.string(body.kind, 'kind', { required: true, max: 64 });
+        const format = v.string(body.format, 'format', { required: true, max: 64 });
         const title = v.string(body.title, 'title', { required: true, max: 1000 });
-        const inputObject = v.object(body.input, 'input');
-        const inputFormat = inputObject
-          ? v.string(inputObject.format, 'input.format', { required: true, max: 64 })
-          : undefined;
         const artifactLocale = v.string(body.locale, 'locale', { max: 64 });
         const themeId = v.string(body.themeId, 'themeId', { max: 64 });
         let tags: string[] | undefined;
@@ -380,30 +359,21 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
           else
             tags = body.tags.map((tag, i) => v.string(tag, `tags[${i}]`, { required: true, max: 64 }) ?? '');
         }
-        const message = v.string(body.message, 'message');
-        const idempotencyKey = v.string(body.idempotencyKey, 'idempotencyKey', { max: MAX_KEY_LENGTH });
         v.throwIfInvalid(locale);
         // Only known fields are forwarded: workspace or actor ids in the body are ignored.
         const create: CreateRequest = {
-          kind: kind!,
+          format: format!,
           title: title!,
           ...(body.content !== undefined ? { content: body.content } : {}),
-          ...(inputObject ? { input: { format: inputFormat!, source: inputObject.source } } : {}),
           ...(artifactLocale ? { locale: artifactLocale } : {}),
           ...(themeId ? { themeId } : {}),
           ...(tags ? { tags } : {}),
-          ...(message ? { message } : {}),
-          ...(idempotencyKey ? { idempotencyKey } : {}),
         };
         return json(200, await service.create(scope, create));
       }
 
-      case 'artifact': {
-        const v = new Validator(m);
-        const version = v.int(query.get('version') ?? undefined, 'query.version');
-        v.throwIfInvalid(locale);
-        return json(200, await service.get(scope, route.id, version === undefined ? undefined : { version }));
-      }
+      case 'artifact':
+        return json(200, await service.get(scope, route.id));
 
       case 'read': {
         const v = new Validator(m);
@@ -411,7 +381,6 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
         const range = v.string(query.get('range') ?? undefined, 'query.range', { max: 500 });
         const maxTokens = v.int(query.get('maxTokens') ?? undefined, 'query.maxTokens');
         const cursor = v.string(query.get('cursor') ?? undefined, 'query.cursor', { max: MAX_KEY_LENGTH });
-        const version = v.int(query.get('version') ?? undefined, 'query.version');
         v.throwIfInvalid(locale);
         return json(
           200,
@@ -420,7 +389,6 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
             ...(range !== undefined ? { range } : {}),
             ...(maxTokens !== undefined ? { maxTokens } : {}),
             ...(cursor !== undefined ? { cursor } : {}),
-            ...(version !== undefined ? { version } : {}),
           }),
         );
       }
@@ -433,45 +401,6 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
           200,
           await service.preview(scope, applyRequest(route.id, await bodyObject(request, true))),
         );
-
-      case 'history': {
-        const v = new Validator(m);
-        const limit = v.int(query.get('limit') ?? undefined, 'query.limit', { max: 500 });
-        const cursor = v.string(query.get('cursor') ?? undefined, 'query.cursor', { max: MAX_KEY_LENGTH });
-        v.throwIfInvalid(locale);
-        return json(
-          200,
-          await service.history(scope, route.id, {
-            ...(limit ? { limit } : {}),
-            ...(cursor ? { cursor } : {}),
-          }),
-        );
-      }
-
-      case 'restore': {
-        const body = await bodyObject(request, true);
-        const v = new Validator(m);
-        const version = v.int(body.version, 'version', { required: true });
-        const message = v.string(body.message, 'message');
-        v.throwIfInvalid(locale);
-        return json(200, await service.restore(scope, route.id, version!, message));
-      }
-
-      case 'status': {
-        const body = await bodyObject(request, true);
-        const v = new Validator(m);
-        const action = v.oneOf(body.action, STATUS_ACTIONS, 'action', true);
-        const message = v.string(body.message, 'message');
-        v.throwIfInvalid(locale);
-        const run = {
-          submit: () => service.submit(scope, route.id, message),
-          approve: () => service.approve(scope, route.id, message),
-          reject: () => service.reject(scope, route.id, message),
-          publish: () => service.publish(scope, route.id),
-          archive: () => service.archive(scope, route.id),
-        }[action!];
-        return json(200, await run());
-      }
 
       case 'lock': {
         if (method === 'GET') return json(200, await service.getLock(scope, route.id));
@@ -509,14 +438,12 @@ export function createArtifactRoutes(options: ArtifactRoutesOptions): ArtifactRo
         const body = await bodyObject(request, true);
         const v = new Validator(m);
         const format = v.string(body.format, 'format', { required: true, max: 32 });
-        const version = v.int(body.version, 'version');
         const exportOptions = v.object(body.options, 'options');
         v.throwIfInvalid(locale);
         const result = await service.export(scope, {
           artifactId: route.id,
           format: format!,
           signal: request.signal,
-          ...(version !== undefined ? { version } : {}),
           ...(exportOptions ? { options: exportOptions } : {}),
         });
         return new Response(result.bytes as Uint8Array<ArrayBuffer>, {

@@ -1,0 +1,81 @@
+{
+  "name": "@artkit-ai/format-sheet",
+  "version": "0.1.0",
+  "description": "Spreadsheet native format for artkit: Univer IWorkbookData, A1 compact reading, operations executed on Univer headless, lint and diff.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts",
+    "spreadsheet",
+    "univer"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./server": {
+      "@artkit/source": "./src/server/index.ts",
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js"
+    },
+    "./package.json": "./package.json",
+    "./react": {
+      "@artkit/source": "./src/react/index.ts",
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./react/univer": {
+      "@artkit/source": "./src/react/univer.tsx",
+      "types": "./dist/react/univer.d.ts",
+      "import": "./dist/react/univer.js"
+    },
+    "./engine": {
+      "@artkit/source": "./src/univer-engine.ts",
+      "types": "./dist/univer-engine.d.ts",
+      "import": "./dist/univer-engine.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
+    "directory": "packages/format-sheet"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@artkit-ai/core": "workspace:^",
+    "@univerjs/core": "1.3.1",
+    "@univerjs/engine-formula": "1.3.1",
+    "@univerjs/sheets": "1.3.1",
+    "@univerjs/sheets-formula": "1.3.1",
+    "zod": "^4.6.7",
+    "@artkit-ai/react": "workspace:^",
+    "@univerjs/presets": "1.3.1",
+    "@univerjs/preset-sheets-core": "1.3.1",
+    "@univerjs/preset-sheets-data-validation": "1.3.1",
+    "@univerjs/sheets-data-validation": "1.3.1"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

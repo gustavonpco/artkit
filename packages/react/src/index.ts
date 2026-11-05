@@ -11,20 +11,13 @@ export {
   type HttpClientOptions,
   type ReadOptions,
   type RequestOptions,
-  STATUS_ACTIONS,
-  type StatusAction,
 } from './client.js';
-export {
-  ArtifactApproval,
-  type ArtifactApprovalPart,
-  type ArtifactApprovalProps,
-} from './components/approval.js';
 export { ArtifactCard, type ArtifactCardPart, type ArtifactCardProps } from './components/card.js';
 export {
   ArtifactEditor,
   type ArtifactEditorPart,
   type ArtifactEditorProps,
-  type EditorPermission,
+  type SaveEvent,
 } from './components/editor.js';
 export {
   ArtifactPanel,
@@ -32,20 +25,12 @@ export {
   type ArtifactPanelProps,
   type PanelTab,
 } from './components/panel.js';
-export { type Slots, StatusBadge } from './components/shared.js';
-export {
-  ArtifactVersionDiff,
-  type ArtifactVersionDiffPart,
-  type ArtifactVersionDiffProps,
-  compareVersions,
-  type DiffLayout,
-  type VersionComparison,
-} from './components/version-diff.js';
+export type { Slots } from './components/shared.js';
 export {
   ArtifactView,
   type ArtifactViewPart,
   type ArtifactViewProps,
-  KindRenderer,
+  FormatRenderer,
   previewContent,
 } from './components/view.js';
 export {
@@ -92,17 +77,10 @@ export {
 } from './controls.js';
 export { triggerDownload } from './download.js';
 export {
-  type ConflictChoice,
-  EditorSession,
-  type EditorSessionOptions,
-  type EditorSessionState,
-  type EnvelopeState,
-  envelopeOf,
-  operationsBetween,
-  type SendRequest,
-  type SessionConflict,
-  type SessionEvent,
-  type SessionStatus,
+  DraftSession,
+  type DraftSessionOptions,
+  type DraftSnapshot,
+  type EmitOptions,
 } from './editor-session.js';
 export {
   type ApplyConflict,
@@ -110,13 +88,11 @@ export {
   type ExportOptions,
   type UseApplyOperationsResult,
   type UseArtifactExportResult,
-  type UseArtifactHistoryResult,
   type UseArtifactOptions,
   type UseArtifactResult,
   useApplyOperations,
   useArtifact,
   useArtifactExport,
-  useArtifactHistory,
   useLatestVersion,
 } from './hooks.js';
 export {
@@ -128,14 +104,6 @@ export {
   uiMessages,
 } from './i18n.js';
 export { kitCss } from './kit-css.js';
-export {
-  diffLines,
-  type LineDiffEntry,
-  type LineDiffOptions,
-  type LineDiffType,
-  type SplitRow,
-  toSplitRows,
-} from './line-diff.js';
 export { parsePartialJson } from './partial-json.js';
 export { ArtifactProvider, type ArtifactProviderProps } from './provider.js';
 export { artkitCss, darkTheme, mixColors, themeStyles } from './styles.js';

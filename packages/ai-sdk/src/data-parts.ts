@@ -31,10 +31,9 @@ export function writeArtifactDataPart(writer: ArtifactPartWriter, artifact: Arti
     id: artifact.id,
     data: {
       id: artifact.id,
-      kind: artifact.kind,
+      format: artifact.format,
       title: artifact.title,
       version: artifact.version,
-      status: artifact.status,
     },
   });
 }

@@ -8,8 +8,6 @@ export {
   writeArtifactDataPart,
 } from './data-parts.js';
 export {
-  type ApprovalState,
-  type ArtifactApproval,
   type ArtifactPreview,
   type ArtifactState,
   type DeriveArtifactsOptions,
@@ -23,7 +21,6 @@ export {
   type ArtifactToolsOptions,
   artifactContextSchema,
   artifactInstructions,
-  artifactToolApproval,
   artifactTools,
   artifactToolsContext,
 } from './tools.js';

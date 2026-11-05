@@ -1,6 +1,6 @@
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { type Artifact, ArtifactError, type CommitResult, type Lock, type Scope } from '@artkit-ai/core';
+import { ArtifactError, type CommitResult, type Lock, type Scope } from '@artkit-ai/core';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createArtifactRoutes, httpStatusForError, toNodeHandler } from '../src/index.js';
 import { noteService } from './helpers.js';
@@ -39,7 +39,7 @@ async function createNote(call: ReturnType<typeof setup>['call'], headers: Recor
   const { status, json } = await call(
     'POST',
     '',
-    { kind: 'note', title: 'Plan', content: { items: [{ id: 'a', text: 'x' }] }, tags: ['t'] },
+    { format: 'note', title: 'Plan', content: { items: [{ id: 'a', text: 'x' }] }, tags: ['t'] },
     headers,
   );
   expect(status).toBe(200);
@@ -50,7 +50,6 @@ describe('createArtifactRoutes', () => {
   it('maps every error code to the contract status', () => {
     expect(httpStatusForError('NOT_FOUND')).toBe(404);
     expect(httpStatusForError('PERMISSION_DENIED')).toBe(403);
-    expect(httpStatusForError('APPROVAL_REQUIRED')).toBe(403);
     expect(httpStatusForError('VERSION_CONFLICT')).toBe(409);
     expect(httpStatusForError('LOCKED')).toBe(423);
     expect(httpStatusForError('LIMIT_EXCEEDED')).toBe(413);
@@ -61,7 +60,7 @@ describe('createArtifactRoutes', () => {
       'UNSUPPORTED_VERSION',
       'MIGRATION_FAILED',
       'OPERATION_FAILED',
-      'UNKNOWN_KIND',
+      'UNKNOWN_FORMAT',
       'ASSET_REJECTED',
     ] as const) {
       expect(httpStatusForError(code)).toBe(422);
@@ -90,14 +89,12 @@ describe('createArtifactRoutes', () => {
   it('creates, gets, lists and reads', async () => {
     const { call } = setup();
     const created = await createNote(call);
-    expect(created).toMatchObject({ version: 1, replayed: false });
+    expect(created).toMatchObject({ version: 1 });
     const id = created.artifact.id;
     expect((await call('GET', `/${id}`)).json).toMatchObject({ id, version: 1, title: 'Plan' });
-    expect((await call('GET', `/${id}?version=1`)).json.version).toBe(1);
-    expect((await call('GET', `/${id}?version=7`)).status).toBe(404);
-    const list = await call('GET', '?kind=note&tag=t&title=pla&status=draft&limit=10');
+    const list = await call('GET', '?format=note&tag=t&title=pla&limit=10');
     expect(list.json.items.map((s: { id: string }) => s.id)).toEqual([id]);
-    expect((await call('GET', '?kind=sheet')).json.items).toEqual([]);
+    expect((await call('GET', '?format=sheet')).json.items).toEqual([]);
     const read = await call('GET', `/${id}/read?mode=full&maxTokens=200`);
     expect(read.json).toMatchObject({ version: 1, projection: { truncated: false } });
     expect(read.json.text).toContain(`<artifact-content id="${id}">`);
@@ -105,17 +102,17 @@ describe('createArtifactRoutes', () => {
 
   it('validates query strings with model-readable issues', async () => {
     const { call } = setup();
-    const { status, json } = await call('GET', '?status=bogus&limit=0');
+    const { status, json } = await call('GET', '?limit=0&cursor=');
     expect(status).toBe(422);
     expect(json.error.code).toBe('INVALID_OPERATION');
-    expect(json.error.issues.map((i: { path: string }) => i.path)).toEqual(['query.status', 'query.limit']);
+    expect(json.error.issues.map((i: { path: string }) => i.path)).toEqual(['query.limit']);
     expect((await call('GET', '/art_1/read?mode=wide')).status).toBe(422);
   });
 
   it('never trusts workspace or actor ids from the body', async () => {
     const { call } = setup();
     const { json } = await call('POST', '', {
-      kind: 'note',
+      format: 'note',
       title: 'Spoof',
       workspaceId: 'ws_2',
       actor: { type: 'user', id: 'root' },
@@ -126,7 +123,7 @@ describe('createArtifactRoutes', () => {
     );
   });
 
-  it('applies, previews, conflicts and keeps history', async () => {
+  it('previews, applies and answers a stale base with VERSION_CONFLICT, without history routes', async () => {
     const { call } = setup();
     const id = (await createNote(call)).artifact.id;
     const preview = await call('POST', `/${id}/preview`, {
@@ -138,16 +135,8 @@ describe('createArtifactRoutes', () => {
     const applied = await call('POST', `/${id}/apply`, {
       baseVersion: 1,
       operations: [{ op: 'edit', id: 'a', text: 'y' }],
-      idempotencyKey: 'k1',
-      message: 'edit',
     });
-    expect(applied.json).toMatchObject({ version: 2, rebased: false });
-    const replay = await call('POST', `/${id}/apply`, {
-      baseVersion: 1,
-      operations: [{ op: 'edit', id: 'a', text: 'y' }],
-      idempotencyKey: 'k1',
-    });
-    expect(replay.json).toMatchObject({ version: 2, replayed: true });
+    expect(applied.json).toMatchObject({ version: 2 });
     const conflict = await call('POST', `/${id}/apply`, {
       baseVersion: 1,
       operations: [{ op: 'edit', id: 'a', text: 'z' }],
@@ -160,24 +149,18 @@ describe('createArtifactRoutes', () => {
     });
     expect(failed.status).toBe(422);
     expect(failed.json.error.code).toBe('OPERATION_FAILED');
-    const history = await call('GET', `/${id}/history?limit=1`);
-    expect(history.json).toMatchObject({ items: [{ version: 2, message: 'edit' }], nextCursor: '1' });
-    const restored = await call('POST', `/${id}/restore`, { version: 1 });
-    expect(restored.json).toMatchObject({
-      version: 3,
-      artifact: { content: { items: [{ id: 'a', text: 'x' }] } },
-    });
+    expect((await call('GET', `/${id}/history`)).response).toBeUndefined();
+    expect((await call('POST', `/${id}/restore`, { version: 1 })).response).toBeUndefined();
   });
 
   it('rejects malformed bodies with 422 and lists the fields', async () => {
     const { call } = setup();
     const id = (await createNote(call)).artifact.id;
-    const missing = await call('POST', `/${id}/apply`, { operations: 'nope', idempotencyKey: 5 });
+    const missing = await call('POST', `/${id}/apply`, { operations: 'nope' });
     expect(missing.status).toBe(422);
     expect(missing.json.error.issues.map((i: { path: string }) => i.path)).toEqual([
       'baseVersion',
       'operations',
-      'idempotencyKey',
     ]);
     const badJson = await call('POST', `/${id}/apply`, '{"baseVersion":');
     expect(badJson.status).toBe(422);
@@ -188,15 +171,15 @@ describe('createArtifactRoutes', () => {
     expect(text.status).toBe(422);
     const empty = await call('POST', `/${id}/apply`);
     expect(empty.json.error.issues).toEqual([{ path: 'body', message: 'Required field.' }]);
-    expect((await call('POST', '', { kind: 'nope', title: 'X' })).json.error.code).toBe('UNKNOWN_KIND');
-    expect((await call('POST', '', { kind: 'note', title: 'X', tags: [1] })).json.error.issues[0].path).toBe(
-      'tags[0]',
-    );
+    expect((await call('POST', '', { format: 'nope', title: 'X' })).json.error.code).toBe('UNKNOWN_FORMAT');
+    expect(
+      (await call('POST', '', { format: 'note', title: 'X', tags: [1] })).json.error.issues[0].path,
+    ).toBe('tags[0]');
   });
 
   it('limits body size by header and by streamed bytes', async () => {
     const { call, handler } = setup({ maxBodyBytes: 64 });
-    const big = { kind: 'note', title: 'x'.repeat(100) };
+    const big = { format: 'note', title: 'x'.repeat(100) };
     const declared = await call('POST', '', big);
     expect(declared.status).toBe(413);
     expect(declared.json.error.code).toBe('LIMIT_EXCEEDED');
@@ -204,7 +187,7 @@ describe('createArtifactRoutes', () => {
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
         for (let i = 0; i < 10; i++)
-          controller.enqueue(new TextEncoder().encode('{"kind":"note","title":"aaaaaaaaaa"}'));
+          controller.enqueue(new TextEncoder().encode('{"format":"note","title":"aaaaaaaaaa"}'));
         controller.close();
       },
     });
@@ -217,25 +200,12 @@ describe('createArtifactRoutes', () => {
     expect((await handler(request))?.status).toBe(413);
   });
 
-  it('runs the lifecycle through status actions', async () => {
+  it('has no status or approval routes: the harness owns saving and approval', async () => {
     const { call } = setup();
-    const agentHeaders = { 'x-actor': 'agent:a1' };
-    const id = (await createNote(call, agentHeaders)).artifact.id;
-    expect((await call('POST', `/${id}/status`, { action: 'publish' }, agentHeaders)).json.error.code).toBe(
-      'APPROVAL_REQUIRED',
-    );
-    expect(
-      (await call('POST', `/${id}/status`, { action: 'submit', message: 'review' }, agentHeaders)).json
-        .status,
-    ).toBe('pending_approval');
-    const denied = await call('POST', `/${id}/status`, { action: 'approve' }, agentHeaders);
-    expect(denied.status).toBe(403);
-    const approved = await call('POST', `/${id}/status`, { action: 'approve' });
-    expect((approved.json as Artifact).meta.publishedVersion).toBe(1);
-    expect((await call('POST', `/${id}/status`, { action: 'archive' })).json.status).toBe('archived');
-    expect((await call('POST', `/${id}/status`, { action: 'delete' })).json.error.issues[0].path).toBe(
-      'action',
-    );
+    const id = (await createNote(call)).artifact.id;
+    for (const action of ['submit', 'approve', 'publish', 'archive']) {
+      expect((await call('POST', `/${id}/status`, { action })).response).toBeUndefined();
+    }
   });
 
   it('locks and unlocks', async () => {
@@ -267,7 +237,7 @@ describe('createArtifactRoutes', () => {
   it('exports files with the contract headers', async () => {
     const { call } = setup();
     const created = await call('POST', '', {
-      kind: 'note',
+      format: 'note',
       title: 'Relatório Final',
       content: { items: [{ text: 'olá' }] },
     });
@@ -364,7 +334,7 @@ describe('toNodeHandler', () => {
     const created = await fetch(`${origin}/api/artifacts`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ kind: 'note', title: 'Over HTTP', content: { items: [{ text: 'hi' }] } }),
+      body: JSON.stringify({ format: 'note', title: 'Over HTTP', content: { items: [{ text: 'hi' }] } }),
     });
     expect(created.status).toBe(200);
     const { artifact } = (await created.json()) as CommitResult;
@@ -416,7 +386,7 @@ describe('toNodeHandler', () => {
     const parsed = await fetch(`${origin}/parsed`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ kind: 'note', title: 'Parsed' }),
+      body: JSON.stringify({ format: 'note', title: 'Parsed' }),
     });
     expect(parsed.status).toBe(200);
     expect(((await parsed.json()) as CommitResult).artifact.title).toBe('Parsed');

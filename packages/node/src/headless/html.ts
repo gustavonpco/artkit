@@ -68,7 +68,7 @@ export interface PrintPageOptions {
   locale: string;
   theme: Theme;
   page: PageSize;
-  /** CSS strings exported by the kind (`documentCss`…), appended after the theme variables. */
+  /** CSS strings exported by the format (`documentCss`…), appended after the theme variables. */
   css?: readonly string[];
 }
 

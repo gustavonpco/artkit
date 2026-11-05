@@ -1,0 +1,48 @@
+{
+  "name": "@artkit-ai/export-docx",
+  "version": "0.1.0",
+  "description": "docx exporter for artkit Markdown documents (docx library): headings, lists, tables, alert blocks and page breaks.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts",
+    "docx"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
+    "directory": "packages/export-docx"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/format-markdown": "workspace:^",
+    "docx": "^9.15.2"
+  }
+}

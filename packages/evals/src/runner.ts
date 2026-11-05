@@ -2,7 +2,6 @@ import { createArtifactToolkit, OVERVIEW_TOPIC } from '@artkit-ai/agent';
 import {
   artifactContextSchema,
   artifactInstructions,
-  artifactToolApproval,
   artifactTools,
   artifactToolsContext,
 } from '@artkit-ai/ai-sdk';
@@ -14,10 +13,9 @@ import {
   type SchemaProfile,
   type Scope,
 } from '@artkit-ai/core';
-import { diagramKind } from '@artkit-ai/kind-diagram';
-import { documentKind } from '@artkit-ai/kind-document';
-import { sheetKind } from '@artkit-ai/kind-sheet';
-import { slidesKind } from '@artkit-ai/kind-slides';
+import { markdownFormat } from '@artkit-ai/format-markdown';
+import { openuiFormat } from '@artkit-ai/format-openui';
+import { sheetFormat } from '@artkit-ai/format-sheet/server';
 import { isStepCount, ToolLoopAgent } from 'ai';
 import { createToolCaller, instrumentToolkit, isMutation } from './instrument.js';
 import { buildReport } from './report.js';
@@ -36,7 +34,7 @@ const AGENT: Scope['actor'] = { type: 'agent', id: 'eval-agent' };
 const USER: Scope['actor'] = { type: 'user', id: 'eval-user' };
 
 export function evalRegistry(): ArtifactRegistry {
-  return createRegistry({ kinds: [documentKind, sheetKind, slidesKind, diagramKind] });
+  return createRegistry({ formats: [markdownFormat, sheetFormat, openuiFormat] });
 }
 
 function fill(prompt: string, vars: Record<string, string>): string {
@@ -49,11 +47,11 @@ function tokens(value: unknown): number {
   return typeof total === 'number' ? total : 0;
 }
 
-async function workspaceArtifacts(ctx: TaskContext, kind?: string): Promise<Artifact[]> {
+async function workspaceArtifacts(ctx: TaskContext, format?: string): Promise<Artifact[]> {
   const out: Artifact[] = [];
   let cursor: string | undefined;
   do {
-    const page = await ctx.service.list(ctx.userScope, kind ? { kind } : {}, {
+    const page = await ctx.service.list(ctx.userScope, format ? { format } : {}, {
       limit: 100,
       ...(cursor ? { cursor } : {}),
     });
@@ -106,7 +104,7 @@ export async function runTask(
   > = {
     taskId: spec.task.id,
     category: spec.task.category,
-    kinds: spec.task.kinds,
+    formats: spec.task.formats,
     model: spec.model.name,
     profile: spec.profile,
     skill: spec.skill,
@@ -138,7 +136,6 @@ export async function runTask(
       model: spec.model.model,
       instructions,
       tools,
-      toolApproval: artifactToolApproval(instrumented),
       callOptionsSchema: artifactContextSchema,
       prepareCall: ({ options, ...settings }) => ({
         ...settings,
@@ -166,7 +163,7 @@ export async function runTask(
 }
 
 async function finishRun(
-  base: Pick<RunResult, 'taskId' | 'category' | 'kinds' | 'model' | 'profile' | 'skill' | 'repetition'>,
+  base: Pick<RunResult, 'taskId' | 'category' | 'formats' | 'model' | 'profile' | 'skill' | 'repetition'>,
   ctx: TaskContext,
   calls: ToolCallRecord[],
   registry: ArtifactRegistry,
@@ -175,7 +172,7 @@ async function finishRun(
 ): Promise<RunResult> {
   const artifacts = await workspaceArtifacts(ctx).catch(() => [] as Artifact[]);
   const check = await task
-    .check({ ...ctx, calls, artifacts: (kind) => workspaceArtifacts(ctx, kind) })
+    .check({ ...ctx, calls, artifacts: (format) => workspaceArtifacts(ctx, format) })
     .catch((cause) => ({ passed: false, score: 0, failures: [`check crashed: ${String(cause)}`] }));
   const mutations = calls.filter((call) => isMutation(call.name));
   const corrections = mutations.filter((call) => !call.ok).length;
@@ -186,10 +183,10 @@ async function finishRun(
       return sum + (Array.isArray(ops) ? ops.length : 1);
     }, 0);
   const lintWarnings = artifacts.reduce((sum, artifact) => {
-    const kind = registry.get(artifact.kind);
+    const format = registry.get(artifact.format);
     return (
       sum +
-      kind
+      format
         .lint(artifact.content, { locale: artifact.locale, theme: registry.theme(artifact.themeId) })
         .filter((i) => i.severity === 'warning').length
     );
@@ -237,7 +234,7 @@ export async function runReference(task: EvalTask): Promise<RunResult> {
     {
       taskId: task.id,
       category: task.category,
-      kinds: task.kinds,
+      formats: task.formats,
       model: 'reference',
       profile: 'default',
       skill: true,
@@ -254,7 +251,7 @@ export async function runReference(task: EvalTask): Promise<RunResult> {
 /** Runs the whole matrix (spec §21.2): tasks × models × schema profiles × with/without skill × repetitions. */
 export async function runEvals(config: EvalConfig): Promise<EvalReport> {
   const startedAt = new Date().toISOString();
-  const tasks = (config.tasks ?? defaultTasks()).filter(
+  const tasks = (config.tasks ?? defaultTasks).filter(
     (task) => !config.only || config.only.includes(task.id),
   );
   const specs: RunSpec[] = [];

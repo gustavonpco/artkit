@@ -1,4 +1,4 @@
-import type { ChangeSummary } from './kind.js';
+import type { ChangeSummary } from './adapter.js';
 
 export interface CollectionDiffOptions<T> {
   /** Target prefix, e.g. `block`, `slide`, `node`. */

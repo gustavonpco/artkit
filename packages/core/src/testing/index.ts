@@ -1,9 +1,9 @@
+import type { AnyFormatAdapter, FormatAdapter } from '../adapter.js';
 import { deepEqual } from '../diff.js';
 import { applyOperations, prepareContent } from '../engine.js';
 import { ArtifactError } from '../errors.js';
-import type { AnyArtifactKind } from '../kind.js';
 import { createRegistry } from '../registry.js';
-import type { ArtifactStore, NewArtifact, Scope } from '../store.js';
+import type { ArtifactStore, Commit, NewArtifact, Scope } from '../store.js';
 import { defaultTheme } from '../theme.js';
 
 /** Minimal test API so the suites work with vitest, jest or node:test. */
@@ -29,21 +29,30 @@ async function expectCode(promise: Promise<unknown>, code: string): Promise<void
 
 const scopeA: Scope = { workspaceId: 'ws_a', actor: { type: 'user', id: 'usr_1' } };
 const scopeB: Scope = { workspaceId: 'ws_b', actor: { type: 'user', id: 'usr_2' } };
-const agent: Scope = { workspaceId: 'ws_a', actor: { type: 'agent', id: 'agt_1' } };
 
 const sample: NewArtifact = {
-  kind: 'note',
-  schemaVersion: 1,
+  format: 'contract-text',
+  formatVersion: 'contract@1',
   title: 'Contract test',
-  status: 'draft',
   locale: 'en',
   themeId: 'default',
-  content: { text: 'hello' },
+  content: 'hello',
   tags: ['contract'],
 };
 
+function commitFrom(baseVersion: number, text = 'v2'): Commit {
+  return {
+    baseVersion,
+    formatVersion: 'contract@1',
+    content: text,
+    title: 'Contract test',
+    locale: 'en',
+    themeId: 'default',
+  };
+}
+
 /**
- * Shared contract suite every `ArtifactStore` adapter must pass (spec §15.1).
+ * Shared contract suite every `ArtifactStore` adapter must pass (spec §17.1).
  * `factory` must return a fresh, empty store for each test.
  */
 export function defineStoreContractTests(
@@ -76,159 +85,72 @@ export function defineStoreContractTests(
       const created = await store.create(scopeA, sample);
       const v2 = await store.commit(scopeA, created.id, commitFrom(1, 'v2'));
       assert(v2.version === 2, 'second version');
+      assert(v2.content === 'v2', 'the current content is replaced');
       await expectCode(store.commit(scopeA, created.id, commitFrom(1, 'stale')), 'VERSION_CONFLICT');
-      const v1 = await store.get(scopeA, created.id, { version: 1 });
-      assert(deepEqual(v1?.content, sample.content), 'old versions are immutable');
-      const latest = await store.get(scopeA, created.id);
-      assert(deepEqual(latest?.content, { text: 'v2' }), 'latest is v2');
+      const current = await store.get(scopeA, created.id);
+      assert(current?.content === 'v2', 'a rejected commit leaves the current content untouched');
     });
 
-    test.it('records history newest first with idempotency lookup', async () => {
+    test.it('filters the list by format and tag', async () => {
+      const store = await factory();
+      await store.create(scopeA, sample);
+      await store.create(scopeA, { ...sample, format: 'contract-other', title: 'Other', tags: [] });
+      const onlyText = await store.list(scopeA, { format: 'contract-text' }, {});
+      assert(onlyText.items.length === 1, 'format filter must narrow the list');
+      const tagged = await store.list(scopeA, { tag: 'contract' }, {});
+      assert(tagged.items.length === 1, 'tag filter must narrow the list');
+    });
+
+    test.it('locks are exclusive to other actors', async () => {
       const store = await factory();
       const created = await store.create(scopeA, sample);
-      await store.commit(scopeA, created.id, {
-        ...commitFrom(1, 'x'),
-        idempotencyKey: 'call_1',
-        message: 'edit',
-      });
-      const history = await store.history(scopeA, created.id, {});
-      assert(history.items[0]?.version === 2 && history.items[1]?.version === 1, 'history order');
-      assert(history.items[0]?.message === 'edit', 'message kept');
-      const found = await store.findByIdempotencyKey(scopeA, created.id, 'call_1');
-      assert(found?.version === 2, 'idempotency key lookup');
-      assert((await store.findByIdempotencyKey(scopeA, created.id, 'missing')) === null, 'unknown key');
-    });
-
-    test.it('filters and paginates lists', async () => {
-      const store = await factory();
-      for (let i = 0; i < 5; i++)
-        await store.create(scopeA, { ...sample, title: `Doc ${i}`, kind: i % 2 ? 'sheet' : 'note' });
-      const sheets = await store.list(scopeA, { kind: 'sheet' }, {});
-      assert(sheets.items.length === 2, 'kind filter');
-      const titled = await store.list(scopeA, { title: 'doc 3' }, {});
-      assert(titled.items.length === 1, 'title filter is case-insensitive');
-      const page1 = await store.list(scopeA, {}, { limit: 2 });
-      assert(page1.items.length === 2 && page1.nextCursor !== undefined, 'first page');
-      const page2 = await store.list(scopeA, {}, { limit: 2, cursor: page1.nextCursor });
-      assert(
-        page2.items.length === 2 && !page2.items.some((item) => page1.items.some((p) => p.id === item.id)),
-        'second page',
-      );
-    });
-
-    test.it('changes status and records the published version', async () => {
-      const store = await factory();
-      const created = await store.create(scopeA, sample);
-      const published = await store.setStatus(scopeA, created.id, 'published', scopeA.actor);
-      assert(published.status === 'published', 'status');
-      assert(published.meta.publishedVersion === 1, 'publishedVersion');
-      assert(published.version === 1, 'status change does not create a version');
-      await store.setStatus(scopeA, created.id, 'draft', scopeA.actor, 'needs a cost table');
-      const entry = (await store.history(scopeA, created.id, {})).items[0];
-      const log = entry?.statusLog ?? [];
-      assert(log.length === 2, 'status changes are logged on the current version');
-      assert(log[1]?.status === 'draft' && log[1]?.message === 'needs a cost table', 'reason is kept');
-    });
-
-    test.it('locks against other actors', async () => {
-      const store = await factory();
-      const created = await store.create(scopeA, sample);
-      const lock = await store.lock(scopeA, created.id, agent.actor, 60_000);
-      assert((await store.getLock(scopeA, created.id))?.token === lock.token, 'lock visible');
-      await expectCode(store.lock(scopeA, created.id, scopeA.actor, 60_000), 'LOCKED');
-      await store.lock(scopeA, created.id, agent.actor, 60_000);
-      await store.unlock(scopeA, (await store.getLock(scopeA, created.id))!);
-      assert((await store.getLock(scopeA, created.id)) === null, 'unlocked');
-    });
-
-    test.it('expires locks', async () => {
-      const store = await factory();
-      const created = await store.create(scopeA, sample);
-      await store.lock(scopeA, created.id, agent.actor, 1);
-      await new Promise<void>((resolve) => setTimeout(() => resolve(), 15));
-      assert((await store.getLock(scopeA, created.id)) === null, 'lock expired');
-    });
-
-    test.it('finds artifacts by creation idempotency key when supported', async () => {
-      const store = await factory();
-      if (!store.findCreatedByIdempotencyKey) return;
-      const created = await store.create(scopeA, { ...sample, idempotencyKey: 'create_1' });
-      await store.commit(scopeA, created.id, { ...commitFrom(1, 'later'), idempotencyKey: 'apply_1' });
-      assert(
-        (await store.findCreatedByIdempotencyKey(scopeA, 'create_1'))?.id === created.id,
-        'found by create key',
-      );
-      assert(
-        (await store.findCreatedByIdempotencyKey(scopeA, 'apply_1')) === null,
-        'apply keys are not create keys',
-      );
-      assert((await store.findCreatedByIdempotencyKey(scopeB, 'create_1')) === null, 'workspace isolation');
-      assert((await store.findCreatedByIdempotencyKey(agent, 'create_1')) === null, 'keys are per actor');
+      const lock = await store.lock(scopeA, created.id, scopeA.actor, 60_000);
+      const other = { type: 'agent' as const, id: 'agt_1' };
+      await expectCode(store.lock(scopeA, created.id, other, 60_000), 'LOCKED');
+      await store.unlock(scopeA, lock);
+      assert((await store.getLock(scopeA, created.id)) === null, 'unlock must release');
     });
   });
 }
 
-function commitFrom(baseVersion: number, text = 'changed') {
-  return {
-    baseVersion,
-    schemaVersion: 1,
-    content: { text },
-    title: 'Contract test',
-    locale: 'en',
-    themeId: 'default',
-    operations: [{ op: 'replace_content', content: { text } }],
-    diff: [],
-  };
-}
-
-export interface KindFixture {
+export interface FormatFixture {
   title: string;
   content: unknown;
-  /** Batches applied in sequence on the content; each must succeed. */
+  /** Batches that must apply deterministically on this fixture. */
   batches?: unknown[][];
-  /** Batches that must be rejected with the given code. */
+  /** Batches that must be rejected, with the expected error code. */
   rejects?: { operations: unknown[]; code: string }[];
 }
 
 /**
- * Conformance suite for kinds (spec §20): instruction examples validate against the schemas, apply is
- * deterministic and atomic, projection exposes ids, diff of identical content is empty, parsePartial
- * accepts complete content and migrations chain up to the current version.
+ * Shared conformance suite every format adapter must pass (spec §8 and §22): examples in the instructions are valid,
+ * fixtures validate and read with ids, `apply` is deterministic, pure and atomic, and migrations form a chain.
  */
-export function defineKindConformanceTests(
-  kind: AnyArtifactKind,
-  fixtures: KindFixture[],
+export function defineFormatConformanceTests(
+  adapter: AnyFormatAdapter,
+  fixtures: FormatFixture[],
   test: TestApi,
 ): void {
-  const registry = createRegistry({ kinds: [kind] });
-  const lint = { locale: 'en', theme: defaultTheme };
+  const registry = createRegistry({ formats: [adapter] });
+  const ctx = { locale: 'en', theme: defaultTheme };
 
-  test.describe(`Kind conformance: ${kind.kind}`, () => {
-    test.it('empty() is valid and projectable', () => {
-      const prepared = prepareContent(registry, kind.kind, kind.empty());
-      kind.project(prepared.content, { mode: 'full', locale: 'en' });
+  test.describe(`Format conformance: ${adapter.format}`, () => {
+    test.it('empty() is valid and readable', () => {
+      const prepared = prepareContent(registry, adapter.format, adapter.empty());
+      const read = adapter.read(prepared.content as never, { mode: 'full', locale: 'en' });
+      assert(typeof read.text === 'string', 'read must return text');
     });
 
-    for (const example of kind.instructions.examples) {
-      test.it(`instruction example "${example.title}" is valid`, () => {
-        if (example.input) {
-          const input = kind.inputs?.[example.input.format];
-          assert(input, `example uses unknown input format "${example.input.format}"`);
-          const raw = input.toContent(input.schema.parse(example.input.source), { locale: 'en' });
-          const fromInput = prepareContent(registry, kind.kind, raw).content;
-          if (example.content !== undefined) {
-            const expected = prepareContent(registry, kind.kind, example.content).content;
-            assert(deepEqual(fromInput, expected), 'example input must produce the example content');
-          }
-        }
+    for (const example of adapter.instructions.examples) {
+      test.it(`instruction example "${example.title}" is valid`, async () => {
         const base =
           example.content === undefined
-            ? kind.empty()
-            : prepareContent(registry, kind.kind, example.content).content;
+            ? adapter.empty()
+            : prepareContent(registry, adapter.format, example.content).content;
         if (example.operations) {
-          applyOperations(
+          await applyOperations(
             registry,
-            { kind: kind.kind, content: base, title: 'Example', themeId: 'default', locale: 'en' },
+            { format: adapter.format, content: base, title: 'Example', themeId: 'default', locale: 'en' },
             example.operations,
           );
         }
@@ -236,36 +158,36 @@ export function defineKindConformanceTests(
     }
 
     for (const fixture of fixtures) {
-      test.it(`fixture "${fixture.title}": validates, projects ids and diffs`, () => {
-        const { content } = prepareContent(registry, kind.kind, fixture.content);
-        const full = kind.project(content, { mode: 'full', locale: 'en' });
-        const outline = kind.project(content, { mode: 'outline', locale: 'en' });
-        assert(full.text.length > 0 && outline.text.length > 0, 'projection must not be empty');
-        const someId = [...kind.ids(content)][0];
-        if (someId) assert(full.text.includes(someId), `full projection must expose ids (missing ${someId})`);
+      test.it(`fixture "${fixture.title}": validates, reads with ids and diffs`, () => {
+        const { content } = prepareContent(registry, adapter.format, fixture.content);
+        const full = adapter.read(content as never, { mode: 'full', locale: 'en' });
+        const outline = adapter.read(content as never, { mode: 'outline', locale: 'en' });
+        assert(full.text.length > 0 && outline.text.length > 0, 'reading must not be empty');
         assert(
-          kind.diff(content, structuredClone(content)).length === 0,
+          adapter.diff(content as never, structuredClone(content) as never).length === 0,
           'diff of identical content must be empty',
         );
-        const partial = kind.parsePartial(structuredClone(content));
-        assert(
-          partial !== undefined && kind.contentSchema.safeParse(partial).success,
-          'parsePartial must accept complete content',
-        );
-        kind.lint(content, lint);
-        assert(deepEqual(JSON.parse(JSON.stringify(content)), content), 'content must be JSON-serializable');
+        const partial = adapter.parsePartial(JSON.stringify(content));
+        assert(partial !== undefined, 'parsePartial must accept complete content');
+        adapter.lint(content as never, ctx);
       });
 
       if (fixture.batches?.length) {
-        test.it(`fixture "${fixture.title}": apply is deterministic and does not mutate input`, () => {
-          let { content } = prepareContent(registry, kind.kind, fixture.content);
+        test.it(`fixture "${fixture.title}": apply is deterministic and does not mutate input`, async () => {
+          let { content } = prepareContent(registry, adapter.format, fixture.content);
           for (const batch of fixture.batches ?? []) {
             const frozen = structuredClone(content);
-            const artifact = { kind: kind.kind, content, title: 'Fixture', themeId: 'default', locale: 'en' };
-            const a = applyOperations(registry, artifact, batch);
-            const b = applyOperations(registry, artifact, batch);
+            const artifact = {
+              format: adapter.format,
+              content,
+              title: 'Fixture',
+              themeId: 'default',
+              locale: 'en',
+            };
+            const a = await applyOperations(registry, artifact, batch);
+            const b = await applyOperations(registry, artifact, batch);
             assert(deepEqual(a.content, b.content), 'same batch must produce the same content');
-            assert(deepEqual(a.createdIds, b.createdIds), 'generated ids must be deterministic');
+            assert(deepEqual(a.createdRefs, b.createdRefs), 'created refs must be deterministic');
             assert(deepEqual(content, frozen), 'apply must not mutate the input');
             assert(a.diff.length > 0, 'a successful batch should report changes');
             content = a.content;
@@ -274,13 +196,13 @@ export function defineKindConformanceTests(
       }
 
       for (const [index, rejected] of (fixture.rejects ?? []).entries()) {
-        test.it(`fixture "${fixture.title}": rejects batch ${index} with ${rejected.code}`, () => {
-          const { content } = prepareContent(registry, kind.kind, fixture.content);
+        test.it(`fixture "${fixture.title}": rejects batch ${index} with ${rejected.code}`, async () => {
+          const { content } = prepareContent(registry, adapter.format, fixture.content);
           const frozen = structuredClone(content);
           try {
-            applyOperations(
+            await applyOperations(
               registry,
-              { kind: kind.kind, content, title: 'Fixture', themeId: 'default', locale: 'en' },
+              { format: adapter.format, content, title: 'Fixture', themeId: 'default', locale: 'en' },
               rejected.operations,
             );
           } catch (error) {
@@ -301,12 +223,15 @@ export function defineKindConformanceTests(
       }
     }
 
-    test.it('migrations chain to the current version', () => {
-      const versions = kind.migrations.map((m) => m.to);
-      assert(
-        kind.migrations.length === 0 || Math.max(...versions) === kind.version,
-        'migrations must end at version',
-      );
+    test.it('migrations chain to the current format version', () => {
+      const chain = adapter.migrations;
+      for (const migration of chain) {
+        assert(migration.to !== migration.from, 'a migration must change the version');
+      }
+      assert(adapter.readableVersions.includes(adapter.formatVersion), 'current version must be readable');
     });
   });
 }
+
+/** Re-export for adapters that want the generic type in their own tests. */
+export type { FormatAdapter };

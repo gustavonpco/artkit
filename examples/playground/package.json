@@ -2,7 +2,7 @@
   "name": "@artkit-ai/example-playground",
   "version": "0.0.0",
   "private": true,
-  "description": "Browser playground: the four kinds with renderers, editors, agent view, operation scenarios and export.",
+  "description": "Browser playground: the three native formats (Markdown, Univer grid, OpenUI) with renderers, editors, the agent scenario and exports.",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
@@ -13,10 +13,14 @@
   "dependencies": {
     "@artkit-ai/core": "workspace:^",
     "@artkit-ai/react": "workspace:^",
-    "@artkit-ai/kind-document": "workspace:^",
-    "@artkit-ai/kind-sheet": "workspace:^",
-    "@artkit-ai/kind-slides": "workspace:^",
-    "@artkit-ai/kind-diagram": "workspace:^",
+    "@artkit-ai/format-markdown": "workspace:^",
+    "@artkit-ai/format-sheet": "workspace:^",
+    "@artkit-ai/format-openui": "workspace:^",
+    "@artkit-ai/openui-components": "workspace:^",
+    "@artkit-ai/export-docx": "workspace:^",
+    "@artkit-ai/export-xlsx": "workspace:^",
+    "@artkit-ai/export-pptx": "workspace:^",
+    "@univerjs/preset-sheets-core": "1.3.1",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

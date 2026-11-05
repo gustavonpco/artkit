@@ -7,7 +7,7 @@ import { agent, noteService, PNG, rejection, tempDir } from './helpers.js';
 async function setup(options: Parameters<typeof noteService>[0] = {}) {
   const service = noteService(options);
   const { artifact } = await service.create(agent, {
-    kind: 'note',
+    format: 'note',
     title: 'Relatório Final',
     content: { items: [{ text: 'a' }] },
   });

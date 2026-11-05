@@ -4,12 +4,12 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { describe, expect, it } from 'vitest';
 import { createArtkitMcpHttpHandler, createArtkitMcpServer, type ResolveScope } from '../src/index.js';
-import { noteKind } from './note-kind.js';
+import { noteFormat } from './note-format.js';
 
 const scope: Scope = { workspaceId: 'ws-1', actor: { type: 'agent', id: 'mcp-agent' } };
 
 function makeToolkit() {
-  const registry = createRegistry({ kinds: [noteKind] });
+  const registry = createRegistry({ formats: [noteFormat] });
   return createArtifactToolkit({ registry, store: createMemoryStore(), authorize: () => true });
 }
 
@@ -39,7 +39,7 @@ describe('createArtkitMcpServer', () => {
       expect(tool.inputSchema).toEqual(neutral.inputSchema);
       expect(tool.annotations?.readOnlyHint).toBe(neutral.readOnly);
     }
-    expect(client.getInstructions()).toContain('# Artifacts');
+    expect(client.getInstructions()).toContain('Artifacts:');
   });
 
   it('creates, reads and applies with scope from resolveScope', async () => {
@@ -51,7 +51,7 @@ describe('createArtkitMcpServer', () => {
     const created = await client.callTool({
       name: 'artifact_create',
       arguments: {
-        kind: 'note',
+        format: 'note',
         title: 'MCP',
         content: { items: [{ id: 'a', text: 'hello' }] },
         workspaceId: 'ws-evil',
@@ -59,7 +59,7 @@ describe('createArtkitMcpServer', () => {
     });
     expect(created.isError).toBe(false);
     const out = parse(created);
-    expect(out).toMatchObject({ ok: true, version: 1, kind: 'note' });
+    expect(out).toMatchObject({ ok: true, version: 1, format: 'note' });
     expect(created.structuredContent).toMatchObject({ ok: true, id: out.id });
     const id = String(out.id);
     expect((await toolkit.service.list({ workspaceId: 'ws-evil', actor: scope.actor })).items).toEqual([]);
@@ -86,18 +86,6 @@ describe('createArtkitMcpServer', () => {
     expect(seen.length).toBe(4);
   });
 
-  it('uses _meta.idempotencyKey to dedupe calls', async () => {
-    const { client } = await connect();
-    const args = {
-      name: 'artifact_create',
-      arguments: { kind: 'note', title: 'Once' },
-      _meta: { idempotencyKey: 'k-1' },
-    };
-    const first = parse(await client.callTool(args));
-    const again = parse(await client.callTool(args));
-    expect(again).toMatchObject({ id: first.id, replayed: true });
-  });
-
   it('rejects unknown tools and unresolvable scopes as protocol errors', async () => {
     const { client } = await connect(() => {
       throw new Error('token expired for user@example.com');
@@ -108,10 +96,10 @@ describe('createArtkitMcpServer', () => {
     expect(String(error)).not.toContain('example.com');
   });
 
-  it('serves artifact projections as resources, latest and by version', async () => {
+  it('serves the latest artifact projection as a resource, without version templates', async () => {
     const { client, toolkit } = await connect();
     const created = await toolkit.service.create(scope, {
-      kind: 'note',
+      format: 'note',
       title: 'Res',
       content: { items: [{ id: 'a', text: 'v1 text' }] },
     });
@@ -124,7 +112,6 @@ describe('createArtkitMcpServer', () => {
     const templates = await client.listResourceTemplates();
     expect(templates.resourceTemplates.map((template) => template.uriTemplate).sort()).toEqual([
       'artifact://{id}',
-      'artifact://{id}/v/{version}',
       'artkit://guide/{topic}',
     ]);
     const listed = await client.listResources();
@@ -133,8 +120,6 @@ describe('createArtkitMcpServer', () => {
     const latestText = (latest.contents[0] as { text: string }).text;
     expect(latestText).toContain('version: 2');
     expect(latestText).toContain('<artifact-content');
-    const old = await client.readResource({ uri: `artifact://${id}/v/1` });
-    expect((old.contents[0] as { text: string }).text).toContain('version: 1');
     await expect(client.readResource({ uri: 'artifact://art_missing' })).rejects.toThrow(/not found/i);
   });
 
@@ -147,9 +132,7 @@ describe('createArtkitMcpServer', () => {
     const prompt = await client.getPrompt({ name: 'artkit-guide-note' });
     expect((prompt.messages[0]!.content as TextBlock).text).toContain('# Note (`note`)');
     const resource = await client.readResource({ uri: 'artkit://guide/overview' });
-    expect((resource.contents[0] as { text: string; mimeType: string }).text).toContain(
-      '# Working with artkit artifacts',
-    );
+    expect((resource.contents[0] as { text: string; mimeType: string }).text).toContain('# artkit');
     const listed = await client.listResources();
     expect(listed.resources.map((r) => r.uri)).toContain('artkit://guide/errors');
     await expect(client.readResource({ uri: 'artkit://guide/nope' })).rejects.toThrow(
@@ -197,7 +180,7 @@ describe('createArtkitMcpHttpHandler', () => {
       jsonrpc: '2.0',
       id: 2,
       method: 'tools/call',
-      params: { name: 'artifact_create', arguments: { kind: 'note', title: 'Via HTTP' } },
+      params: { name: 'artifact_create', arguments: { format: 'note', title: 'Via HTTP' } },
     });
     expect(call.status).toBe(200);
     const payload = await call.json();

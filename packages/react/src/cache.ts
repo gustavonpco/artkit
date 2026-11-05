@@ -9,12 +9,9 @@ export interface CacheEntry {
 
 const EMPTY: CacheEntry = Object.freeze({ loading: false }) as CacheEntry;
 
-const keyOf = (id: string, version?: number) => `${id}@${version ?? 'latest'}`;
-
 /**
- * Artifact cache shared by the hooks under one provider (spec §13.2). Versions are immutable, so an
- * entry for a specific version never needs revalidation; the `latest` entry only moves forward and is
- * revalidated on demand. Listeners are per artifact id so history and editors hear about new commits.
+ * Artifact cache shared by the hooks under one provider (spec §13.2). One entry per artifact: the current content the
+ * application last loaded or saved. The library keeps no older versions, so there is nothing else to cache.
  */
 export class ArtifactCache {
   private readonly entries = new Map<string, CacheEntry>();
@@ -23,12 +20,12 @@ export class ArtifactCache {
 
   constructor(private readonly client: ArtifactClient) {}
 
-  entry(id: string, version?: number): CacheEntry {
-    return this.entries.get(keyOf(id, version)) ?? EMPTY;
+  entry(id: string): CacheEntry {
+    return this.entries.get(id) ?? EMPTY;
   }
 
   latest(id: string): Artifact | undefined {
-    return this.entries.get(keyOf(id))?.artifact;
+    return this.entries.get(id)?.artifact;
   }
 
   subscribe(id: string, listener: () => void): () => void {
@@ -45,63 +42,48 @@ export class ArtifactCache {
     for (const listener of [...(this.listeners.get(id) ?? [])]) listener();
   }
 
-  private set(id: string, version: number | undefined, entry: CacheEntry): void {
-    this.entries.set(keyOf(id, version), entry);
-  }
-
   /**
-   * Records a known artifact version (commit result, prop, status change). `latest` only moves forward,
-   * except that a status change on the same version replaces it.
+   * Records an artifact the application loaded or saved. An older version never replaces a newer one; a newer
+   * `updatedAt` of the same version replaces it.
    */
   put(artifact: Artifact): void {
     const current = this.latest(artifact.id);
-    const sameVersionChanged =
-      current !== undefined &&
-      artifact.version === current.version &&
-      (artifact.status !== current.status ||
-        artifact.meta.updatedAt !== current.meta.updatedAt ||
-        artifact.meta.publishedVersion !== current.meta.publishedVersion);
-    const known = this.entries.get(keyOf(artifact.id, artifact.version))?.artifact;
-    if (current && !sameVersionChanged && artifact.version <= current.version && known) return;
-    this.set(artifact.id, artifact.version, { artifact, loading: false });
-    if (!current || artifact.version > current.version || sameVersionChanged) {
-      this.set(artifact.id, undefined, { artifact, loading: false });
+    if (current) {
+      const older = artifact.version < current.version;
+      const sameVersionOlder =
+        artifact.version === current.version && artifact.meta.updatedAt <= current.meta.updatedAt;
+      if (older || sameVersionOlder) return;
     }
+    this.entries.set(artifact.id, { artifact, loading: false });
     this.notify(artifact.id);
   }
 
-  /** Loads unless a fresh value is cached. `force` revalidates `latest` (specific versions never change). */
-  load(id: string, version?: number, force = false): Promise<Artifact> {
-    const key = keyOf(id, version);
-    const existing = this.entries.get(key);
-    if (existing?.artifact && (version !== undefined || !force)) return Promise.resolve(existing.artifact);
-    const pending = this.inflight.get(key);
+  /** Loads the artifact unless it is cached. `force` fetches it again. */
+  load(id: string, force = false): Promise<Artifact> {
+    const existing = this.entries.get(id);
+    if (existing?.artifact && !force) return Promise.resolve(existing.artifact);
+    const pending = this.inflight.get(id);
     if (pending) return pending;
-    this.set(id, version, { ...(existing ?? {}), loading: true });
+    this.entries.set(id, { ...(existing ?? {}), loading: true });
     this.notify(id);
-    const promise = this.client.get(id, version === undefined ? undefined : { version }).then(
+    const promise = this.client.get(id).then(
       (artifact) => {
-        this.inflight.delete(key);
-        if (version === undefined) {
-          // A commit may have landed while the request was in flight; never move `latest` backwards.
-          const current = this.latest(id);
-          if (current && current.version > artifact.version) {
-            this.set(id, undefined, { artifact: current, loading: false });
-            this.notify(id);
-            return current;
-          }
+        this.inflight.delete(id);
+        // A save may have landed while the request was in flight; never move the cache backwards.
+        const current = this.latest(id);
+        if (current && current.version > artifact.version) {
+          this.entries.set(id, { artifact: current, loading: false });
+          this.notify(id);
+          return current;
         }
-        this.set(artifact.id, artifact.version, { artifact, loading: false });
-        if (version === undefined) this.set(id, undefined, { artifact, loading: false });
-        else if (!this.latest(id) || this.latest(id)!.version < artifact.version)
-          this.set(id, undefined, { artifact, loading: false });
+        this.entries.set(id, { artifact, loading: false });
         this.notify(id);
         return artifact;
       },
       (error: unknown) => {
-        this.inflight.delete(key);
-        const previous = this.entries.get(key);
-        this.set(id, version, {
+        this.inflight.delete(id);
+        const previous = this.entries.get(id);
+        this.entries.set(id, {
           ...(previous?.artifact ? { artifact: previous.artifact } : {}),
           error,
           loading: false,
@@ -110,13 +92,8 @@ export class ArtifactCache {
         throw error;
       },
     );
-    this.inflight.set(key, promise);
+    this.inflight.set(id, promise);
     return promise;
-  }
-
-  /** Signals listeners of an id without changing entries (e.g. history must refetch after a restore). */
-  touch(id: string): void {
-    this.notify(id);
   }
 }
 

@@ -7,13 +7,7 @@ import {
   sha256Hex,
   toDataUrl,
 } from './assets.js';
-import {
-  type Actor,
-  type Artifact,
-  type ArtifactStatus,
-  type ArtifactSummary,
-  summarize,
-} from './envelope.js';
+import { type Artifact, type ArtifactSummary, summarize } from './envelope.js';
 import { ArtifactError } from './errors.js';
 import { t } from './i18n.js';
 import { createArtifactId } from './ids.js';
@@ -27,31 +21,24 @@ import type {
   Page,
   PageRequest,
   Scope,
-  VersionEntry,
 } from './store.js';
 
 export interface MemoryStoreOptions {
   now?: () => Date;
-  /** Snapshot every N versions (first version always has one). Memory keeps full versions anyway. */
-  snapshotEvery?: number;
   locale?: string;
 }
 
 interface Record_ {
   workspaceId: string;
-  versions: Artifact[];
-  history: VersionEntry[];
+  artifact: Artifact;
   lock?: Lock;
 }
 
 const DEFAULT_PAGE = 50;
 
-const sameActor = (a: Actor, b: Actor) => a.type === b.type && a.id === b.id;
-
 /** Reference in-memory store: tests, playground and prototypes (spec §15.2). Runs in any runtime. */
 export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactStore {
   const now = options.now ?? (() => new Date());
-  const snapshotEvery = Math.max(1, options.snapshotEvery ?? 10);
   const records = new Map<string, Record_>();
 
   const notFound = (id: string): never => {
@@ -63,10 +50,6 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
     // Scope isolation: an id from another workspace behaves exactly like a missing one.
     if (!found || found.workspaceId !== scope.workspaceId) return notFound(id);
     return found;
-  }
-
-  function latest(rec: Record_): Artifact {
-    return rec.versions[rec.versions.length - 1]!;
   }
 
   function activeLock(rec: Record_): Lock | null {
@@ -90,12 +73,10 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
   const clone = <T>(value: T): T => structuredClone(value);
 
   return {
-    async get(scope, id, opts) {
+    async get(scope, id) {
       const rec = records.get(id);
       if (!rec || rec.workspaceId !== scope.workspaceId) return null;
-      if (opts?.version === undefined) return clone(latest(rec));
-      const found = rec.versions.find((v) => v.version === opts.version);
-      return found ? clone(found) : null;
+      return clone(rec.artifact);
     },
 
     async create(scope, input: NewArtifact) {
@@ -103,11 +84,10 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
       const id = createArtifactId(at.getTime());
       const artifact: Artifact = {
         id,
-        kind: input.kind,
-        schemaVersion: input.schemaVersion,
+        format: input.format,
+        formatVersion: input.formatVersion,
         version: 1,
         title: input.title,
-        status: input.status,
         locale: input.locale,
         themeId: input.themeId,
         content: clone(input.content),
@@ -119,30 +99,13 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
           tags: input.tags ?? [],
         },
       };
-      records.set(id, {
-        workspaceId: scope.workspaceId,
-        versions: [artifact],
-        history: [
-          {
-            version: 1,
-            actor: scope.actor,
-            createdAt: at.toISOString(),
-            operations: [],
-            diff: [],
-            createdIds: input.createdIds ?? [],
-            status: input.status,
-            ...(input.message ? { message: input.message } : {}),
-            ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}),
-            snapshot: { schemaVersion: input.schemaVersion, content: clone(input.content) },
-          },
-        ],
-      });
+      records.set(id, { workspaceId: scope.workspaceId, artifact });
       return clone(artifact);
     },
 
     async commit(scope, id, change: Commit) {
       const rec = record(scope, id);
-      const current = latest(rec);
+      const current = rec.artifact;
       if (change.baseVersion !== current.version) {
         throw new ArtifactError(
           'VERSION_CONFLICT',
@@ -150,55 +113,29 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
             baseVersion: change.baseVersion,
             currentVersion: current.version,
           }),
-          {
-            details: { currentVersion: current.version },
-          },
+          { details: { currentVersion: current.version } },
         );
       }
-      const at = now().toISOString();
-      const version = current.version + 1;
       const next: Artifact = {
         ...current,
-        schemaVersion: change.schemaVersion,
-        version,
+        formatVersion: change.formatVersion,
+        version: current.version + 1,
         title: change.title,
         locale: change.locale,
         themeId: change.themeId,
-        status: change.status ?? current.status,
         content: clone(change.content),
-        meta: { ...current.meta, updatedAt: at, updatedBy: scope.actor },
+        meta: { ...current.meta, updatedAt: now().toISOString(), updatedBy: scope.actor },
       };
-      rec.versions.push(next);
-      rec.history.push({
-        version,
-        actor: scope.actor,
-        createdAt: at,
-        operations: clone(change.operations),
-        diff: clone(change.diff),
-        createdIds: change.createdIds ?? [],
-        status: next.status,
-        ...(change.message ? { message: change.message } : {}),
-        ...(change.idempotencyKey ? { idempotencyKey: change.idempotencyKey } : {}),
-        ...(change.restoredFrom ? { restoredFrom: change.restoredFrom } : {}),
-        ...(version % snapshotEvery === 0
-          ? { snapshot: { schemaVersion: change.schemaVersion, content: clone(change.content) } }
-          : {}),
-      });
+      rec.artifact = next;
       return clone(next);
-    },
-
-    async history(scope, id, page) {
-      const rec = record(scope, id);
-      return paginate(clone([...rec.history].reverse()), page);
     },
 
     async list(scope, filter: ArtifactFilter, page) {
       const items: ArtifactSummary[] = [];
       for (const rec of records.values()) {
         if (rec.workspaceId !== scope.workspaceId) continue;
-        const artifact = latest(rec);
-        if (filter.kind && artifact.kind !== filter.kind) continue;
-        if (filter.status && artifact.status !== filter.status) continue;
+        const artifact = rec.artifact;
+        if (filter.format && artifact.format !== filter.format) continue;
         if (filter.title && !artifact.title.toLowerCase().includes(filter.title.toLowerCase())) continue;
         if (filter.tag && !artifact.meta.tags.includes(filter.tag)) continue;
         items.push(summarize(artifact));
@@ -207,32 +144,6 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
         a.updatedAt < b.updatedAt ? 1 : a.updatedAt > b.updatedAt ? -1 : a.id < b.id ? 1 : -1,
       );
       return paginate(items, page);
-    },
-
-    async setStatus(scope, id, status: ArtifactStatus, actor: Actor, message?: string) {
-      const rec = record(scope, id);
-      const current = latest(rec);
-      const at = now().toISOString();
-      const updated: Artifact = {
-        ...current,
-        status,
-        meta: {
-          ...current.meta,
-          updatedAt: at,
-          updatedBy: actor,
-          ...(status === 'published' ? { publishedVersion: current.version } : {}),
-        },
-      };
-      rec.versions[rec.versions.length - 1] = updated;
-      const entry = rec.history[rec.history.length - 1];
-      if (entry) {
-        entry.status = status;
-        entry.statusLog = [
-          ...(entry.statusLog ?? []),
-          { status, actor, at, ...(message ? { message } : {}) },
-        ];
-      }
-      return clone(updated);
     },
 
     async lock(scope, id, actor, ttlMs) {
@@ -245,9 +156,7 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
             holder: `${existing.holder.type}:${existing.holder.id}`,
             expiresAt: existing.expiresAt,
           }),
-          {
-            details: { expiresAt: existing.expiresAt },
-          },
+          { details: { expiresAt: existing.expiresAt } },
         );
       }
       const token = createArtifactId(now().getTime()).slice(4);
@@ -269,21 +178,6 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ArtifactSto
       const rec = record(scope, id);
       const lock = activeLock(rec);
       return lock ? clone(lock) : null;
-    },
-
-    async findByIdempotencyKey(scope, id, key) {
-      const rec = record(scope, id);
-      const entry = rec.history.find((h) => h.idempotencyKey === key);
-      return entry ? clone(entry) : null;
-    },
-
-    async findCreatedByIdempotencyKey(scope, key) {
-      for (const rec of records.values()) {
-        if (rec.workspaceId !== scope.workspaceId) continue;
-        const first = rec.history[0];
-        if (first?.idempotencyKey === key && sameActor(first.actor, scope.actor)) return clone(latest(rec));
-      }
-      return null;
     },
   };
 }

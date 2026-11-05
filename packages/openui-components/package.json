@@ -1,0 +1,65 @@
+{
+  "name": "@artkit-ai/openui-components",
+  "version": "0.1.0",
+  "description": "artkit component library for OpenUI Lang: layout, text, data, Deck and Slide, dashboard, report, prototype and diagram components with typed props.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts",
+    "openui"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./react": {
+      "@artkit/source": "./src/react/index.tsx",
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./package.json": "./package.json",
+    "./export": {
+      "@artkit/source": "./src/export/index.tsx",
+      "types": "./dist/export/index.d.ts",
+      "import": "./dist/export/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
+    "directory": "packages/openui-components"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@artkit-ai/core": "workspace:^",
+    "@openuidev/lang-core": "1.1.0",
+    "@openuidev/react-lang": "1.1.0",
+    "react": "19.3.1",
+    "zod": "^4.6.7",
+    "@artkit-ai/react": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

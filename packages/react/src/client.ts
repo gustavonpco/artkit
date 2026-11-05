@@ -14,39 +14,30 @@ import {
   type Lock,
   type Page,
   type PageRequest,
-  type ProjectionMode,
-  type ReadResult,
+  type ReadMode,
+  type ArtifactReadResult as ReadResult,
   type Scope,
-  type VersionEntry,
 } from '@artkit-ai/core';
-
-/** Lifecycle actions accepted by `POST {base}/{id}/status` (spec §15.3). */
-export type StatusAction = 'submit' | 'approve' | 'reject' | 'publish' | 'archive';
-
-export const STATUS_ACTIONS: readonly StatusAction[] = ['submit', 'approve', 'reject', 'publish', 'archive'];
 
 export interface RequestOptions {
   signal?: AbortSignal;
 }
 
 export interface ReadOptions extends RequestOptions {
-  mode?: ProjectionMode;
+  mode?: ReadMode;
   range?: string;
   maxTokens?: number;
   cursor?: string;
-  version?: number;
 }
 
+/** Operations computed against `baseVersion`; a different current version answers VERSION_CONFLICT. */
 export interface ApplyInput {
   baseVersion: number;
   operations: unknown[];
-  idempotencyKey?: string;
-  message?: string;
 }
 
 export interface ExportInput extends RequestOptions {
   format: string;
-  version?: number;
   options?: Record<string, unknown>;
 }
 
@@ -64,14 +55,11 @@ export interface ClientExportResult {
 export interface ArtifactClient {
   list(filter?: ArtifactFilter, page?: PageRequest, options?: RequestOptions): Promise<Page<ArtifactSummary>>;
   create(request: CreateRequest, options?: RequestOptions): Promise<CommitResult>;
-  get(id: string, options?: RequestOptions & { version?: number }): Promise<Artifact>;
+  get(id: string, options?: RequestOptions): Promise<Artifact>;
   read(id: string, options?: ReadOptions): Promise<ReadResult>;
   apply(id: string, input: ApplyInput, options?: RequestOptions): Promise<CommitResult>;
   /** Dry run on the current version: diff and lint without committing. */
   preview(id: string, input: ApplyInput, options?: RequestOptions): Promise<BatchResult>;
-  history(id: string, page?: PageRequest, options?: RequestOptions): Promise<Page<VersionEntry>>;
-  restore(id: string, version: number, message?: string, options?: RequestOptions): Promise<CommitResult>;
-  setStatus(id: string, action: StatusAction, message?: string, options?: RequestOptions): Promise<Artifact>;
   lock(id: string, options?: RequestOptions & { ttlMs?: number }): Promise<Lock>;
   unlock(id: string, lock: Lock, options?: RequestOptions): Promise<void>;
   /** Current lock, or null when nobody holds one. */
@@ -251,7 +239,7 @@ export function createHttpClient(options: HttpClientOptions = {}): ArtifactClien
         opts?.signal,
       ),
     create: (request, opts) => json('POST', path(), request, opts?.signal),
-    get: (id, opts) => json('GET', withQuery(path(id), { version: opts?.version }), undefined, opts?.signal),
+    get: (id, opts) => json('GET', path(id), undefined, opts?.signal),
     read: (id, opts = {}) =>
       json(
         'GET',
@@ -260,24 +248,12 @@ export function createHttpClient(options: HttpClientOptions = {}): ArtifactClien
           range: opts.range,
           maxTokens: opts.maxTokens,
           cursor: opts.cursor,
-          version: opts.version,
         }),
         undefined,
         opts.signal,
       ),
     apply: (id, input, opts) => json('POST', path(id, 'apply'), input, opts?.signal),
     preview: (id, input, opts) => json('POST', path(id, 'preview'), input, opts?.signal),
-    history: (id, page = {}, opts) =>
-      json(
-        'GET',
-        withQuery(path(id, 'history'), { limit: page.limit, cursor: page.cursor }),
-        undefined,
-        opts?.signal,
-      ),
-    restore: (id, version, message, opts) =>
-      json('POST', path(id, 'restore'), { version, ...(message ? { message } : {}) }, opts?.signal),
-    setStatus: (id, action, message, opts) =>
-      json('POST', path(id, 'status'), { action, ...(message ? { message } : {}) }, opts?.signal),
     lock: (id, opts) =>
       json('POST', path(id, 'lock'), opts?.ttlMs === undefined ? {} : { ttlMs: opts.ttlMs }, opts?.signal),
     async unlock(id, lock, opts) {
@@ -290,7 +266,6 @@ export function createHttpClient(options: HttpClientOptions = {}): ArtifactClien
         path(id, 'export'),
         {
           format: input.format,
-          ...(input.version === undefined ? {} : { version: input.version }),
           ...(input.options ? { options: input.options } : {}),
         },
         input.signal,
@@ -337,8 +312,7 @@ export function createServiceClient(service: ArtifactService, scope: Scope | (()
   return {
     list: (filter, page) => run((s) => service.list(s, filter, page)),
     create: (request) => run((s) => service.create(s, request)),
-    get: (id, opts) =>
-      run((s) => service.get(s, id, opts?.version === undefined ? undefined : { version: opts.version })),
+    get: (id) => run((s) => service.get(s, id)),
     read: (id, opts = {}) =>
       run((s) => {
         const { signal: _signal, ...rest } = opts;
@@ -346,27 +320,6 @@ export function createServiceClient(service: ArtifactService, scope: Scope | (()
       }),
     apply: (id, input) => run((s) => service.apply(s, { artifactId: id, ...input })),
     preview: (id, input) => run((s) => service.preview(s, { artifactId: id, ...input })),
-    history: (id, page) => run((s) => service.history(s, id, page)),
-    restore: (id, version, message) => run((s) => service.restore(s, id, version, message)),
-    setStatus: (id, action, message) =>
-      run((s) => {
-        switch (action) {
-          case 'submit':
-            return service.submit(s, id, message);
-          case 'approve':
-            return service.approve(s, id, message);
-          case 'reject':
-            return service.reject(s, id, message);
-          case 'publish':
-            return service.publish(s, id);
-          case 'archive':
-            return service.archive(s, id);
-          default:
-            throw new ArtifactError('INVALID_OPERATION', `Unknown status action "${String(action)}".`, {
-              issues: [{ path: 'action', message: `Use one of: ${STATUS_ACTIONS.join(', ')}.` }],
-            });
-        }
-      }),
     lock: (id, opts) => run((s) => service.lock(s, id, opts?.ttlMs)),
     unlock: (_id, lock) => run((s) => service.unlock(s, lock)),
     getLock: (id) => run((s) => service.getLock(s, id)),
@@ -375,7 +328,6 @@ export function createServiceClient(service: ArtifactService, scope: Scope | (()
         const result = await service.export(s, {
           artifactId: id,
           format: input.format,
-          ...(input.version === undefined ? {} : { version: input.version }),
           ...(input.options ? { options: input.options } : {}),
           ...(input.signal ? { signal: input.signal } : {}),
         });

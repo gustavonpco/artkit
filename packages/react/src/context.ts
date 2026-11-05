@@ -19,20 +19,25 @@ export interface RendererProps<Content = unknown> {
 
 /** What a kind's `/react` entry provides. */
 export interface RendererModule {
-  // biome-ignore lint/suspicious/noExplicitAny: renderers are typed by their own kind.
+  // biome-ignore lint/suspicious/noExplicitAny: renderers are typed by their own format.
   Renderer: ComponentType<RendererProps<any>>;
   css?: string;
 }
 
 /** What a kind's `/edit` entry provides. */
 export interface EditorModule {
-  // biome-ignore lint/suspicious/noExplicitAny: editors are typed by their own kind.
+  // biome-ignore lint/suspicious/noExplicitAny: editors are typed by their own format.
   Editor: ComponentType<EditorBindings<any, any>>;
   css?: string;
+  /**
+   * Who draws the undo, redo and save controls. `host` (default): the editor host shows them above the format editor.
+   * `format`: the format editor receives `actions` and draws them inside its own toolbar.
+   */
+  toolbar?: 'host' | 'format';
 }
 
 /**
- * Lazy loaders per kind, so the bundle only pulls what is shown (spec §13.6). Typical use:
+ * Lazy loaders per format, so the bundle only pulls what is shown (spec §13.6). Typical use:
  * `renderers: { document: () => import('@artkit-ai/kind-document/react').then((m) => ({ Renderer: m.DocumentRenderer, css: m.documentCss })) }`.
  */
 export interface ArtifactLoaders {
@@ -55,16 +60,16 @@ export interface ArtkitContextValue {
   themeFor(themeId: string | undefined): Theme;
   resolveAssetUrl?: (ref: string) => string | undefined;
   assets?: AssetResolver;
-  /** Formats the server can export, per kind. */
+  /** Formats the server can export, per format. */
   exportFormats: Record<string, readonly string[]>;
-  hasRenderer(kind: string): boolean;
-  hasEditor(kind: string): boolean;
-  hasExporters(kind: string): boolean;
-  loadRenderer(kind: string): Promise<RendererModule>;
-  loadEditor(kind: string): Promise<EditorModule>;
-  loadExporters(kind: string): Promise<AnyArtifactExporter[]>;
+  hasRenderer(format: string): boolean;
+  hasEditor(format: string): boolean;
+  hasExporters(format: string): boolean;
+  loadRenderer(format: string): Promise<RendererModule>;
+  loadEditor(format: string): Promise<EditorModule>;
+  loadExporters(format: string): Promise<AnyArtifactExporter[]>;
   /** Forgets a failed load so it can be retried. */
-  resetLoad(type: 'renderer' | 'editor' | 'exporters', kind: string): void;
+  resetLoad(type: 'renderer' | 'editor' | 'exporters', format: string): void;
   nonce?: string;
 }
 

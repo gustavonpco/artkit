@@ -1,7 +1,7 @@
+import { type AnyFormatAdapter, assertFormatContract, type FormatLimits } from './adapter.js';
 import type { AssetResolver } from './assets.js';
 import { ArtifactError } from './errors.js';
 import { t } from './i18n.js';
-import { type AnyArtifactKind, assertKindContract, type KindLimits } from './kind.js';
 import type { Logger } from './logger.js';
 import { defaultTheme, type Theme, themeSchema } from './theme.js';
 
@@ -26,48 +26,49 @@ export interface ExportContext {
   assets: AssetResolver;
   logger: Logger;
   signal?: AbortSignal;
-  /** Records a fidelity degradation (spec §12.4), returned to the caller as `warnings`. */
+  /** Records a fidelity degradation (spec §13), returned to the caller as `warnings`. */
   warn(message: string): void;
   /** Exporter-specific options (e.g. `sheet` for per-sheet CSV). */
   options?: Record<string, unknown>;
 }
 
+/** Exporters live beside the adapter (spec §8): `format` is the native source, `target` the file format. */
 export interface ArtifactExporter<Content = unknown> {
-  kind: string;
-  format: ExportFormat;
+  format: string;
+  target: ExportFormat;
   mimeType: string;
   extension: string;
   runtime: 'any' | 'node' | 'browser';
   export(content: Content, ctx: ExportContext): Promise<Uint8Array>;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: registry stores heterogeneous exporters.
+// biome-ignore lint/suspicious/noExplicitAny: the registry stores heterogeneous exporters.
 export type AnyArtifactExporter = ArtifactExporter<any>;
 
 export interface BatchLimits {
-  /** Operations per batch (spec §6.6: 200). */
+  /** Operations per batch (spec §7.5: 200). */
   maxOperations: number;
-  /** Serialized envelope size in bytes (spec §6.6: 5 MB). */
+  /** Serialized envelope size in bytes (spec §7.5: 5 MB). */
   maxEnvelopeBytes: number;
 }
 
 export const DEFAULT_BATCH_LIMITS: BatchLimits = { maxOperations: 200, maxEnvelopeBytes: 5 * 1024 * 1024 };
 
 export interface RegistryOptions {
-  kinds?: AnyArtifactKind[];
+  formats?: AnyFormatAdapter[];
   themes?: Theme[];
   exporters?: AnyArtifactExporter[];
-  /** Per-kind overrides of the default limits. */
-  limits?: Record<string, Partial<KindLimits>>;
+  /** Per-format overrides of the default limits. */
+  limits?: Record<string, Partial<FormatLimits>>;
   batch?: Partial<BatchLimits>;
 }
 
 export interface ArtifactRegistry {
-  register(kind: AnyArtifactKind): void;
-  get(kind: string, locale?: string): AnyArtifactKind;
-  has(kind: string): boolean;
-  kinds(): AnyArtifactKind[];
-  limits(kind: string): KindLimits;
+  register(adapter: AnyFormatAdapter): void;
+  get(format: string, locale?: string): AnyFormatAdapter;
+  has(format: string): boolean;
+  formats(): AnyFormatAdapter[];
+  limits(format: string): FormatLimits;
   readonly batch: BatchLimits;
 
   registerTheme(theme: Theme): void;
@@ -76,12 +77,12 @@ export interface ArtifactRegistry {
   themes(): Theme[];
 
   registerExporter(exporter: AnyArtifactExporter, options?: { replace?: boolean }): void;
-  exporter(kind: string, format: string, locale?: string): AnyArtifactExporter;
-  exporters(kind?: string): AnyArtifactExporter[];
+  exporter(format: string, target: string, locale?: string): AnyArtifactExporter;
+  exporters(format?: string): AnyArtifactExporter[];
 }
 
 export function createRegistry(options: RegistryOptions = {}): ArtifactRegistry {
-  const kinds = new Map<string, AnyArtifactKind>();
+  const formats = new Map<string, AnyFormatAdapter>();
   const themes = new Map<string, Theme>([[defaultTheme.id, defaultTheme]]);
   const exporters = new Map<string, AnyArtifactExporter>();
   const limitOverrides = options.limits ?? {};
@@ -89,35 +90,38 @@ export function createRegistry(options: RegistryOptions = {}): ArtifactRegistry 
 
   const registry: ArtifactRegistry = {
     batch,
-    register(kind) {
-      if (kinds.has(kind.kind)) {
-        throw new ArtifactError('DUPLICATE_KIND', t(undefined, 'DUPLICATE_KIND', { kind: kind.kind }));
+    register(adapter) {
+      if (formats.has(adapter.format)) {
+        throw new ArtifactError(
+          'DUPLICATE_FORMAT',
+          t(undefined, 'DUPLICATE_FORMAT', { format: adapter.format }),
+        );
       }
-      assertKindContract(kind);
-      kinds.set(kind.kind, kind);
+      assertFormatContract(adapter);
+      formats.set(adapter.format, adapter);
     },
-    get(kind, locale) {
-      const found = kinds.get(kind);
+    get(format, locale) {
+      const found = formats.get(format);
       if (!found) {
-        throw new ArtifactError('UNKNOWN_KIND', t(locale, 'UNKNOWN_KIND', { kind }), {
+        throw new ArtifactError('UNKNOWN_FORMAT', t(locale, 'UNKNOWN_FORMAT', { format }), {
           issues: [
             {
-              path: 'kind',
-              message: t(locale, 'UNKNOWN_KIND', { kind }),
-              hint: t(locale, 'UNKNOWN_KIND_HINT', { available: [...kinds.keys()].join(', ') }),
+              path: 'format',
+              message: t(locale, 'UNKNOWN_FORMAT', { format }),
+              hint: t(locale, 'UNKNOWN_FORMAT_HINT', { available: [...formats.keys()].join(', ') }),
             },
           ],
         });
       }
       return found;
     },
-    has: (kind) => kinds.has(kind),
-    kinds: () => [...kinds.values()],
-    limits(kind) {
-      const base = registry.get(kind).limits;
+    has: (format) => formats.has(format),
+    formats: () => [...formats.values()],
+    limits(format) {
+      const base = registry.get(format).limits;
       const overrides = Object.fromEntries(
-        Object.entries(limitOverrides[kind] ?? {}).filter(([, v]) => v !== undefined),
-      ) as KindLimits;
+        Object.entries(limitOverrides[format] ?? {}).filter(([, v]) => v !== undefined),
+      ) as FormatLimits;
       return { ...base, ...overrides };
     },
     registerTheme(theme) {
@@ -131,21 +135,21 @@ export function createRegistry(options: RegistryOptions = {}): ArtifactRegistry 
     hasTheme: (id) => themes.has(id),
     themes: () => [...themes.values()],
     registerExporter(exporter, opts) {
-      const key = `${exporter.kind}:${exporter.format}`;
+      const key = `${exporter.format}:${exporter.target}`;
       if (exporters.has(key) && !opts?.replace) {
         throw new Error(`Exporter ${key} is already registered; pass { replace: true } to override it.`);
       }
       exporters.set(key, exporter);
     },
-    exporter(kind, format, locale) {
-      const found = exporters.get(`${kind}:${format}`);
-      if (!found) throw new ArtifactError('NOT_FOUND', t(locale, 'EXPORTER_NOT_FOUND', { kind, format }));
+    exporter(format, target, locale) {
+      const found = exporters.get(`${format}:${target}`);
+      if (!found) throw new ArtifactError('NOT_FOUND', t(locale, 'EXPORTER_NOT_FOUND', { format, target }));
       return found;
     },
-    exporters: (kind) => [...exporters.values()].filter((e) => kind === undefined || e.kind === kind),
+    exporters: (format) => [...exporters.values()].filter((e) => format === undefined || e.format === format),
   };
 
-  for (const kind of options.kinds ?? []) registry.register(kind);
+  for (const adapter of options.formats ?? []) registry.register(adapter);
   for (const theme of options.themes ?? []) registry.registerTheme(theme);
   for (const exporter of options.exporters ?? []) registry.registerExporter(exporter, { replace: true });
   return registry;

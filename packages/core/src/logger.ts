@@ -1,13 +1,12 @@
 /** Structured, injectable logger (spec §17). Never log artifact content, cell text, prompts or personal data. */
 export interface LogFields {
   artifactId?: string;
-  kind?: string;
+  format?: string;
   version?: number;
   operationCount?: number;
   durationMs?: number;
   code?: string;
   actorType?: string;
-  format?: string;
   [key: string]: string | number | boolean | undefined;
 }
 

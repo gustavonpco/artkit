@@ -10,7 +10,7 @@ import {
   type Scope,
 } from '@artkit-ai/core';
 import { afterAll } from 'vitest';
-import { noteKind } from './note-kind.js';
+import { noteFormat } from './note-format.js';
 
 const dirs: string[] = [];
 
@@ -43,10 +43,10 @@ export const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0
 
 /** Service over the core memory stores with the note kind and a markdown exporter. */
 export function noteService(options: Partial<Parameters<typeof createArtifactService>[0]> = {}) {
-  const registry = createRegistry({ kinds: [noteKind] });
+  const registry = createRegistry({ formats: [noteFormat] });
   registry.registerExporter({
-    kind: 'note',
-    format: 'md',
+    format: 'note',
+    target: 'md',
     mimeType: 'text/markdown',
     extension: 'md',
     runtime: 'any',
@@ -56,16 +56,16 @@ export function noteService(options: Partial<Parameters<typeof createArtifactSer
     },
   });
   registry.registerExporter({
-    kind: 'note',
-    format: 'png',
+    format: 'note',
+    target: 'png',
     mimeType: 'image/png',
     extension: 'png',
     runtime: 'any',
     export: async () => PNG,
   });
   registry.registerExporter({
-    kind: 'note',
-    format: 'html',
+    format: 'note',
+    target: 'html',
     mimeType: 'text/html',
     extension: 'html',
     runtime: 'any',

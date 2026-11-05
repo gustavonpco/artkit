@@ -2,8 +2,8 @@ export {
   collectAssetRefs,
   createHeadlessExporters,
   type HeadlessExportersOptions,
-  type HeadlessFormat,
-  type HeadlessKind,
+  type HeadlessSource,
+  type HeadlessTarget,
 } from './exporters.js';
 export {
   buildPrintHtml,

@@ -1,16 +1,23 @@
 export { ERROR_ACTIONS, MAX_RETRIES } from './guides/errors.js';
-export { GENERIC_KIND_GUIDE, KIND_GUIDES, type KindGuide, kindGuide } from './guides/kinds.js';
 export {
   type InstructionContext,
   type InstructionDetail,
   type InstructionOptions,
   renderInstructions,
 } from './instructions.js';
-export { applyToolName } from './kind-doc.js';
-export { describeContent, describeOperations, renderFields, typeLabel } from './schema-doc.js';
+export {
+  applySchema,
+  createSchema,
+  exportSchema,
+  guideSchema,
+  listSchema,
+  readSchema,
+} from './schemas.js';
 export {
   ARTKIT_VERSION,
   ERRORS_TOPIC,
+  formatBody,
+  guideBody,
   guidePath,
   guideTopics,
   INTEGRATION_SKILL,
@@ -24,7 +31,6 @@ export {
 } from './skills.js';
 export {
   type ApplyToolOutput,
-  type ApprovalOptions,
   type ArtifactReference,
   type ArtifactTool,
   type ArtifactToolkit,
@@ -35,7 +41,6 @@ export {
   type GuideToolOutput,
   type ListToolOutput,
   type ReadToolOutput,
-  type SubmitToolOutput,
   type ToolExecutionContext,
   type ToolkitEvent,
   type ToolResult,

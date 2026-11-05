@@ -11,9 +11,11 @@
   "dependencies": {
     "@artkit-ai/core": "workspace:^",
     "@artkit-ai/node": "workspace:^",
-    "@artkit-ai/kind-document": "workspace:^",
-    "@artkit-ai/kind-sheet": "workspace:^",
-    "@artkit-ai/kind-slides": "workspace:^",
-    "@artkit-ai/kind-diagram": "workspace:^"
+    "@artkit-ai/format-markdown": "workspace:^",
+    "@artkit-ai/format-sheet": "workspace:^",
+    "@artkit-ai/format-openui": "workspace:^",
+    "@artkit-ai/export-docx": "workspace:^",
+    "@artkit-ai/export-xlsx": "workspace:^",
+    "@artkit-ai/export-pptx": "workspace:^"
   }
 }

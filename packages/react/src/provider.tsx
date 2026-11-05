@@ -18,7 +18,7 @@ export interface ArtifactProviderProps {
   /** Core registry with the kinds the app shows (parsePartial, apply, project, diff, lint). */
   registry: ArtifactRegistry;
   client: ArtifactClient;
-  /** Lazy renderers, editors and exporters per kind. Read once per kind: later changes are ignored. */
+  /** Lazy renderers, editors and exporters per format. Read once per format: later changes are ignored. */
   loaders?: ArtifactLoaders;
   /** UI locale (pt-BR or en built in). Artifacts keep their own locale for content formatting. */
   locale?: string;
@@ -92,8 +92,8 @@ export function ArtifactProvider(props: ArtifactProviderProps) {
 
   const value = useMemo<ArtkitContextValue>(() => {
     const byId = new Map(themeList.map((theme) => [theme.id, theme]));
-    function load<T>(type: 'renderer' | 'editor' | 'exporters', kind: string): Promise<T> {
-      const key: LoadKey = `${type}:${kind}`;
+    function load<T>(type: 'renderer' | 'editor' | 'exporters', format: string): Promise<T> {
+      const key: LoadKey = `${type}:${format}`;
       let promise = loads.current.get(key) as Promise<T> | undefined;
       if (!promise) {
         const group =
@@ -102,10 +102,10 @@ export function ArtifactProvider(props: ArtifactProviderProps) {
             : type === 'editor'
               ? loadersRef.current?.editors
               : loadersRef.current?.exporters;
-        const loader = group?.[kind];
+        const loader = group?.[format];
         promise = loader
           ? (loader() as Promise<T>)
-          : Promise.reject(new Error(`No ${type} loader registered for kind "${kind}".`));
+          : Promise.reject(new Error(`No ${type} loader registered for kind "${format}".`));
         loads.current.set(key, promise);
       }
       return promise;
@@ -122,14 +122,14 @@ export function ArtifactProvider(props: ArtifactProviderProps) {
       ...(props.resolveAssetUrl ? { resolveAssetUrl: props.resolveAssetUrl } : {}),
       ...(props.assets ? { assets: props.assets } : {}),
       exportFormats: props.exportFormats ?? {},
-      hasRenderer: (kind) => Boolean(loadersRef.current?.renderers?.[kind]),
-      hasEditor: (kind) => Boolean(loadersRef.current?.editors?.[kind]),
-      hasExporters: (kind) => Boolean(loadersRef.current?.exporters?.[kind]),
-      loadRenderer: (kind) => load<RendererModule>('renderer', kind),
-      loadEditor: (kind) => load<EditorModule>('editor', kind),
-      loadExporters: (kind) => load('exporters', kind),
-      resetLoad: (type, kind) => {
-        loads.current.delete(`${type}:${kind}`);
+      hasRenderer: (format) => Boolean(loadersRef.current?.renderers?.[format]),
+      hasEditor: (format) => Boolean(loadersRef.current?.editors?.[format]),
+      hasExporters: (format) => Boolean(loadersRef.current?.exporters?.[format]),
+      loadRenderer: (format) => load<RendererModule>('renderer', format),
+      loadEditor: (format) => load<EditorModule>('editor', format),
+      loadExporters: (format) => load('exporters', format),
+      resetLoad: (type, format) => {
+        loads.current.delete(`${type}:${format}`);
       },
       ...(nonce ? { nonce } : {}),
     };

@@ -28,7 +28,7 @@ export interface TaskContext {
 export interface CheckContext extends TaskContext {
   calls: readonly ToolCallRecord[];
   /** Latest version of every artifact in the workspace. */
-  artifacts(kind?: string): Promise<Artifact[]>;
+  artifacts(format?: string): Promise<Artifact[]>;
 }
 
 export interface CheckResult {
@@ -48,8 +48,8 @@ export interface EvalTask {
   id: string;
   title: string;
   category: TaskCategory;
-  /** Kinds the task exercises (used to aggregate results per kind). */
-  kinds: string[];
+  /** Formats the task exercises (used to aggregate results per format). */
+  formats: string[];
   /** User prompt; `{{var}}` placeholders are filled from `setup`. */
   prompt: string;
   setup?(ctx: TaskContext): Promise<Record<string, string>>;
@@ -83,7 +83,7 @@ export interface EvalConfig {
   locale?: string;
   /** Concurrent runs (default 2). */
   concurrency?: number;
-  /** Exit criterion (spec §21.2): success within two corrections, per kind and model (default 0.9). */
+  /** Exit criterion (spec §21.2): success within two corrections, per format and model (default 0.9). */
   threshold?: number;
   onRun?(run: RunResult): void;
 }
@@ -91,7 +91,7 @@ export interface EvalConfig {
 export interface RunResult {
   taskId: string;
   category: TaskCategory;
-  kinds: string[];
+  formats: string[];
   model: string;
   profile: SchemaProfile;
   skill: boolean;
@@ -117,7 +117,7 @@ export interface RunResult {
 
 export interface AggregateRow {
   key: string;
-  kind: string;
+  format: string;
   model: string;
   profile: SchemaProfile;
   skill: boolean;
@@ -136,10 +136,10 @@ export interface EvalReport {
   finishedAt: string;
   runs: RunResult[];
   rows: AggregateRow[];
-  /** Skill gain in success rate per kind and model (with skill minus without). */
-  skillGain: { kind: string; model: string; profile: SchemaProfile; gain: number }[];
-  /** Exit criteria per kind and model (spec §25.1). */
-  criteria: { kind: string; model: string; successRate: number; passed: boolean }[];
+  /** Skill gain in success rate per format and model (with skill minus without). */
+  skillGain: { format: string; model: string; profile: SchemaProfile; gain: number }[];
+  /** Exit criteria per format and model (spec §25.1). */
+  criteria: { format: string; model: string; successRate: number; passed: boolean }[];
   passed: boolean;
 }
 

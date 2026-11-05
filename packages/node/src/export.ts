@@ -23,11 +23,11 @@ export interface ExportArtifactRequest extends ExportRequest {
 
 /**
  * Export orchestration (spec §12.1) on top of `service.export`: resolves the exporter registered for
- * the kind and format, migrates the content, resolves theme, locale and assets, runs with a timeout and
+ * the format and format, migrates the content, resolves theme, locale and assets, runs with a timeout and
  * the caller's `AbortSignal`, and optionally stores the file in the asset store.
  *
- * The service performs authorization, approval policy and event emission; failures surface as
- * `ArtifactError` (`NOT_FOUND`, `PERMISSION_DENIED`, `APPROVAL_REQUIRED`, `EXPORT_FAILED`…).
+ * The service performs authorization and event emission; failures surface as
+ * `ArtifactError` (`NOT_FOUND`, `PERMISSION_DENIED`, `EXPORT_FAILED`…).
  */
 export async function exportArtifact(
   service: ArtifactService,

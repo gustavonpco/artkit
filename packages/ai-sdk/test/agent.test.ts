@@ -2,7 +2,6 @@ import { createArtifactToolkit } from '@artkit-ai/agent';
 import { createMemoryStore, createRegistry, type Scope } from '@artkit-ai/core';
 import {
   createUIMessageStream,
-  type ModelMessage,
   readUIMessageStream,
   simulateReadableStream,
   ToolLoopAgent,
@@ -13,12 +12,11 @@ import { describe, expect, it } from 'vitest';
 import {
   artifactContextSchema,
   artifactInstructions,
-  artifactToolApproval,
   artifactTools,
   artifactToolsContext,
   deriveArtifacts,
 } from '../src/index.js';
-import { noteKind } from './note-kind.js';
+import { noteFormat } from './note-format.js';
 
 const usage = {
   inputTokens: { total: 10, noCache: 10, cacheRead: undefined, cacheWrite: undefined },
@@ -27,13 +25,12 @@ const usage = {
 
 const scope: Scope = { workspaceId: 'ws-1', actor: { type: 'agent', id: 'assistant' } };
 
-function setup(approval?: Parameters<typeof createArtifactToolkit>[0]['approval']) {
-  const registry = createRegistry({ kinds: [noteKind] });
+function setup() {
+  const registry = createRegistry({ formats: [noteFormat] });
   const toolkit = createArtifactToolkit({
     registry,
     store: createMemoryStore(),
     authorize: () => true,
-    ...(approval ? { approval } : {}),
   });
   const tools = artifactTools(toolkit);
   return { registry, toolkit, tools };
@@ -62,7 +59,7 @@ describe('ToolLoopAgent integration', () => {
           return {
             content: [
               toolCall('call-1', 'artifact_create', {
-                kind: 'note',
+                format: 'note',
                 title: 'Plan',
                 content: { items: [{ id: 'a', text: 'first' }] },
                 workspaceId: 'evil',
@@ -101,7 +98,6 @@ describe('ToolLoopAgent integration', () => {
       model,
       instructions: artifactInstructions(toolkit),
       tools,
-      toolApproval: artifactToolApproval(toolkit),
       callOptionsSchema: artifactContextSchema,
       prepareCall: ({ options, ...settings }) => ({
         ...settings,
@@ -116,8 +112,8 @@ describe('ToolLoopAgent integration', () => {
     const outputs = result.steps.flatMap((s) =>
       s.toolResults.map((r) => r.output as Record<string, unknown>),
     );
-    expect(outputs[0]).toMatchObject({ ok: true, version: 1, kind: 'note' });
-    expect(outputs[1]).toMatchObject({ ok: true, version: 2, createdIds: ['b'] });
+    expect(outputs[0]).toMatchObject({ ok: true, version: 1, format: 'note' });
+    expect(outputs[1]).toMatchObject({ ok: true, version: 2, createdRefs: ['b'] });
     const id = String(outputs[0]!.id);
     const read = await toolkit.service.read(scope, id, { mode: 'full' });
     expect(read.text).toContain('second');
@@ -141,7 +137,7 @@ describe('ToolLoopAgent integration', () => {
         });
         if (step === 1) {
           const input = JSON.stringify({
-            kind: 'note',
+            format: 'note',
             title: 'Streamed',
             content: { items: [{ id: 'a', text: 'one' }] },
           });
@@ -206,67 +202,13 @@ describe('ToolLoopAgent integration', () => {
     expect(dataParts).toHaveLength(1);
     expect(dataParts[0]).toMatchObject({
       type: 'data-artifact',
-      data: { kind: 'note', title: 'Streamed', version: 2, status: 'draft' },
+      data: { format: 'note', title: 'Streamed', version: 2 },
     });
     const derived = deriveArtifacts([last!], { registry });
     expect(derived.artifacts).toHaveLength(1);
-    expect(derived.artifacts[0]).toMatchObject({ kind: 'note', version: 2, title: 'Streamed' });
+    expect(derived.artifacts[0]).toMatchObject({ format: 'note', version: 2, title: 'Streamed' });
     expect(derived.artifacts[0]!.preview).toBeUndefined();
     const content = await toolkit.service.get(scope, derived.artifacts[0]!.id!);
     expect(content.content).toEqual({ items: [{ id: 'a', text: 'uno' }] });
-  });
-
-  it('asks for approval on artifact_submit and resumes after the decision', async () => {
-    const { toolkit, tools } = setup();
-    const created = await toolkit.service.create(scope, { kind: 'note', title: 'Review me' });
-    let step = 0;
-    const model = new MockLanguageModelV4({
-      doGenerate: async () => {
-        step++;
-        if (step === 1) {
-          return {
-            content: [toolCall('call-s', 'artifact_submit', { id: created.artifact.id })],
-            finishReason: { unified: 'tool-calls', raw: undefined },
-            usage,
-            warnings: [],
-          };
-        }
-        return {
-          content: [{ type: 'text', text: 'Submitted.' }],
-          finishReason: { unified: 'stop', raw: undefined },
-          usage,
-          warnings: [],
-        };
-      },
-    });
-    const agent = new ToolLoopAgent({
-      model,
-      tools,
-      toolApproval: artifactToolApproval(toolkit),
-      callOptionsSchema: artifactContextSchema,
-      prepareCall: ({ options, ...settings }) => ({
-        ...settings,
-        toolsContext: artifactToolsContext(tools, options),
-      }),
-    });
-    const messages: ModelMessage[] = [{ role: 'user', content: 'Submit it' }];
-    const first = await agent.generate({ messages, options: scope });
-    const request = first.content.find((part) => part.type === 'tool-approval-request');
-    expect(request).toBeDefined();
-    expect((await toolkit.service.get(scope, created.artifact.id)).status).toBe('draft');
-    messages.push(...first.response.messages);
-    messages.push({
-      role: 'tool',
-      content: [
-        {
-          type: 'tool-approval-response',
-          approvalId: (request as { approvalId: string }).approvalId,
-          approved: true,
-        },
-      ],
-    });
-    const second = await agent.generate({ messages, options: scope });
-    expect(second.text).toBe('Submitted.');
-    expect((await toolkit.service.get(scope, created.artifact.id)).status).toBe('pending_approval');
   });
 });

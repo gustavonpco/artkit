@@ -45,9 +45,8 @@
   "dependencies": {
     "@artkit-ai/core": "workspace:^",
     "@artkit-ai/agent": "workspace:^",
-    "@artkit-ai/kind-document": "workspace:^",
-    "@artkit-ai/kind-sheet": "workspace:^",
-    "@artkit-ai/kind-slides": "workspace:^",
-    "@artkit-ai/kind-diagram": "workspace:^"
+    "@artkit-ai/format-markdown": "workspace:^",
+    "@artkit-ai/format-sheet": "workspace:^",
+    "@artkit-ai/format-openui": "workspace:^"
   }
 }

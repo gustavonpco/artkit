@@ -1,6 +1,5 @@
 import type { AssetMeta, AssetRef, StoredAssetInfo } from './assets.js';
-import type { Actor, Artifact, ArtifactStatus, ArtifactSummary } from './envelope.js';
-import type { ChangeSummary } from './kind.js';
+import type { Actor, Artifact, ArtifactSummary } from './envelope.js';
 
 /** Workspace and actor. Every store implementation filters by scope; ids alone never grant access. */
 export interface Scope {
@@ -11,60 +10,23 @@ export interface Scope {
 export type StoredArtifact = Artifact;
 
 export interface NewArtifact {
-  kind: string;
-  schemaVersion: number;
+  format: string;
+  formatVersion: string;
   title: string;
-  status: ArtifactStatus;
   locale: string;
   themeId: string;
   content: unknown;
   tags?: string[];
-  message?: string;
-  idempotencyKey?: string;
-  createdIds?: string[];
 }
 
 export interface Commit {
   /** Version the change was computed against. The store rejects with VERSION_CONFLICT when it is stale. */
   baseVersion: number;
-  schemaVersion: number;
+  formatVersion: string;
   content: unknown;
   title: string;
   locale: string;
   themeId: string;
-  status?: ArtifactStatus;
-  operations: unknown[];
-  diff: ChangeSummary[];
-  createdIds?: string[];
-  message?: string;
-  idempotencyKey?: string;
-  /** Set when the commit restores an older version (spec §8.5). */
-  restoredFrom?: number;
-}
-
-export interface VersionEntry {
-  version: number;
-  actor: Actor;
-  createdAt: string;
-  operations: unknown[];
-  diff: ChangeSummary[];
-  createdIds: string[];
-  status: ArtifactStatus;
-  message?: string;
-  idempotencyKey?: string;
-  restoredFrom?: number;
-  /** Lifecycle changes made while this was the current version, oldest first (approval trail). */
-  statusLog?: StatusChange[];
-  /** Content snapshot, present at least on the first version and periodically after (spec §8.5). */
-  snapshot?: { schemaVersion: number; content: unknown };
-}
-
-export interface StatusChange {
-  status: ArtifactStatus;
-  actor: Actor;
-  at: string;
-  /** Submit message, approval note or rejection reason. */
-  message?: string;
 }
 
 export interface PageRequest {
@@ -78,8 +40,7 @@ export interface Page<T> {
 }
 
 export interface ArtifactFilter {
-  kind?: string;
-  status?: ArtifactStatus;
+  format?: string;
   /** Case-insensitive substring of the title. */
   title?: string;
   tag?: string;
@@ -93,35 +54,22 @@ export interface Lock {
 }
 
 /**
- * Persistence contract (spec §15.1). Implementations must pass the shared contract suite
- * exported from `@artkit-ai/core/testing`.
+ * Persistence contract (spec §17.1). The store keeps the current content of each artifact and its version counter;
+ * it does not keep earlier versions. Implementations must pass the shared contract suite from `@artkit-ai/core/testing`.
  */
 export interface ArtifactStore {
-  get(scope: Scope, id: string, opts?: { version?: number }): Promise<StoredArtifact | null>;
+  get(scope: Scope, id: string): Promise<StoredArtifact | null>;
   create(scope: Scope, input: NewArtifact): Promise<StoredArtifact>;
-  /** Throws `ArtifactError('VERSION_CONFLICT')` when `change.baseVersion` is not the current version. */
+  /**
+   * Replaces the content when `change.baseVersion` is the current version and increments the version. Throws
+   * `ArtifactError('VERSION_CONFLICT')` otherwise.
+   */
   commit(scope: Scope, id: string, change: Commit): Promise<StoredArtifact>;
-  history(scope: Scope, id: string, page: PageRequest): Promise<Page<VersionEntry>>;
   list(scope: Scope, filter: ArtifactFilter, page: PageRequest): Promise<Page<ArtifactSummary>>;
-  /** Changes status without creating a version; sets `meta.publishedVersion` when publishing. */
-  setStatus(
-    scope: Scope,
-    id: string,
-    status: ArtifactStatus,
-    actor: Actor,
-    message?: string,
-  ): Promise<StoredArtifact>;
   /** Throws `ArtifactError('LOCKED')` when another actor holds a valid lock. */
   lock(scope: Scope, id: string, actor: Actor, ttlMs: number): Promise<Lock>;
   unlock(scope: Scope, lock: Lock): Promise<void>;
   getLock(scope: Scope, id: string): Promise<Lock | null>;
-  findByIdempotencyKey(scope: Scope, id: string, key: string): Promise<VersionEntry | null>;
-  /**
-   * Finds an artifact created with this idempotency key by the same actor in the scope's workspace, so a repeated
-   * `create` tool call returns the first artifact instead of a duplicate. Optional for compatibility;
-   * without it, creation is not deduplicated across processes.
-   */
-  findCreatedByIdempotencyKey?(scope: Scope, key: string): Promise<StoredArtifact | null>;
 }
 
 export interface AssetStore {

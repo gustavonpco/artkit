@@ -28,14 +28,6 @@ export interface ArtkitMcpServerOptions {
    * Server instructions sent on initialize. Default: the toolkit's compact instructions; `false` disables them.
    */
   instructions?: string | false;
-  /**
-   * Idempotency key of a tool call. MCP has no stable call id (JSON-RPC ids repeat across sessions), so the
-   * default reads `params._meta.idempotencyKey` and otherwise sends none.
-   */
-  idempotencyKey?: (
-    request: { params: { _meta?: Record<string, unknown> } },
-    extra: McpRequestExtra,
-  ) => string | undefined;
 }
 
 const RESOURCE_NOT_FOUND = -32002;
@@ -66,7 +58,7 @@ function toolDefinition(tool: ArtifactTool): Tool {
     inputSchema: tool.inputSchema as Tool['inputSchema'],
     annotations: {
       readOnlyHint: tool.readOnly,
-      // Changes are versioned and restorable, never destructive.
+      // Changes are never destructive: saving and versions belong to the harness.
       destructiveHint: false,
       idempotentHint: tool.readOnly,
       openWorldHint: false,
@@ -95,11 +87,6 @@ function callResult(result: ToolResult): CallToolResult {
   };
 }
 
-const defaultIdempotencyKey: NonNullable<ArtkitMcpServerOptions['idempotencyKey']> = (request) => {
-  const key = request.params._meta?.idempotencyKey;
-  return typeof key === 'string' && key.length > 0 && key.length <= 200 ? key : undefined;
-};
-
 /**
  * MCP server exposing the toolkit tools (same names, descriptions and JSON Schemas), artifact projections as
  * resources and the guides as prompts and resources (spec §14.5, §14.7).
@@ -121,7 +108,6 @@ export function createArtkitMcpServer(options: ArtkitMcpServerOptions): McpServe
       ...(instructions ? { instructions } : {}),
     },
   );
-  const idempotencyKey = options.idempotencyKey ?? defaultIdempotencyKey;
 
   // Tools are served from the low-level handlers so the toolkit's JSON Schemas (per profile) go out unchanged;
   // McpServer.registerTool would regenerate them from zod.
@@ -132,22 +118,17 @@ export function createArtkitMcpServer(options: ArtkitMcpServerOptions): McpServe
     const tool = toolkit.tool(request.params.name);
     if (!tool) throw new McpError(ErrorCode.InvalidParams, `Unknown tool: ${request.params.name}`);
     const scope = await scopeFor(resolveScope, extra);
-    const key = idempotencyKey(request as { params: { _meta?: Record<string, unknown> } }, extra);
     const result = await tool.execute(request.params.arguments ?? {}, {
       scope,
       signal: extra.signal,
-      ...(key ? { idempotencyKey: key } : {}),
     });
     return callResult(result);
   });
 
-  async function readProjection(uri: URL, id: string, version: number | undefined, extra: McpRequestExtra) {
+  async function readProjection(uri: URL, id: string, extra: McpRequestExtra) {
     const scope = await scopeFor(resolveScope, extra);
     try {
-      const read = await toolkit.service.read(scope, id, {
-        mode: 'outline',
-        ...(version === undefined ? {} : { version }),
-      });
+      const read = await toolkit.service.read(scope, id, { mode: 'outline' });
       return { contents: [{ uri: uri.href, mimeType: 'text/plain', text: read.text }] };
     } catch (error) {
       throw mcpErrorFrom(toModelError(error, toolkit.locale));
@@ -156,19 +137,6 @@ export function createArtkitMcpServer(options: ArtkitMcpServerOptions): McpServe
 
   const single = (value: string | string[] | undefined): string =>
     Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
-
-  // Registered before `artifact://{id}` so versioned URIs never fall into the latest-version template.
-  server.registerResource(
-    'artifact-version',
-    new ResourceTemplate('artifact://{id}/v/{version}', { list: undefined }),
-    { description: 'Outline projection of a specific artifact version.', mimeType: 'text/plain' },
-    (uri, variables, extra) => {
-      const version = Number(single(variables.version));
-      if (!Number.isInteger(version) || version < 1)
-        throw new McpError(ErrorCode.InvalidParams, 'Version must be a positive integer.');
-      return readProjection(uri, decodeURIComponent(single(variables.id)), version, extra);
-    },
-  );
 
   server.registerResource(
     'artifact',
@@ -181,7 +149,7 @@ export function createArtkitMcpServer(options: ArtkitMcpServerOptions): McpServe
             resources: page.items.map((item) => ({
               uri: `artifact://${encodeURIComponent(item.id)}`,
               name: item.title,
-              description: `${item.kind} v${item.version} (${item.status})`,
+              description: `${item.format} v${item.version}`,
               mimeType: 'text/plain',
             })),
           };
@@ -194,8 +162,7 @@ export function createArtkitMcpServer(options: ArtkitMcpServerOptions): McpServe
       description: 'Outline projection (ids and one line per item) of the latest artifact version.',
       mimeType: 'text/plain',
     },
-    (uri, variables, extra) =>
-      readProjection(uri, decodeURIComponent(single(variables.id)), undefined, extra),
+    (uri, variables, extra) => readProjection(uri, decodeURIComponent(single(variables.id)), extra),
   );
 
   const topics = toolkit.guideTopics();
@@ -212,7 +179,7 @@ export function createArtkitMcpServer(options: ArtkitMcpServerOptions): McpServe
       complete: { topic: (value) => topics.filter((topic) => topic.startsWith(value)) },
     }),
     {
-      description: 'artkit usage guides: overview, one per kind, themes and errors.',
+      description: 'artkit usage guides: overview, one per format, themes and errors.',
       mimeType: 'text/markdown',
     },
     (uri, variables) => {

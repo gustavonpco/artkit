@@ -49,47 +49,28 @@ describe('createHttpClient', () => {
       expiresAt: '2030-01-01T00:00:00Z',
     };
 
-    await client.list({ kind: 'note', status: 'draft', title: 'Plan', tag: 'x' }, { limit: 5, cursor: 'c1' });
-    await client.create({ kind: 'note', title: 'T' });
-    await client.get('a b', { version: 3 });
-    await client.read('a b', { mode: 'range', range: 'a..b', maxTokens: 100, cursor: 'c2', version: 2 });
-    await client.apply('a b', {
-      baseVersion: 2,
-      operations: [{ op: 'remove', id: 'x' }],
-      idempotencyKey: 'k',
-    });
+    await client.list({ format: 'note', title: 'Plan', tag: 'x' }, { limit: 5, cursor: 'c1' });
+    await client.create({ format: 'note', title: 'T' });
+    await client.get('a b');
+    await client.read('a b', { mode: 'range', range: 'a..b', maxTokens: 100, cursor: 'c2' });
+    await client.apply('a b', { baseVersion: 2, operations: [{ op: 'remove', id: 'x' }] });
     await client.preview('a b', { baseVersion: 2, operations: [] });
-    await client.history('a b', { limit: 10, cursor: 'h' });
-    await client.restore('a b', 1, 'back');
-    await client.setStatus('a b', 'reject', 'too long');
     await client.lock('a b', { ttlMs: 1000 });
     await expect(client.unlock('a b', lock)).resolves.toBeUndefined();
 
     expect(calls.map((call) => `${call.method} ${call.url}`)).toEqual([
-      'GET /base?kind=note&status=draft&title=Plan&tag=x&limit=5&cursor=c1',
+      'GET /base?format=note&title=Plan&tag=x&limit=5&cursor=c1',
       'POST /base',
-      'GET /base/a%20b?version=3',
-      'GET /base/a%20b/read?mode=range&range=a..b&maxTokens=100&cursor=c2&version=2',
+      'GET /base/a%20b',
+      'GET /base/a%20b/read?mode=range&range=a..b&maxTokens=100&cursor=c2',
       'POST /base/a%20b/apply',
       'POST /base/a%20b/preview',
-      'GET /base/a%20b/history?limit=10&cursor=h',
-      'POST /base/a%20b/restore',
-      'POST /base/a%20b/status',
       'POST /base/a%20b/lock',
       'DELETE /base/a%20b/lock',
     ]);
-    expect(calls[1]?.body).toEqual({ kind: 'note', title: 'T' });
-    expect(calls[4]?.body).toEqual({
-      baseVersion: 2,
-      operations: [{ op: 'remove', id: 'x' }],
-      idempotencyKey: 'k',
-    });
-    expect(calls[7]?.body).toEqual({ version: 1, message: 'back' });
-    expect(calls[8]?.body).toEqual({ action: 'reject', message: 'too long' });
-    expect(calls[9]?.body).toEqual({ ttlMs: 1000 });
-    expect(calls[10]?.body).toEqual(lock);
-    expect(calls[1]?.headers.get('Content-Type')).toBe('application/json');
-    expect(calls.every((call) => call.headers.get('Authorization') === 'Bearer t')).toBe(true);
+    expect(calls[1]?.body).toEqual({ format: 'note', title: 'T' });
+    expect(calls[4]?.body).toEqual({ baseVersion: 2, operations: [{ op: 'remove', id: 'x' }] });
+    expect(calls[0]?.headers.get('Authorization')).toBe('Bearer t');
   });
 
   it('uses the default base path and resolves headers per request', async () => {
@@ -141,17 +122,13 @@ describe('createHttpClient', () => {
     expect(error.details.status).toBe(status);
   });
 
-  it('keeps APPROVAL_REQUIRED and maps unknown codes by status', async () => {
-    const { fetch } = mockFetch((call) =>
-      call.url.endsWith('status')
-        ? json({ ok: false, error: { code: 'APPROVAL_REQUIRED', message: 'needs approval' } }, 403)
-        : json({ ok: false, error: { code: 'WHATEVER', message: 'odd' } }, 423),
+  it('maps unknown codes by status', async () => {
+    const { fetch } = mockFetch(() =>
+      json({ ok: false, error: { code: 'NOT_A_CODE', message: 'Nope' } }, 409),
     );
-    const client = createHttpClient({ fetch });
-    expect(((await rejection(client.setStatus('a', 'publish'))) as ArtifactError).code).toBe(
-      'APPROVAL_REQUIRED',
-    );
-    expect(((await rejection(client.get('a'))) as ArtifactError).code).toBe('LOCKED');
+    const error = await rejection(createHttpClient({ fetch }).get('a'));
+    expect(error).toBeInstanceOf(ArtifactError);
+    expect((error as ArtifactError).code).toBe('VERSION_CONFLICT');
   });
 
   it('wraps network failures and lets aborts through', async () => {
@@ -188,10 +165,9 @@ describe('createHttpClient', () => {
     );
     const result = await createHttpClient({ fetch }).export('doc-1', {
       format: 'docx',
-      version: 2,
       options: { toc: true },
     });
-    expect(calls[0]?.body).toEqual({ format: 'docx', version: 2, options: { toc: true } });
+    expect(calls[0]?.body).toEqual({ format: 'docx', options: { toc: true } });
     expect([...result.bytes]).toEqual([1, 2, 3]);
     expect(result.mimeType).toBe('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
     expect(result.filename).toBe('Proposta técnica.docx');

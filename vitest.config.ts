@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   ssr: { resolve: { conditions: [SOURCE_CONDITION, ...defaultServerConditions] } },
   test: {
-    include: ['packages/*/test/**/*.test.{ts,tsx}', 'examples/*/test/**/*.test.{ts,tsx}'],
+    include: ['packages/*/test/**/*.test.{ts,tsx}'],
     environment: 'node',
     testTimeout: 30_000,
   },

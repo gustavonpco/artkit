@@ -130,7 +130,7 @@ export const defaultDarkTheme: Theme = {
     muted: '#C6CBCE',
     accent: '#00DD80',
     background: '#1D2F3C',
-    surface: '#263744',
+    surface: '#1A313D',
     info: '#FFFFFF',
     warning: '#F3C11B',
     success: '#00DD80',

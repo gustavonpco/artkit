@@ -1,6 +1,6 @@
 # artkit MCP server (stdio)
 
-Exposes the artkit tools (`artifact_create`, `artifact_read`, `artifact_apply`, `artifact_export`, `artifact_list`, `artifact_submit`, `artifact_guide`), the `artifact://{id}` resources and the guide prompts to any MCP client, with artifacts stored on disk.
+Exposes the artkit tools (`artifact_create`, `artifact_read`, `artifact_apply`, `artifact_export`, `artifact_list`, `artifact_guide`), the `artifact://{id}` resources and the guide prompts to any MCP client, with artifacts stored on disk.
 
 ```bash
 pnpm install && pnpm build

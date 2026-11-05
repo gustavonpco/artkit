@@ -1,3 +1,5 @@
 packages:
   - packages/*
   - examples/*
+  # Pending the Workia adaptation to v0.3: kept in the repository, out of the install and build.
+  - "!examples/workia-migration"

@@ -1,0 +1,48 @@
+{
+  "name": "@artkit-ai/export-xlsx",
+  "version": "0.1.0",
+  "description": "xlsx exporter for artkit spreadsheets (ExcelJS): formulas with cached values, number formats, styles, merges, frozen panes and widths.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts",
+    "xlsx"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
+    "directory": "packages/export-xlsx"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/format-sheet": "workspace:^",
+    "exceljs": "^4.4.0"
+  }
+}

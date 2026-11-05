@@ -1,0 +1,49 @@
+{
+  "name": "@artkit-ai/format-openui",
+  "version": "0.1.0",
+  "description": "OpenUI Lang native format for artkit: declarations, validation against the artkit component library, compact reading, operations, lint and diff.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "artkit",
+    "ai",
+    "agents",
+    "artifacts",
+    "openui"
+  ],
+  "exports": {
+    ".": {
+      "@artkit/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gustavonpco/artkit.git",
+    "directory": "packages/format-openui"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@artkit-ai/core": "workspace:^",
+    "@artkit-ai/openui-components": "workspace:^",
+    "@openuidev/lang-core": "1.1.0",
+    "zod": "^4.6.7"
+  }
+}

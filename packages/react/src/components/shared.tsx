@@ -1,4 +1,4 @@
-import type { ArtifactStatus, ChangeSummary } from '@artkit-ai/core';
+import type { ChangeSummary } from '@artkit-ai/core';
 import { isArtifactError } from '@artkit-ai/core';
 import { RotateCw } from 'lucide-react';
 import {
@@ -39,15 +39,6 @@ export function rootAttributes(ctx: ArtkitContextValue, themeId?: string): Recor
     ...(themeId ? { 'data-ak-theme': themeId } : {}),
     ...(ctx.colorScheme !== 'system' ? { 'data-theme': ctx.colorScheme } : {}),
   };
-}
-
-export function StatusBadge({ status, className }: { status: ArtifactStatus; className?: string }) {
-  const { t } = useArtkit();
-  return (
-    <span className={cx('ak-badge', className)} data-status={status}>
-      {t(`status_${status}` as UiMessageKey)}
-    </span>
-  );
 }
 
 export function errorMessage(error: unknown, fallback: string): string {
@@ -202,6 +193,6 @@ export function formatDate(value: string, locale: string): string {
   }
 }
 
-export function kindLabel(ctx: ArtkitContextValue, kind: string): string {
-  return ctx.registry.has(kind) ? ctx.registry.get(kind).label : kind;
+export function formatLabel(ctx: ArtkitContextValue, format: string): string {
+  return ctx.registry.has(format) ? ctx.registry.get(format).label : format;
 }

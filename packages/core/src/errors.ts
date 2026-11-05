@@ -3,11 +3,11 @@ import { t } from './i18n.js';
 
 /** Error catalog (spec §10.3). `INTERNAL_ERROR` is the only extension: unexpected failures never leak details. */
 export const ERROR_CODES = [
-  'UNKNOWN_KIND',
-  'DUPLICATE_KIND',
+  'UNKNOWN_FORMAT',
+  'DUPLICATE_FORMAT',
   'NOT_FOUND',
   'INVALID_ENVELOPE',
-  'UNSUPPORTED_VERSION',
+  'UNSUPPORTED_FORMAT_VERSION',
   'MIGRATION_FAILED',
   'INVALID_CONTENT',
   'INVALID_OPERATION',
@@ -16,9 +16,9 @@ export const ERROR_CODES = [
   'LOCKED',
   'LIMIT_EXCEEDED',
   'PERMISSION_DENIED',
-  'APPROVAL_REQUIRED',
   'ASSET_REJECTED',
   'EXPORT_FAILED',
+  'ENGINE_UNAVAILABLE',
   'INTERNAL_ERROR',
 ] as const;
 

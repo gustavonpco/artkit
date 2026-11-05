@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/openui-components",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "artkit component library for OpenUI Lang: layout, text, data, Deck and Slide, dashboard, report, prototype and diagram components with typed props.",
   "license": "Apache-2.0",
   "type": "module",

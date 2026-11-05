@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Harness-neutral agent toolkit for artkit: tool definitions, instructions, model-facing errors and token budgets.",
   "license": "Apache-2.0",
   "type": "module",

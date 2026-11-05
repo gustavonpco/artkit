@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/format-markdown",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Markdown (GFM with frontmatter) native format for artkit: dialect, anchors, section operations, compact reading, lint and Tiptap-compatible parsing.",
   "license": "Apache-2.0",
   "type": "module",

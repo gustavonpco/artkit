@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/export-xlsx",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "xlsx exporter for artkit spreadsheets (ExcelJS): formulas with cached values, number formats, styles, merges, frozen panes and widths.",
   "license": "Apache-2.0",
   "type": "module",

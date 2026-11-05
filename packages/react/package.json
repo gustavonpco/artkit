@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "React host for artkit artifacts: provider, view, editor, panel, card, approval, version diff, hooks and streaming preview.",
   "license": "Apache-2.0",
   "type": "module",

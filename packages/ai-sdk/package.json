@@ -1,6 +1,6 @@
 {
   "name": "@artkit-ai/ai-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Vercel AI SDK 7 adapter for artkit: tools, approval, context, data parts and the useArtifacts hook.",
   "license": "Apache-2.0",
   "type": "module",
